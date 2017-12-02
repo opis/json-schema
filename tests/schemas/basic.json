@@ -1,0 +1,65 @@
+{
+    "$id": "schema:/basic.json#",
+    "definitions": {
+        "constant": {
+            "const": 10
+        },
+        "enumeration": {
+            "enum": ["a", "b", 5, null]
+        },
+        "false": false,
+        "true": true,
+        "empty": {},
+        "def": {
+            "type": "object",
+            "properties": {
+                "a": {
+                    "type": "string",
+                    "default": "default value"
+                }
+            },
+            "required": ["a"]
+        },
+        "cond": {
+            "negation": {
+                "not": {"enum": ["a", "b"]}
+            },
+            "if-then": {
+                "if": {"type": "integer"},
+                "then": {"const": 10}
+            },
+            "if-else": {
+                "if": {"type": "integer"},
+                "else": {"const": 5.8}
+            },
+            "if-then-else": {
+                "if": {"type": "integer"},
+                "then": {"const": 10},
+                "else": {"const": 5.8}
+            },
+            "all": {
+                "allOf": [
+                    {"type": "integer"},
+                    {"enum": [1, 2]},
+                    {"enum": [1, 3]},
+                    {"enum": [1, 4]}
+                ]
+            },
+            "any": {
+                "anyOf": [
+                    {"type": "integer"},
+                    {"type": "string", "format": "ipv4"},
+                    {"enum": ["x", "y"]}
+                ]
+            },
+            "one": {
+                "oneOf": [
+                    {"type": "integer"},
+                    {"type": "boolean"},
+                    {"type": "array", "minItems": 2},
+                    {"type": "array", "items": {"type": "string"}}
+                ]
+            }
+        }
+    }
+}

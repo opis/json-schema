@@ -1,0 +1,152 @@
+{
+    "$id": "schema:/types.json#",
+    "definitions": {
+        "null": {
+            "type": "null"
+        },
+        "boolean": {
+            "type": "boolean"
+        },
+        "integer": {
+            "type": "integer"
+        },
+        "number": {
+            "simple": {
+                "type": "number"
+            },
+            "interval": {
+                "type": "number",
+                "minimum": -0.8,
+                "maximum": 7.5
+            },
+            "interval_exclusive": {
+                "type": "number",
+                "minimum": -0.8,
+                "maximum": 7.5,
+                "exclusiveMinimum": true,
+                "exclusiveMaximum": true
+            },
+            "multiple": {
+                "type": "number",
+                "multipleOf": 0.2
+            }
+        },
+        "string": {
+            "simple": {
+                "type": "string"
+            },
+            "format": {
+                "type": "string",
+                "format": "email"
+            },
+            "length": {
+                "type": "string",
+                "minLength": 2,
+                "maxLength": 10
+            },
+            "pattern": {
+                "type": "string",
+                "pattern": "^[a-z]+$"
+            }
+        },
+        "array": {
+            "simple": {
+                "type": "array"
+            },
+            "interval": {
+                "type": "array",
+                "minItems": 2,
+                "maxItems": 10
+            },
+            "unique": {
+                "type": "array",
+                "uniqueItems": true
+            },
+            "contains": {
+                "type": "array",
+                "contains": {
+                    "type": "string",
+                    "const": "you found me"
+                }
+            },
+            "items_object": {
+                "type": "array",
+                "items": {
+                    "type": ["string", "integer"]
+                }
+            },
+            "items_array": {
+                "type": "array",
+                "items": [
+                    {"type": "number"},
+                    {"type": "string"}
+                ]
+            },
+            "items_additional": {
+                "type": "array",
+                "items": [
+                    {"type": "number"},
+                    {"type": "string"}
+                ],
+                "additionalItems": {
+                    "type": "null"
+                }
+            }
+        },
+        "object": {
+            "simple": {
+                "type": "object"
+            },
+            "interval": {
+                "type": "object",
+                "minProperties": 2,
+                "maxProperties": 3
+            },
+            "required": {
+                "type": "object",
+                "required": ["p1", "p2"]
+            },
+            "props": {
+                "type": "object",
+                "properties": {
+                    "p1": {"type": "integer"},
+                    "p2": {"type": "string"}
+                }
+            },
+            "props_additional": {
+                "type": "object",
+                "properties": {
+                    "p1": {"type": "integer"},
+                    "p2": {"type": "string"}
+                },
+                "additionalProperties": {
+                    "type": "null"
+                }
+            },
+            "pattern": {
+                "type": "object",
+                "patternProperties": {
+                    "^p[13579]$": {"type": "number"},
+                    "^p[02468]$": {"type": "string"}
+                }
+            },
+            "dep": {
+                "type": "object",
+                "dependencies": {
+                    "a": ["b"],
+                    "c": ["d"],
+                    "e": {
+                        "type": "integer"
+                    }
+                }
+            }
+        },
+        "combined": {
+            "type": ["boolean", "number", "string", "array", "object"],
+            "multipleOf": 0.2,
+            "minLength": 2,
+            "required": ["a"],
+            "minItems": 3
+        }
+    }
+}

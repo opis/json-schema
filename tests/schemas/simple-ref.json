@@ -1,0 +1,17 @@
+{
+    "$id": "schema:/simple-ref.json#",
+    "type": "object",
+    "properties": {
+        "name": {"$ref": "/my-name.json"},
+        "age": {"$ref": "#age"}
+    },
+    "required": ["name"],
+    "definitions": {
+        "age-def": {
+            "$id": "#age",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 200
+        }
+    }
+}

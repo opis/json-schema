@@ -1,0 +1,5 @@
+{
+    "$id": "schema:/my-name.json#",
+    "type": "string",
+    "pattern": "^[A-Z]"
+}

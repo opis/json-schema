@@ -1,0 +1,17 @@
+{
+    "$id": "schema:/pointer-ref#",
+    "type": "object",
+    "properties": {
+        "a": {"$ref": "#/definitions/a"},
+        "b": {
+            "type": "object",
+            "properties": {
+                "c": {"$ref": "4/definitions/c"}
+            }
+        }
+    },
+    "definitions": {
+        "a": {"type": "boolean"},
+        "c": {"const": 10}
+    }
+}

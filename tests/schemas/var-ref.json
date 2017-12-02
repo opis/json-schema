@@ -1,0 +1,27 @@
+{
+    "$id": "schema:/var-ref.json#",
+    "type": "object",
+    "properties": {
+        "regionData": {
+            "enum": ["eu", "us"]
+        },
+        "age": {
+            "$ref": "#/definitions/valid-{+what}-{+region}",
+            "$vars": {
+                "what": "age",
+                "region": {"$ref": "1/regionData"}
+            }
+        }
+    },
+    "required": ["regionData", "age"],
+    "definitions": {
+        "valid-age-eu": {
+            "type": "integer",
+            "minimum": 18
+        },
+        "valid-age-us": {
+            "type": "integer",
+            "minimum": 21
+        }
+    }
+}
