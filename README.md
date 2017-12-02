@@ -8,15 +8,18 @@ Opis Json Schema
 Json Schema
 -----------
 
-**Opis Json Schema** is a PHP implementation for the latest [json-schema](http://json-schema.org/) draft.
+**Opis Json Schema** is a PHP implementation for the latest [json-schema](http://json-schema.org/) validation draft.
 
 **The library's key features:**
 
-- Fast validation
-- Support for absolute/relative json pointers
+- Fast validation (you can set maximum number of errors for a validation)
+- Support for absolute and relative json pointers
 - Support for if-then-else
-- Support for uri templates and variables
-- Support for custom filters/formats
+- Support for uri-templates and variables
+- Most of the string formats are supported
+- Support for custom formats
+- Support for default value
+- Support for custom filters
 
 
 ## License
@@ -34,7 +37,7 @@ This library is available on [Packagist](https://packagist.org/packages/opis/jso
 ```json
 {
     "require": {
-        "opis/json-schema": "1.0.x-dev"
+        "opis/json-schema": "^1.0.0"
     }
 }
 ```
@@ -88,10 +91,24 @@ $loader->add((object) [
     "format" => "email"
 ], "urn:mail");
 
+$loader->add((object) [
+    "type" => "object",
+    "properties" => (object) [
+        "age" => (object)['$ref' => "urn:positive-integer"],
+        "mail" => (object)['$ref' => "urn:mail"],
+    ],
+    "required" => ["age", "mail"]
+], "urn:simple-person");
+
 // use memory loader
 $validator->setLoader($loader);
 
 $result = $validator->uriValidation("someone@example.com", "urn:mail");
+
+$result = $validator->uriValidation((object) [
+    "age" => 23,
+    "mail" => "someone@example.com",
+], "urn:simple-person");
 
 // use filters
 
@@ -123,9 +140,7 @@ $result = $validator->dataValidation(7, (object) [
 
 ```
 
-TODO: add more PHP examples
-
-#### Usage of variables ($vars) in $ref
+#### Usage of variables ($vars) for $ref (uri-template)
 
 ```json
 {
@@ -151,7 +166,7 @@ For the following data
     "prop2": null
 }
 ```
-the `$ref` is `http://example.com/absolute/path/some-file.json#static-fragment`
+the `$ref` will be `http://example.com/absolute/path/some-file.json#static-fragment`
 
 #### Usage of filters in schema ($filters)
 

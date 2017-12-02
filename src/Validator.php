@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema;
 
 use Opis\JsonSchema\Exception\{
-    FilterNotFoundException, FormatNotFoundException, InvalidJsonPointerException, InvalidSchemaException, SchemaNotFoundException, SchemaPropertyException
+    FilterNotFoundException, InvalidJsonPointerException, InvalidSchemaException, SchemaNotFoundException, SchemaPropertyException
 };
 use stdClass;
 
@@ -163,6 +163,7 @@ class Validator implements IValidator
     }
 
     /**
+     * Use default property from schema
      * @param bool $use_default
      * @return Validator
      */
@@ -173,6 +174,7 @@ class Validator implements IValidator
     }
 
     /**
+     * Checks if default property is used
      * @return bool
      */
     public function isDefaultPropertyUsed(): bool
@@ -181,6 +183,7 @@ class Validator implements IValidator
     }
 
     /**
+     * Validates a schema
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -218,10 +221,11 @@ class Validator implements IValidator
             return $this->validateRef($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
         }
 
-        return $this->doValidation($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
+        return $this->validateKeywords($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
     }
 
     /**
+     * Resolves $ref property and validates resulted schema
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -247,7 +251,7 @@ class Validator implements IValidator
                 );
             }
             $vars = $this->deepClone($schema->{Schema::VARS_PROP});
-            $this->parseVars($vars, $document_data, $data_pointer);
+            $this->resolveVars($vars, $document_data, $data_pointer);
             $ref = URI::parseTemplate($ref, $vars);
             unset($vars);
         }
@@ -347,69 +351,7 @@ class Validator implements IValidator
     }
 
     /**
-     * @param $vars
-     * @return mixed
-     */
-    protected function deepClone($vars)
-    {
-        if (is_object($vars)) {
-            $vars = get_object_vars($vars);
-            foreach ($vars as $key => $value) {
-                if (is_array($value) || is_object($value)) {
-                    $vars[$key] = $this->deepClone($value);
-                }
-                unset($value);
-            }
-            return (object) $vars;
-        }
-        if (!is_array($vars)) {
-            return $vars;
-        }
-        foreach ($vars as &$value) {
-            if (is_array($value) || is_object($value)) {
-                $value = $this->deepClone($value);
-            }
-            unset($value);
-        }
-        return $vars;
-    }
-
-    /**
-     * @param $vars
-     * @param $data
-     * @param array $data_pointer
-     */
-    protected function parseVars(&$vars, &$data, array &$data_pointer)
-    {
-        if (is_object($vars)) {
-            if (property_exists($vars, '$ref') && is_string($vars->{'$ref'})) {
-                $ref = $vars->{'$ref'};
-                $relative = JsonPointer::parseRelativePointer($ref, true);
-                if ($relative === null) {
-                    $resolved = JsonPointer::getDataByPointer($data, $ref, $this, false);
-                } else {
-                    $resolved = JsonPointer::getDataByRelativePointer($data, $relative, $data_pointer, $this);
-                }
-                if ($resolved === $this) {
-                    throw new InvalidJsonPointerException($ref);
-                }
-                $vars = $resolved;
-                return;
-            }
-            goto LOOP;
-        } elseif (!is_array($vars)) {
-            return;
-        }
-        LOOP:
-        foreach ($vars as $name => &$var) {
-            if (is_array($var) || is_object($var)) {
-                $this->parseVars($var, $data, $data_pointer);
-            }
-            unset($var);
-        }
-    }
-
-    /**
+     * Validates schema keywords
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -419,7 +361,7 @@ class Validator implements IValidator
      * @param ValidationResult $bag
      * @return bool
      */
-    protected function doValidation(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
+    protected function validateKeywords(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
     {
         // here the $ref is already resolved
         $ok = true;
@@ -444,7 +386,7 @@ class Validator implements IValidator
             }
         }
 
-        if (!$this->validateBasic($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag)) {
+        if (!$this->validateCommons($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag)) {
             $ok = false;
             if ($bag->isFull()) {
                 return false;
@@ -476,6 +418,7 @@ class Validator implements IValidator
     }
 
     /**
+     * Validates common keywords
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -485,7 +428,7 @@ class Validator implements IValidator
      * @param ValidationResult $bag
      * @return bool
      */
-    protected function validateBasic(/** @noinspection PhpUnusedParameterInspection */
+    protected function validateCommons(/** @noinspection PhpUnusedParameterInspection */
         &$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
     {
         $ok = true;
@@ -616,6 +559,7 @@ class Validator implements IValidator
     }
 
     /**
+     * Validates conditionals and boolean logic
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -855,6 +799,7 @@ class Validator implements IValidator
     }
 
     /**
+     * Validates keywords based on data type
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -866,11 +811,11 @@ class Validator implements IValidator
      */
     protected function validateProperties(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
     {
-        $type = $this->helper->type($data, false);
+        $type = $this->helper->type($data, true);
         if ($type === 'null' || $type === 'boolean') {
             return true;
         }
-        if (property_exists($schema, 'format')) {
+        if (property_exists($schema, 'format') && $this->formats) {
             if (!is_string($schema->format)) {
                 throw new SchemaPropertyException(
                     $schema,
@@ -879,19 +824,19 @@ class Validator implements IValidator
                     "'format' property must be a string, " . gettype($schema->format) . ", given"
                 );
             }
-            $formatObj = null;
-            if ($this->formats) {
-                $formatObj = $this->formats->get($type, $schema->format);
+            $formatObj = $this->formats->get($type, $schema->format);
+            if ($formatObj === null && $type === 'integer') {
+                $formatObj = $this->formats->get('number', $schema->format);
             }
-            if ($formatObj === null) {
-                throw new FormatNotFoundException($type, $schema->format);
-            }
-            if (!$formatObj->validate($data)) {
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'format', [
-                    'format' => $schema->format
-                ]));
-                if ($bag->isFull()) {
-                    return false;
+            if ($formatObj !== null) {
+                if (!$formatObj->validate($data)) {
+                    $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'format', [
+                        'type' => $type,
+                        'format' => $schema->format,
+                    ]));
+                    if ($bag->isFull()) {
+                        return false;
+                    }
                 }
             }
             unset($formatObj);
@@ -901,6 +846,7 @@ class Validator implements IValidator
             case 'string':
                 return $this->validateString($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
             case 'number':
+            case 'integer':
                 return $this->validateNumber($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
             case 'array':
                 return $this->validateArray($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
@@ -909,9 +855,10 @@ class Validator implements IValidator
         }
 
         return false;
-    }/** @noinspection PhpUnusedParameterInspection */
+    }
 
     /**
+     * Validates custom filters
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -924,7 +871,7 @@ class Validator implements IValidator
     protected function validateFilters(/** @noinspection PhpUnusedParameterInspection */
         &$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
     {
-        if (!property_exists($schema, Schema::FILTERS_PROP)) {
+        if (!property_exists($schema, Schema::FILTERS_PROP) || !$this->filters) {
             return true;
         }
 
@@ -951,7 +898,7 @@ class Validator implements IValidator
             );
         }
 
-        $type = $this->helper->type($data);
+        $type = $this->helper->type($data, true);
         $filter_name = null;
         $valid = true;
         foreach ($filters as $filter) {
@@ -980,12 +927,17 @@ class Validator implements IValidator
                 );
             }
 
-            $filterObj = null;
-            if ($this->filters) {
-                $filterObj = $this->filters->get($type, $filter->{Schema::FUNC_NAME});
-            }
+            $filterObj = $this->filters->get($type, $filter->{Schema::FUNC_NAME});
             if ($filterObj === null) {
-                throw new FilterNotFoundException($type, $filter->{Schema::FUNC_NAME});
+                if ($type === 'integer') {
+                    $filterObj = $this->filters->get('number', $filter->{Schema::FUNC_NAME});
+                    if ($filterObj === null) {
+                        throw new FilterNotFoundException($type, $filter->{Schema::FUNC_NAME});
+                    }
+                }
+                else {
+                    throw new FilterNotFoundException($type, $filter->{Schema::FUNC_NAME});
+                }
             }
 
             if (property_exists($filter, Schema::VARS_PROP)) {
@@ -998,7 +950,7 @@ class Validator implements IValidator
                     );
                 }
                 $vars = $this->deepClone($filter->{Schema::VARS_PROP});
-                $this->parseVars($vars, $document_data, $data_pointer);
+                $this->resolveVars($vars, $document_data, $data_pointer);
                 $vars = (array)$vars;
             } else {
                 $vars = [];
@@ -1025,6 +977,7 @@ class Validator implements IValidator
     }
 
     /**
+     * Validates string keywords
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -1145,6 +1098,7 @@ class Validator implements IValidator
     }
 
     /**
+     * Validates number/integer keywords
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -1278,6 +1232,7 @@ class Validator implements IValidator
     }
 
     /**
+     * Validates array keywords
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -1466,6 +1421,7 @@ class Validator implements IValidator
     }
 
     /**
+     * Validates object keywords
      * @param $document_data
      * @param $data
      * @param array $data_pointer
@@ -1770,6 +1726,71 @@ class Validator implements IValidator
         }
 
         return $ok;
+    }
+
+    /**
+     * Clones a variable in depth
+     * @param $vars
+     * @return mixed
+     */
+    protected function deepClone($vars)
+    {
+        if (is_object($vars)) {
+            $vars = get_object_vars($vars);
+            foreach ($vars as $key => $value) {
+                if (is_array($value) || is_object($value)) {
+                    $vars[$key] = $this->deepClone($value);
+                }
+                unset($value);
+            }
+            return (object)$vars;
+        }
+        if (!is_array($vars)) {
+            return $vars;
+        }
+        foreach ($vars as &$value) {
+            if (is_array($value) || is_object($value)) {
+                $value = $this->deepClone($value);
+            }
+            unset($value);
+        }
+        return $vars;
+    }
+
+    /**
+     * Resolves $vars
+     * @param $vars
+     * @param $data
+     * @param array $data_pointer
+     */
+    protected function resolveVars(&$vars, &$data, array &$data_pointer)
+    {
+        if (is_object($vars)) {
+            if (property_exists($vars, '$ref') && is_string($vars->{'$ref'})) {
+                $ref = $vars->{'$ref'};
+                $relative = JsonPointer::parseRelativePointer($ref, true);
+                if ($relative === null) {
+                    $resolved = JsonPointer::getDataByPointer($data, $ref, $this, false);
+                } else {
+                    $resolved = JsonPointer::getDataByRelativePointer($data, $relative, $data_pointer, $this);
+                }
+                if ($resolved === $this) {
+                    throw new InvalidJsonPointerException($ref);
+                }
+                $vars = $resolved;
+                return;
+            }
+            goto LOOP;
+        } elseif (!is_array($vars)) {
+            return;
+        }
+        LOOP:
+        foreach ($vars as $name => &$var) {
+            if (is_array($var) || is_object($var)) {
+                $this->resolveVars($var, $data, $data_pointer);
+            }
+            unset($var);
+        }
     }
 
 }
