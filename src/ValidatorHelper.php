@@ -128,7 +128,7 @@ class ValidatorHelper implements IValidatorHelper
     /**
      * @inheritDoc
      */
-    public function equals($a, $b): bool
+    public function equals($a, $b, array $defaults = null): bool
     {
         $a_type = $this->type($a, false);
         $b_type = $this->type($b, false);
@@ -157,6 +157,9 @@ class ValidatorHelper implements IValidatorHelper
             $a = get_object_vars($a);
             if ($a === null) {
                 return false;
+            }
+            if ($defaults) {
+                $a += $defaults;
             }
             $b = get_object_vars($b);
             if ($b === null) {

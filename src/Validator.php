@@ -366,27 +366,26 @@ class Validator implements IValidator
         // here the $ref is already resolved
         $ok = true;
 
+        $defaults = null;
+
         // Set defaults if used
         if ($this->useDefaultProperty && is_object($data) && is_object($schema) && property_exists($schema, 'properties')) {
             foreach ($schema->properties as $property => $value) {
                 if (property_exists($data, $property) || !is_object($value) || !property_exists($value, 'default')) {
                     continue;
                 }
-                if (property_exists($value, 'type')) {
-                    if (!$this->helper->isValidType($value->default, $value->type)) {
-                        throw new SchemaPropertyException(
-                            $value,
-                            'default',
-                            $value->default,
-                            "'default' property type does not match types declared by 'type' property"
-                        );
-                    }
-                }
-                $data->{$property} = $this->deepClone($value->default);
+                $defaults[$property] = $this->deepClone($value->default);
             }
         }
 
-        if (!$this->validateCommons($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag)) {
+        if (!$this->validateCommons($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag, $defaults)) {
+            $ok = false;
+            if ($bag->isFull()) {
+                return false;
+            }
+        }
+
+        if (!$this->validateProperties($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag, $defaults)) {
             $ok = false;
             if ($bag->isFull()) {
                 return false;
@@ -394,13 +393,6 @@ class Validator implements IValidator
         }
 
         if (!$this->validateConditionals($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag)) {
-            $ok = false;
-            if ($bag->isFull()) {
-                return false;
-            }
-        }
-
-        if (!$this->validateProperties($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag)) {
             $ok = false;
             if ($bag->isFull()) {
                 return false;
@@ -426,10 +418,11 @@ class Validator implements IValidator
      * @param ISchema $document
      * @param stdClass $schema
      * @param ValidationResult $bag
+     * @param array|null $defaults
      * @return bool
      */
     protected function validateCommons(/** @noinspection PhpUnusedParameterInspection */
-        &$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
+        &$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag, array &$defaults = null): bool
     {
         $ok = true;
 
@@ -505,7 +498,7 @@ class Validator implements IValidator
 
         // const
         if (property_exists($schema, 'const')) {
-            if (!$this->helper->equals($data, $schema->const)) {
+            if (!$this->helper->equals($data, $schema->const, $defaults)) {
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'const', [
                     'expected' => $schema->const,
@@ -537,7 +530,7 @@ class Validator implements IValidator
 
             $found = false;
             foreach ($schema->enum as $v) {
-                if ($this->helper->equals($data, $v)) {
+                if ($this->helper->equals($data, $v, $defaults)) {
                     $found = true;
                     break;
                 }
@@ -777,12 +770,12 @@ class Validator implements IValidator
                         "'allOf' property items must be booleans or objects, found " . gettype($one)
                     );
                 }
-                $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $one, $newbag);
-                if ($newbag->hasErrors()) {
+                if (!$this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $one, $newbag)) {
                     $valid = false;
                     $errors = $newbag->getErrors();
                     break;
                 }
+                $newbag->clear();
             }
             unset($one, $newbag);
             if (!$valid) {
@@ -807,14 +800,38 @@ class Validator implements IValidator
      * @param ISchema $document
      * @param $schema
      * @param ValidationResult $bag
+     * @param array|null $defaults
      * @return bool
      */
-    protected function validateProperties(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
+    protected function validateProperties(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag, array $defaults = null): bool
     {
         $type = $this->helper->type($data, true);
         if ($type === 'null' || $type === 'boolean') {
             return true;
         }
+
+        $valid = false;
+
+        switch ($type) {
+            case 'string':
+                $valid = $this->validateString($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
+                break;
+            case 'number':
+            case 'integer':
+                $valid = $this->validateNumber($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
+                break;
+            case 'array':
+                $valid = $this->validateArray($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
+                break;
+            case 'object':
+                $valid = $this->validateObject($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag, $defaults);
+                break;
+        }
+
+        if (!$valid && $bag->isFull()) {
+            return false;
+        }
+
         if (property_exists($schema, 'format') && $this->formats) {
             if (!is_string($schema->format)) {
                 throw new SchemaPropertyException(
@@ -830,6 +847,7 @@ class Validator implements IValidator
             }
             if ($formatObj !== null) {
                 if (!$formatObj->validate($data)) {
+                    $valid = false;
                     $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'format', [
                         'type' => $type,
                         'format' => $schema->format,
@@ -842,19 +860,7 @@ class Validator implements IValidator
             unset($formatObj);
         }
 
-        switch ($type) {
-            case 'string':
-                return $this->validateString($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
-            case 'number':
-            case 'integer':
-                return $this->validateNumber($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
-            case 'array':
-                return $this->validateArray($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
-            case 'object':
-                return $this->validateObject($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
-        }
-
-        return false;
+        return $valid;
     }
 
     /**
@@ -1545,9 +1551,10 @@ class Validator implements IValidator
      * @param ISchema $document
      * @param $schema
      * @param ValidationResult $bag
+     * @param array|null $defaults
      * @return bool
      */
-    protected function validateObject(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
+    protected function validateObject(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag, array &$defaults = null): bool
     {
         $ok = true;
 
@@ -1570,7 +1577,7 @@ class Validator implements IValidator
                         "'required' property items must be strings, found " . gettype($prop)
                     );
                 }
-                if (!property_exists($data, $prop)) {
+                if (!property_exists($data, $prop) && !($defaults && array_key_exists($prop, $defaults))) {
                     $ok = false;
                     $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'required', [
                         'missing' => $prop,
@@ -1607,7 +1614,7 @@ class Validator implements IValidator
                                 "'dependencies' property items can only be array of strings, objects or booleans, found array with " . gettype($prop)
                             );
                         }
-                        if (!property_exists($data, $prop)) {
+                        if (!property_exists($data, $prop) && !($defaults && array_key_exists($prop, $defaults))) {
                             $ok = false;
                             $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'dependencies', [
                                 'missing' => $prop,
@@ -1630,6 +1637,13 @@ class Validator implements IValidator
                     );
                 }
 
+                if ($defaults) {
+                    foreach ($defaults as $prop => $value) {
+                        $data->{$prop} = $value;
+                        unset($value, $prop);
+                    }
+                    $defaults = null;
+                }
                 $valid = $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $value, $bag);
                 if (!$valid) {
                     $ok = false;
@@ -1661,7 +1675,11 @@ class Validator implements IValidator
                     "'minProperties' property must be positive, " . $schema->minProperties . " given"
                 );
             }
-            if (($count = count($properties)) < $schema->minProperties) {
+            $count = count($properties);
+            if ($defaults) {
+                $count += count($defaults);
+            }
+            if ($count < $schema->minProperties) {
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'minProperties', [
                     'min' => $schema->minProperties,
@@ -1692,7 +1710,12 @@ class Validator implements IValidator
                     "'maxProperties' property must be positive, " . $schema->maxProperties . " given"
                 );
             }
-            if (($count = count($properties)) > $schema->maxProperties) {
+
+            $count = count($properties);
+            if ($defaults) {
+                $count += count($defaults);
+            }
+            if ($count > $schema->maxProperties) {
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'maxProperties', [
                     'min' => $schema->maxProperties,
@@ -1808,7 +1831,7 @@ class Validator implements IValidator
                     }
                 }
             }
-            unset($property_schema);
+            unset($property_schema, $regex);
         }
 
         // additionalProperties
@@ -1835,6 +1858,12 @@ class Validator implements IValidator
             unset($property);
         }
 
+        if ($defaults) {
+            foreach ($defaults as $property => $value) {
+                $data->{$property} = $value;
+            }
+            $defaults = null;
+        }
         return $ok;
     }
 

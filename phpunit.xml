@@ -6,5 +6,9 @@
             <file>./tests/TypesTest.php</file>
             <file>./tests/FilterTest.php</file>
         </testsuite>
+        <testsuite name="Official">
+            <file>./tests/OfficialDraft7.php</file>
+            <file>./tests/OfficialDraft6.php</file>
+        </testsuite>
     </testsuites>
 </phpunit>
