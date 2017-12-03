@@ -17,31 +17,11 @@
 
 namespace Opis\JsonSchema\Test;
 
-
-use Opis\JsonSchema\ISchemaLoader;
-use Opis\JsonSchema\IValidator;
-use Opis\JsonSchema\Loaders\File;
-use Opis\JsonSchema\Validator;
-
-trait JsonValidatorTrait
+class OfficialDraft6 extends AbstractOficialDraft
 {
-
-    protected $validator = null;
-
-    protected function getValidator(): IValidator
+    protected function getDraft(): int
     {
-        if (!$this->validator) {
-            $this->validator = $this->createValidator();
-        }
-        return $this->validator;
-    }
-
-    protected function createValidator(ISchemaLoader $loader = null, bool $use_default = true): IValidator
-    {
-        if ($loader === null) {
-            $loader = new File( 'schema:', [__DIR__ . '/schemas']);
-        }
-        return new Validator(null, $loader, null, null, $use_default);
+        return 6;
     }
 
 }

@@ -136,7 +136,9 @@
                     "a": ["b"],
                     "c": ["d"],
                     "e": {
-                        "type": "integer"
+                        "properties": {
+                            "a": {"type": "array"}
+                        }
                     }
                 }
             }

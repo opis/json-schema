@@ -463,8 +463,14 @@ class TypesTest extends \PHPUnit_Framework_TestCase
         $result = $validator->uriValidation((object)[], "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)['e' => 1], "schema:/types.json#/definitions/object/dep");
+        $result = $validator->uriValidation((object)['e' => 1, 'a' => [1, 2], 'b' => null], "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->isValid());
+
+        $result = $validator->uriValidation((object)['e' => 1, 'a' => [1, 2]], "schema:/types.json#/definitions/object/dep");
+        $this->assertTrue($result->hasErrors());
+
+        $result = $validator->uriValidation((object)['e' => 1, 'a' => 1, 'b' => 2], "schema:/types.json#/definitions/object/dep");
+        $this->assertTrue($result->hasErrors());
 
         $result = $validator->uriValidation((object)['a' => 1, 'b' => 2], "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->isValid());
@@ -474,9 +480,6 @@ class TypesTest extends \PHPUnit_Framework_TestCase
 
         $result = $validator->uriValidation((object)['b' => 1, 'd' => 2], "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation((object)['e' => 'str'], "schema:/types.json#/definitions/object/dep");
-        $this->assertTrue($result->hasErrors());
 
         $result = $validator->uriValidation((object)['a' => 'str'], "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->hasErrors());
