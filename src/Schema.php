@@ -18,12 +18,14 @@
 namespace Opis\JsonSchema;
 
 use Opis\JsonSchema\Exception\{
-    DuplicateSchemaException, InvalidIdException, InvalidSchemaException
+    DuplicateSchemaException, InvalidSchemaDraftException, InvalidSchemaIdException, InvalidSchemaException, SchemaDraftNotSupportedException
 };
 
 class Schema implements ISchema
 {
 
+    const SCHEMA_REGEX = '~https?://json-schema\.org/draft-(?<draft>\d\d)/schema#?~i';
+    const SUPPORTED_DRAFTS = ['06', '07'];
     const BASE_ID_PROP = '$_base_id';
     const PATH_PROP = '$_path';
     const VARS_PROP = '$vars';
@@ -38,6 +40,9 @@ class Schema implements ISchema
 
     /** @var string */
     protected $id;
+
+    /** @var string */
+    protected $draft;
 
     /** @var array */
     protected $internal = [];
@@ -62,12 +67,26 @@ class Schema implements ISchema
         }
         $id = URI::normalize($id);
         if (substr($id, -1) !== '#') {
-            throw new InvalidIdException($id);
+            throw new InvalidSchemaIdException($id);
         }
 
         $this->id = $id;
 
         if (is_object($data)) {
+            if (!property_exists($data, '$schema')) {
+                $data->{'$schema'} = 'http://json-schema.org/draft-07/schema#';
+            }
+            elseif (!is_string($data->{'$schema'})) {
+                throw new InvalidSchemaDraftException($data);
+            }
+            if (!preg_match(static::SCHEMA_REGEX, $data->{'$schema'}, $m)) {
+                throw new InvalidSchemaDraftException($data);
+            }
+            $this->draft = $m['draft'];
+            unset($m);
+            if (!in_array($this->draft, static::SUPPORTED_DRAFTS)) {
+                throw new SchemaDraftNotSupportedException($data, $this->draft);
+            }
             $data->{static::ID_PROP} = $id;
             static::walk($this->internal, $data, $id);
             if (isset($data->{'$ref'}) && is_string($data->{'$ref'})) {
@@ -84,6 +103,14 @@ class Schema implements ISchema
     public function id(): string
     {
         return $this->id;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function draft(): string
+    {
+        return $this->draft;
     }
 
     /**

@@ -27,6 +27,11 @@ interface ISchema
     public function id(): string;
 
     /**
+     * @return string
+     */
+    public function draft(): string;
+
+    /**
      * Resolve schema data, if id is null the document is returned
      * @param string|null $id
      * @return mixed

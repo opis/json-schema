@@ -17,30 +17,42 @@
 
 namespace Opis\JsonSchema\Exception;
 
-use RuntimeException, Throwable;
+use stdClass, Throwable;
 
-class InvalidIdException extends RuntimeException
+class SchemaDraftNotSupportedException extends AbstractSchemaException
 {
 
+    /** @var stdClass */
+    protected $schema;
+
     /** @var string */
-    protected $id;
+    protected $draft;
 
     /**
-     * InvalidIdException constructor.
-     * @param string $id
+     * InvalidSchemaDraftException constructor.
+     * @param stdClass $schema
      * @param Throwable|null $previous
      */
-    public function __construct(string $id, Throwable $previous = null)
+    public function __construct(stdClass $schema, string $draft, Throwable $previous = null)
     {
-        $this->id = $id;
-        parent::__construct("Invalid id '{$id}'", 0, $previous);
+        $this->schema = $schema;
+        $this->draft = $draft;
+        parent::__construct("Draft {$draft} is not supported", 0, $previous);
+    }
+
+    /**
+     * @return stdClass
+     */
+    public function schema(): stdClass
+    {
+        return $this->schema;
     }
 
     /**
      * @return string
      */
-    public function id(): string
+    public function draft(): string
     {
-        return $this->id;
+        return $this->draft;
     }
 }

@@ -17,6 +17,7 @@
 
 namespace Opis\JsonSchema\Test;
 
+use Opis\JsonSchema\Exception\AbstractSchemaException;
 use Opis\JsonSchema\IValidator;
 use Opis\JsonSchema\Loaders\File;
 use Opis\JsonSchema\Schema;
@@ -85,7 +86,7 @@ abstract class AbstractOficialDraft extends \PHPUnit_Framework_TestCase
                     $result = $validator->schemaValidation($test->data, $schema);
                     $valid = $result->isValid();
                 }
-                catch (\RuntimeException $e) {
+                catch (AbstractSchemaException $e) {
                     $valid = false;
                 }
 

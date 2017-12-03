@@ -17,9 +17,9 @@
 
 namespace Opis\JsonSchema\Exception;
 
-use RuntimeException, Throwable;
+use Throwable;
 
-class InvalidJsonPointerException extends RuntimeException
+class InvalidJsonPointerException extends AbstractSchemaException
 {
 
     /** @var string */

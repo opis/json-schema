@@ -17,9 +17,9 @@
 
 namespace Opis\JsonSchema\Exception;
 
-use RuntimeException, Throwable;
+use Throwable;
 
-class FilterNotFoundException extends RuntimeException
+class FilterNotFoundException extends AbstractSchemaException
 {
 
     /** @var string */

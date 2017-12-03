@@ -17,9 +17,9 @@
 
 namespace Opis\JsonSchema\Exception;
 
-use RuntimeException, stdClass, Throwable;
+use stdClass, Throwable;
 
-class DuplicateSchemaException extends RuntimeException
+class DuplicateSchemaException extends AbstractSchemaException
 {
 
     /** @var string */

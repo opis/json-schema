@@ -17,30 +17,8 @@
 
 namespace Opis\JsonSchema\Exception;
 
-use Throwable;
+use RuntimeException;
 
-class SchemaNotFoundException extends AbstractSchemaException
+abstract class AbstractSchemaException extends RuntimeException
 {
-
-    /** @var string */
-    protected $id;
-
-    /**
-     * SchemaNotFoundException constructor.
-     * @param string $id
-     * @param Throwable|null $previous
-     */
-    public function __construct(string $id, Throwable $previous = null)
-    {
-        $this->id = $id;
-        parent::__construct("Schema '{$id}' was not found or could not be loaded", 0, $previous);
-    }
-
-    /**
-     * @return string
-     */
-    public function id(): string
-    {
-        return $this->id;
-    }
 }

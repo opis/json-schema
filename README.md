@@ -8,7 +8,7 @@ Opis Json Schema
 Json Schema
 -----------
 
-**Opis Json Schema** is a PHP implementation for the latest [json-schema](http://json-schema.org/) validation draft.
+**Opis Json Schema** is a PHP implementation for [json-schema](http://json-schema.org/) draft-07 and draft-06.
 
 **The library's key features:**
 
