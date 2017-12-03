@@ -24,6 +24,6 @@ class Hostname extends AbstractFormat
      */
     public function validate($data): bool
     {
-        return $this->validateRegex($data, '/^[_a-z]+\.([_a-z]+\.?)+$/i');
+        return $this->validateRegex($data, \Opis\JsonSchema\URI::HOSTNAME_REGEX);
     }
 }

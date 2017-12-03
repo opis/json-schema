@@ -20,9 +20,11 @@ namespace Opis\JsonSchema;
 class JsonPointer
 {
 
-    const POINTER_REGEX = '~^(?:/|(?:/[^/#]+)*)$~';
+    const POINTER_REGEX = '~^(?:/|(?:/[^/#]*)*)$~';
 
-    const RELATIVE_POINTER_REGEX = '~^(?<level>0|[1-9][0-9]*)(?<pointer>(?:/[^/#]+)+)(?<fragment>#?)$~';
+    const RELATIVE_POINTER_REGEX = '~^(?<level>0|[1-9][0-9]*)(?<pointer>(?:/[^/#]+)*)(?<fragment>#?)$~';
+
+    const POINTER_NOT_ESCAPED_REGEX = '/~([^01]|$)/';
 
 
     /**
@@ -31,7 +33,10 @@ class JsonPointer
      */
     public static function isPointer(string $pointer): bool
     {
-        return (bool)preg_match(static::POINTER_REGEX, $pointer);
+        if ($pointer === '') {
+            return true;
+        }
+        return (bool) preg_match(static::POINTER_REGEX, $pointer);
     }
 
     /**
@@ -40,7 +45,16 @@ class JsonPointer
      */
     public static function isRelativePointer(string $pointer): bool
     {
-        return (bool)preg_match(static::RELATIVE_POINTER_REGEX, $pointer);
+        return (bool) preg_match(static::RELATIVE_POINTER_REGEX, $pointer);
+    }
+
+    /**
+     * @param string $pointer
+     * @return bool
+     */
+    public static function isEscapedPointer(string $pointer): bool
+    {
+        return !preg_match(static::POINTER_NOT_ESCAPED_REGEX, $pointer);
     }
 
     /**
@@ -56,7 +70,7 @@ class JsonPointer
 
         return [
             'level' => (int)$m['level'],
-            'pointer' => $parts ? static::parsePointer($m['pointer']) : $m['pointer'],
+            'pointer' => $parts ? static::parsePointer($m['pointer'] ?? '') : $m['pointer'] ?? '',
             'fragment' => isset($m['fragment']) && $m['fragment'] === '#',
         ];
     }
@@ -77,6 +91,7 @@ class JsonPointer
             $pointer = str_replace('~1', '/', $pointer);
             $pointer = str_replace('~0', '~', $pointer);
         }
+        $pointer = array_map('rawurldecode', $pointer);
         return $pointer;
     }
 

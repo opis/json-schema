@@ -27,6 +27,6 @@ class JsonPointer implements IFormat
      */
     public function validate($data): bool
     {
-        return JPointer::isPointer($data);
+        return JPointer::isPointer($data) && JPointer::isEscapedPointer($data);
     }
 }

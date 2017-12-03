@@ -27,6 +27,6 @@ class RelativeJsonPointer implements IFormat
      */
     public function validate($data): bool
     {
-        return JsonPointer::isRelativePointer($data);
+        return JsonPointer::isRelativePointer($data) && JsonPointer::isEscapedPointer($data);
     }
 }

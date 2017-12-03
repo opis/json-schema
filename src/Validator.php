@@ -209,15 +209,7 @@ class Validator implements IValidator
             throw new InvalidSchemaException($schema);
         }
 
-        if (property_exists($schema, '$ref')) {
-            if (!is_string($schema->{'$ref'})) {
-                throw new SchemaPropertyException(
-                    $schema,
-                    '$ref',
-                    $schema->{'$ref'},
-                    "'\$ref' property must be a string, " . gettype($schema->{'$ref'}) . " given"
-                );
-            }
+        if (property_exists($schema, '$ref') && is_string($schema->{'$ref'})) {
             return $this->validateRef($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
         }
 
@@ -258,6 +250,9 @@ class Validator implements IValidator
 
         // Check if is relative json pointer
         if ($relative = JsonPointer::parseRelativePointer($ref, true)) {
+            if (!JsonPointer::isEscapedPointer($ref)) {
+                throw new InvalidJsonPointerException($ref);
+            }
             $schema = JsonPointer::getDataByRelativePointer(
                 $document->resolve(),
                 $relative,
@@ -274,6 +269,9 @@ class Validator implements IValidator
         if (isset($ref[0]) && $ref[0] === '#') {
             $pointer = substr($ref, 1);
             if (JsonPointer::isPointer($pointer)) {
+                if (!JsonPointer::isEscapedPointer($pointer)) {
+                    throw new InvalidJsonPointerException($pointer);
+                }
                 $schema = JsonPointer::getDataByPointer($document->resolve(), $pointer, $this);
                 if ($schema === $this) {
                     throw new InvalidJsonPointerException($pointer);
@@ -288,8 +286,10 @@ class Validator implements IValidator
 
         list($base_ref, $fragment) = explode('#', $ref, 2);
 
-        if ($fragment === '' || JsonPointer::isPointer($fragment)) {
-
+        if (JsonPointer::isPointer($fragment)) {
+            if (!JsonPointer::isEscapedPointer($fragment)) {
+                throw new InvalidJsonPointerException($fragment);
+            }
             // try to resolve locally
             $schema = $document->resolve($base_ref . '#');
 
@@ -934,8 +934,7 @@ class Validator implements IValidator
                     if ($filterObj === null) {
                         throw new FilterNotFoundException($type, $filter->{Schema::FUNC_NAME});
                     }
-                }
-                else {
+                } else {
                     throw new FilterNotFoundException($type, $filter->{Schema::FUNC_NAME});
                 }
             }
@@ -1094,6 +1093,79 @@ class Validator implements IValidator
             }
         }
 
+        // content encoding
+        if (property_exists($schema, 'contentEncoding')) {
+            if (!is_string($schema->contentEncoding)) {
+                throw new SchemaPropertyException(
+                    $schema,
+                    'contentEncoding',
+                    $schema->contentEncoding,
+                    "'contentEncoding' property must be a string, " . gettype($schema->contentEncoding) . " given"
+                );
+            }
+
+            switch ($schema->contentEncoding) {
+                case "binary":
+                    $decoded = $data;
+                    break;
+                case "base64":
+                    $decoded = base64_decode($data, true);
+                    break;
+                default:
+                    $decoded = false;
+                    break;
+            }
+
+            if ($decoded === false) {
+                $ok = false;
+                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'contentEncoding', [
+                    'encoding' => $schema->contentEncoding,
+                ]));
+                if ($bag->isFull()) {
+                    return false;
+                }
+            }
+        }
+
+        // media type
+        if (property_exists($schema, 'contentMediaType')) {
+            if (!is_string($schema->contentMediaType)) {
+                throw new SchemaPropertyException(
+                    $schema,
+                    'contentMediaType',
+                    $schema->contentMediaType,
+                    "'contentMediaType' property must be a string, " . gettype($schema->contentMediaType) . " given"
+                );
+            }
+
+            if (!isset($decoded)) {
+                // is set in contentEncoding if any
+                $decoded = $data;
+            }
+
+            $valid = false;
+
+            if ($decoded !== false) {
+                // TODO: allow different media types
+                if (stripos($schema->contentMediaType, 'text/') !== false) {
+                    $valid = true;
+                } elseif (stripos($schema->contentMediaType, 'json') !== false) {
+                    json_decode($decoded);
+                    $valid = json_last_error() === JSON_ERROR_NONE;
+                }
+            }
+
+            if (!$valid) {
+                $ok = false;
+                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'contentMediaType', [
+                    'media' => $schema->contentMediaType,
+                ]));
+                if ($bag->isFull()) {
+                    return false;
+                }
+            }
+        }
+
         return $ok;
     }
 
@@ -1131,7 +1203,7 @@ class Validator implements IValidator
                         $schema,
                         'exclusiveMinimum',
                         $schema->exclusiveMinimum,
-                        "'exclusiveMinimum' property must be a boolean, " . gettype($schema->exclusiveMinimum) . " given"
+                        "'exclusiveMinimum' property must be a boolean if 'minimum' property is present, " . gettype($schema->exclusiveMinimum) . " given"
                     );
                 }
                 $exclusive = $schema->exclusiveMinimum;
@@ -1149,6 +1221,24 @@ class Validator implements IValidator
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'minimum', [
                     'min' => $schema->minimum
+                ]));
+                if ($bag->isFull()) {
+                    return false;
+                }
+            }
+        } elseif (property_exists($schema, 'exclusiveMinimum')) {
+            if (!is_int($schema->exclusiveMinimum) && !is_float($schema->exclusiveMinimum)) {
+                throw new SchemaPropertyException(
+                    $schema,
+                    'exclusiveMinimum',
+                    $schema->exclusiveMinimum,
+                    "'exclusiveMinimum' property must be an integer or a float if 'minimum' property is not present, " . gettype($schema->exclusiveMinimum) . " given"
+                );
+            }
+            if ($data <= $schema->exclusiveMinimum) {
+                $ok = false;
+                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'exclusiveMinimum', [
+                    'min' => $schema->exclusiveMinimum
                 ]));
                 if ($bag->isFull()) {
                     return false;
@@ -1174,7 +1264,7 @@ class Validator implements IValidator
                         $schema,
                         'exclusiveMaximum',
                         $schema->exclusiveMaximum,
-                        "'exclusiveMaximum' property must be a boolean, " . gettype($schema->exclusiveMaximum) . " given"
+                        "'exclusiveMaximum' property must be a boolean is 'maximum' property is present, " . gettype($schema->exclusiveMaximum) . " given"
                     );
                 }
                 $exclusive = $schema->exclusiveMaximum;
@@ -1192,6 +1282,24 @@ class Validator implements IValidator
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'maximum', [
                     'max' => $schema->maximum
+                ]));
+                if ($bag->isFull()) {
+                    return false;
+                }
+            }
+        } elseif (property_exists($schema, 'exclusiveMaximum')) {
+            if (!is_int($schema->exclusiveMaximum) && !is_float($schema->exclusiveMaximum)) {
+                throw new SchemaPropertyException(
+                    $schema,
+                    'exclusiveMaximum',
+                    $schema->exclusiveMaximum,
+                    "'exclusiveMaximum' property must be an integer or a float if 'maximum' property is not present, " . gettype($schema->exclusiveMaximum) . " given"
+                );
+            }
+            if ($data >= $schema->exclusiveMaximum) {
+                $ok = false;
+                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'exclusiveMaximum', [
+                    'max' => $schema->exclusiveMaximum
                 ]));
                 if ($bag->isFull()) {
                     return false;
@@ -1388,6 +1496,14 @@ class Validator implements IValidator
                     }
                 }
                 if ($max < $data_count && property_exists($schema, 'additionalItems')) {
+                    if (!is_bool($schema->additionalItems) && !is_object($schema->additionalItems)) {
+                        throw new SchemaPropertyException(
+                            $schema,
+                            'additionalItems',
+                            $schema->additionalItems,
+                            "'additionalItems' property must be a boolean or an object, " . gettype($schema->additionalItems) . " given"
+                        );
+                    }
                     for ($i = $max; $i < $data_count; $i++) {
                         $data_pointer[] = $i;
                         $valid = $this->validateSchema($document_data, $data[$i], $data_pointer, $parent_data_pointer, $document, $schema->additionalItems, $bag);
@@ -1443,14 +1559,6 @@ class Validator implements IValidator
                     'required',
                     $schema->required,
                     "'required' property must be an array, " . gettype($schema->required) . " given"
-                );
-            }
-            if (count($schema->required) === 0) {
-                throw new SchemaPropertyException(
-                    $schema,
-                    'required',
-                    $schema->required,
-                    "'required' property must not be empty"
                 );
             }
             foreach ($schema->required as $prop) {
@@ -1509,28 +1617,27 @@ class Validator implements IValidator
                             }
                         }
                     }
-                    unset($prop);
-                } else {
-                    if (!is_bool($value) && !is_object($value)) {
-                        throw new SchemaPropertyException(
-                            $schema,
-                            'dependencies',
-                            $schema->dependencies,
-                            "'dependencies' property items can only be array of strings, objects or booleans, found " . gettype($value)
-                        );
-                    }
-                    $data_pointer[] = $name;
-                    $valid = $this->validateSchema($document_data, $data->{$name}, $data_pointer, $parent_data_pointer, $document, $value, $bag);
-                    array_pop($data_pointer);
-                    if (!$valid) {
-                        $ok = false;
-                        if ($bag->isFull()) {
-                            return false;
-                        }
-                    }
-                    unset($valid);
+                    unset($prop, $value);
+                    continue;
                 }
-                unset($value);
+
+                if (!is_bool($value) && !is_object($value)) {
+                    throw new SchemaPropertyException(
+                        $schema,
+                        'dependencies',
+                        $schema->dependencies,
+                        "'dependencies' property items can only be array of strings, objects or booleans, found " . gettype($value)
+                    );
+                }
+
+                $valid = $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $value, $bag);
+                if (!$valid) {
+                    $ok = false;
+                    if ($bag->isFull()) {
+                        return false;
+                    }
+                }
+                unset($valid, $value);
             }
         }
 
@@ -1577,7 +1684,7 @@ class Validator implements IValidator
                     "'maxProperties' property must be an integer, " . gettype($schema->maxProperties) . " given"
                 );
             }
-            if ($schema->minProperties < 0) {
+            if ($schema->maxProperties < 0) {
                 throw new SchemaPropertyException(
                     $schema,
                     'maxProperties',
@@ -1600,7 +1707,7 @@ class Validator implements IValidator
 
         // propertyNames
         if (property_exists($schema, 'propertyNames')) {
-            if (!is_bool($schema->propertyNames) && is_object($schema->propertyNames)) {
+            if (!is_bool($schema->propertyNames) && !is_object($schema->propertyNames)) {
                 throw new SchemaPropertyException(
                     $schema,
                     'propertyNames',
@@ -1661,30 +1768,6 @@ class Validator implements IValidator
             }
         }
 
-        // additionalProperties
-        if (property_exists($schema, 'additionalProperties')) {
-            if (!is_bool($schema->additionalProperties) && !is_object($schema->additionalProperties)) {
-                throw new SchemaPropertyException(
-                    $schema,
-                    'additionalProperties',
-                    $schema->additionalProperties,
-                    "'additionalProperties' property must be a boolean or an object, " . gettype($schema->additionalProperties) . " given"
-                );
-            }
-            foreach (array_diff($properties, $checked_properties) as $property) {
-                $data_pointer[] = $property;
-                $valid = $this->validateSchema($document_data, $data->{$property}, $data_pointer, $parent_data_pointer, $document, $schema->additionalProperties, $bag);
-                array_pop($data_pointer);
-                if (!$valid) {
-                    $ok = false;
-                    if ($bag->isFull()) {
-                        return false;
-                    }
-                }
-            }
-            unset($property);
-        }
-
         // patternProperties
         if (property_exists($schema, 'patternProperties')) {
             if (!is_object($schema->patternProperties)) {
@@ -1711,6 +1794,9 @@ class Validator implements IValidator
                     if (!$match) {
                         continue;
                     }
+                    if (!in_array($name, $checked_properties)) {
+                        $checked_properties[] = $name;
+                    }
                     $data_pointer[] = $name;
                     $valid = $this->validateSchema($document_data, $data->{$name}, $data_pointer, $parent_data_pointer, $document, $property_schema, $bag);
                     array_pop($data_pointer);
@@ -1723,6 +1809,30 @@ class Validator implements IValidator
                 }
             }
             unset($property_schema);
+        }
+
+        // additionalProperties
+        if (property_exists($schema, 'additionalProperties')) {
+            if (!is_bool($schema->additionalProperties) && !is_object($schema->additionalProperties)) {
+                throw new SchemaPropertyException(
+                    $schema,
+                    'additionalProperties',
+                    $schema->additionalProperties,
+                    "'additionalProperties' property must be a boolean or an object, " . gettype($schema->additionalProperties) . " given"
+                );
+            }
+            foreach (array_diff($properties, $checked_properties) as $property) {
+                $data_pointer[] = $property;
+                $valid = $this->validateSchema($document_data, $data->{$property}, $data_pointer, $parent_data_pointer, $document, $schema->additionalProperties, $bag);
+                array_pop($data_pointer);
+                if (!$valid) {
+                    $ok = false;
+                    if ($bag->isFull()) {
+                        return false;
+                    }
+                }
+            }
+            unset($property);
         }
 
         return $ok;
@@ -1772,6 +1882,9 @@ class Validator implements IValidator
                 if ($relative === null) {
                     $resolved = JsonPointer::getDataByPointer($data, $ref, $this, false);
                 } else {
+                    if (!JsonPointer::isEscapedPointer($ref)) {
+                        throw new InvalidJsonPointerException($ref);
+                    }
                     $resolved = JsonPointer::getDataByRelativePointer($data, $relative, $data_pointer, $this);
                 }
                 if ($resolved === $this) {

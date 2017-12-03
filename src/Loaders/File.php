@@ -20,11 +20,11 @@ namespace Opis\JsonSchema\Loaders;
 use Opis\JsonSchema\ISchemaLoader;
 use Opis\JsonSchema\Schema;
 
-class File implements ISchemaLoader
+class File extends Memory
 {
 
-    /** @var string */
-    protected $base;
+    /** @var string[] */
+    protected $dirs;
 
     /** @var string */
     protected $prefix;
@@ -32,17 +32,14 @@ class File implements ISchemaLoader
     /** @var int */
     protected $prefixLength;
 
-    /** @var array */
-    protected $cache = [];
-
     /**
      * File constructor.
-     * @param string $base_dir
      * @param string $prefix
+     * @param string[] $dirs
      */
-    public function __construct(string $base_dir, string $prefix)
+    public function __construct(string $prefix, array $dirs)
     {
-        $this->base = rtrim($base_dir, '/');
+        $this->dirs = $dirs;
         $this->prefix = $prefix;
         $this->prefixLength = strlen($prefix);
     }
@@ -52,20 +49,25 @@ class File implements ISchemaLoader
      */
     public function loadSchema(string $uri)
     {
+        if (isset($this->schemas[$uri])) {
+            return $this->schemas[$uri];
+        }
         if (strpos($uri, $this->prefix) !== 0) {
             return null;
         }
-        $uri = substr($uri, $this->prefixLength);
-        if (!array_key_exists($uri, $this->cache)) {
-            $file = $this->base . $uri;
-            $schema = null;
-            if (file_exists($file)) {
-                $schema = json_decode(file_get_contents($file), false);
-                $schema = new Schema($schema, $this->prefix . $uri);
+        $path = substr($uri, $this->prefixLength);
+
+        $schema = null;
+        foreach ($this->dirs as $dir) {
+            if (file_exists($dir . $path)) {
+                $schema = json_decode(file_get_contents($dir . $path), false);
+                $schema = new Schema($schema, $uri);
+                break;
             }
-            $this->cache[$uri] = $schema;
         }
-        return $this->cache[$uri];
+        $this->schemas[$uri] = $schema;
+
+        return $schema;
     }
 
 }

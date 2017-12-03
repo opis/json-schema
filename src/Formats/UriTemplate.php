@@ -26,6 +26,6 @@ class UriTemplate implements IFormat
      */
     public function validate($data): bool
     {
-        return \Opis\JsonSchema\URI::isTemplate($data);
+        return \Opis\JsonSchema\URI::isTemplate($data) || \Opis\JsonSchema\URI::isValid($data);
     }
 }

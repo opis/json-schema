@@ -23,6 +23,8 @@
         "php": ">=7.0"
     },
     "require-dev": {
+        "ext-bcmath": "*",
+        "ext-mbstring": "*",
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {

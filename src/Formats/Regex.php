@@ -26,7 +26,7 @@ class Regex implements IFormat
      */
     public function validate($data): bool
     {
-        $data = '/' . $data . '/u';
-        return false === @preg_match($data, '');
+        $data = '/' . $data . '/';
+        return false !== @preg_match($data, '');
     }
 }

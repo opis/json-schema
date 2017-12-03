@@ -29,6 +29,7 @@ class Schema implements ISchema
     const VARS_PROP = '$vars';
     const FILTERS_PROP = '$filters';
     const FUNC_NAME = '$func';
+    const ID_PROP = '$id';
 
     const WALK_IGNORE_PROPERTIES = [
         'type', 'default', 'const', 'enum',
@@ -49,8 +50,8 @@ class Schema implements ISchema
     public function __construct($data, string $id = null)
     {
         if (is_object($data)) {
-            if (property_exists($data, '$id')) {
-                $id = $data->{'$id'};
+            if (property_exists($data, static::ID_PROP)) {
+                $id = $data->{static::ID_PROP};
             }
         } elseif (!is_bool($data)) {
             throw new InvalidSchemaException($data);
@@ -67,9 +68,9 @@ class Schema implements ISchema
         $this->id = $id;
 
         if (is_object($data)) {
-            $data->{'$id'} = $id;
+            $data->{static::ID_PROP} = $id;
             static::walk($this->internal, $data, $id);
-            if (isset($data->{'$ref'})) {
+            if (isset($data->{'$ref'}) && is_string($data->{'$ref'})) {
                 $this->internal[$id] = $data;
             }
         } else {
@@ -116,7 +117,7 @@ class Schema implements ISchema
             return;
         }
 
-        if (isset($schema->{'$ref'})) {
+        if (isset($schema->{'$ref'}) && is_string($schema->{'$ref'})) {
             // Set the base id
             $schema->{static::BASE_ID_PROP} = $id;
             // Add current path
@@ -125,9 +126,9 @@ class Schema implements ISchema
             return;
         }
 
-        if (isset($schema->{'$id'})) {
+        if (isset($schema->{static::ID_PROP}) && is_string($schema->{static::ID_PROP})) {
             $schema->{static::BASE_ID_PROP} = $id;
-            $id = URI::merge($schema->{'$id'}, $id);
+            $id = URI::merge($schema->{static::ID_PROP}, $id);
             if (array_key_exists($id, $container)) {
                 throw new DuplicateSchemaException($id, $schema, $container);
             }

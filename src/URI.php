@@ -31,6 +31,8 @@ class URI
         'fragment' => null
     ];
 
+    const HOSTNAME_REGEX = '/^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9])$/i';
+
     const TEMPLATE_VARSPEC_REGEX = '~^(?<varname>[a-zA-Z0-9\_\%\.]+)(?:(?<explode>\*)?|\:(?<prefix>\d+))?$~';
 
     const TEMPLATE_REGEX = <<<'REGEX'
@@ -104,6 +106,25 @@ REGEX;
             'allow' => true,
         ],
     ];
+
+    /**
+     * @param string $uri
+     * @return bool
+     */
+    public static function isValid(string $uri): bool
+    {
+        $uri = parse_url($uri);
+        if (!$uri || !isset($uri['scheme']) || $uri['scheme'] === '') {
+            return false;
+        }
+        if (isset($uri['host'])) {
+            if (preg_match( static::HOSTNAME_REGEX, $uri['host'])) {
+                return true;
+            }
+            return filter_var($uri['host'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+        }
+        return true;
+    }
 
     /**
      * @param string $uri
@@ -221,7 +242,7 @@ REGEX;
             if (!isset($uri['query'])) {
                 $uri['query'] = $base['query'];
             }
-        } elseif (!isset($base['path'])) {
+        } elseif (isset($base['path'])) {
             if (isset($uri['path'][0]) && $uri['path'][0] !== '/') {
                 $path = explode('/', $base['path']);
                 array_pop($path);

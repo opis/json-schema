@@ -24,9 +24,6 @@ class Uri extends AbstractFormat
      */
     public function validate($data): bool
     {
-        if (strpos($data, '//') === 0) {
-            $data = 'http:' . $data;
-        }
-        return $this->validateFilter($data, FILTER_VALIDATE_URL);
+        return \Opis\JsonSchema\URI::isValid($data);
     }
 }
