@@ -25,6 +25,7 @@
     "require-dev": {
         "ext-bcmath": "*",
         "ext-mbstring": "*",
+        "ext-intl": "*",
         "phpunit/phpunit": "3.7.*"
     },
     "autoload": {

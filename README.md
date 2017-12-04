@@ -13,15 +13,16 @@ Json Schema
 **The library's key features:**
 
 - Fast validation (you can set maximum number of errors for a validation)
-- Support for absolute and relative json pointers
+- Supports [json pointer](https://tools.ietf.org/html/rfc6901)
+- Support [relative json pointer](https://tools.ietf.org/html/draft-luff-relative-json-pointer-00)
+- Support for [uri-template](https://tools.ietf.org/html/rfc6570)
 - Support for if-then-else (draft-07)
-- Support for uri-templates and variables
 - Most of the string formats are supported
 - Support for custom formats
+- Support for custom media types
 - Support for default value
 - Support for custom filters
-- Support for custom media types
-
+- Support for custom variables
 
 ## License
 
