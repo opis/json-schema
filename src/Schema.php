@@ -36,6 +36,7 @@ class Schema implements ISchema
     const WALK_IGNORE_PROPERTIES = [
         'type', 'default', 'const', 'enum',
         'title', 'description', 'readOnly', 'writeOnly', 'examples',
+        self::FILTERS_PROP, self::FUNC_NAME, '$comment',
     ];
 
     /** @var string */
@@ -140,7 +141,9 @@ class Schema implements ISchema
                 array_pop($path);
                 unset($value);
             }
-        } elseif (!is_object($schema)) {
+            return;
+        }
+        if (!is_object($schema)) {
             return;
         }
 
@@ -159,15 +162,15 @@ class Schema implements ISchema
             if (array_key_exists($id, $container)) {
                 throw new DuplicateSchemaException($id, $schema, $container);
             }
-            $container[$id] = &$schema;
+            $container[$id] = $schema;
         }
 
         foreach ($schema as $name => &$value) {
-            if (is_string($name)) {
-                if (!isset($name[0]) || $name[0] === '$' || in_array($name, static::WALK_IGNORE_PROPERTIES)) {
-                    // Skip empty properties, default and $*
-                    continue;
-                }
+            if (is_null($value) || is_scalar($value)) {
+                continue;
+            }
+            if (in_array($name, static::WALK_IGNORE_PROPERTIES)) {
+                continue;
             }
             $path[] = $name;
             static::walk($container, $value, $id, $path);
