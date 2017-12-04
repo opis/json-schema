@@ -15,33 +15,42 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Test;
+namespace Opis\JsonSchema\Exception;
 
+use stdClass, Throwable;
 
-use Opis\JsonSchema\ISchemaLoader;
-use Opis\JsonSchema\IValidator;
-use Opis\JsonSchema\Loaders\File;
-use Opis\JsonSchema\Validator;
-
-trait JsonValidatorTrait
+class UnknownMediaTypeException extends AbstractSchemaException
 {
 
-    protected $validator = null;
+    /** @var stdClass */
+    protected $schema;
 
-    protected function getValidator(): IValidator
+    /** @var string */
+    protected $media;
+
+    /**
+     * @inheritDoc
+     */
+    public function __construct(stdClass $schema, string $media, Throwable $previous = null)
     {
-        if (!$this->validator) {
-            $this->validator = $this->createValidator();
-        }
-        return $this->validator;
+        $this->schema = $schema;
+        $this->media = $media;
+        parent::__construct("Unknown media type '{$media}'", 0, $previous);
     }
 
-    protected function createValidator(ISchemaLoader $loader = null, bool $use_default = true): IValidator
+    /**
+     * @return stdClass
+     */
+    public function schema(): stdClass
     {
-        if ($loader === null) {
-            $loader = new File( 'schema:', [__DIR__ . '/schemas']);
-        }
-        return new Validator(null, $loader, null, null, null, $use_default);
+        return $this->schema;
     }
 
+    /**
+     * @return string
+     */
+    public function media(): string
+    {
+        return $this->media;
+    }
 }

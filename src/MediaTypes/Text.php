@@ -15,33 +15,17 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Test;
+namespace Opis\JsonSchema\MediaTypes;
 
+use Opis\JsonSchema\IMediaType;
 
-use Opis\JsonSchema\ISchemaLoader;
-use Opis\JsonSchema\IValidator;
-use Opis\JsonSchema\Loaders\File;
-use Opis\JsonSchema\Validator;
-
-trait JsonValidatorTrait
+class Text implements IMediaType
 {
-
-    protected $validator = null;
-
-    protected function getValidator(): IValidator
+    /**
+     * @inheritDoc
+     */
+    public function validate(string $data, string $type): bool
     {
-        if (!$this->validator) {
-            $this->validator = $this->createValidator();
-        }
-        return $this->validator;
+        return true;
     }
-
-    protected function createValidator(ISchemaLoader $loader = null, bool $use_default = true): IValidator
-    {
-        if ($loader === null) {
-            $loader = new File( 'schema:', [__DIR__ . '/schemas']);
-        }
-        return new Validator(null, $loader, null, null, null, $use_default);
-    }
-
 }

@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema;
 
 use Opis\JsonSchema\Exception\{
-    FilterNotFoundException, InvalidJsonPointerException, InvalidSchemaException, SchemaNotFoundException, SchemaPropertyException
+    FilterNotFoundException, InvalidJsonPointerException, InvalidSchemaException, SchemaNotFoundException, SchemaPropertyException, UnknownMediaTypeException
 };
 use stdClass;
 
@@ -37,6 +37,9 @@ class Validator implements IValidator
     /** @var IFormatContainer|null */
     protected $formats = null;
 
+    /** @var IMediaTypeContainer|null */
+    protected $mediaTypes = null;
+
     /** @var bool */
     protected $useDefaultProperty = false;
 
@@ -46,16 +49,19 @@ class Validator implements IValidator
      * @param ISchemaLoader|null $loader
      * @param IFormatContainer|null $formats
      * @param IFilterContainer|null $filters
+     * @param IMediaTypeContainer|null $media
      * @param bool $use_default_property
      */
     public function __construct(IValidatorHelper $helper = null,
                                 ISchemaLoader $loader = null,
                                 IFormatContainer $formats = null,
                                 IFilterContainer $filters = null,
+                                IMediaTypeContainer $media = null,
                                 bool $use_default_property = true)
     {
         $this->helper = $helper ?? new ValidatorHelper();
         $this->formats = $formats ?? new FormatContainer();
+        $this->mediaTypes = $media ?? new MediaTypeContainer();
         $this->loader = $loader;
         $this->filters = $filters;
         $this->useDefaultProperty = $use_default_property;
@@ -160,6 +166,23 @@ class Validator implements IValidator
     public function getLoader()
     {
         return $this->loader;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setMediaType(IMediaTypeContainer $media = null): IValidator
+    {
+        $this->mediaTypes = $media;
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getMediaType()
+    {
+        return $this->mediaTypes;
     }
 
     /**
@@ -1130,6 +1153,10 @@ class Validator implements IValidator
                 );
             }
 
+            if (!$this->mediaTypes) {
+                throw new UnknownMediaTypeException($schema, $schema->contentMediaType);
+            }
+
             if (!isset($decoded)) {
                 // is set in contentEncoding if any
                 $decoded = $data;
@@ -1138,12 +1165,12 @@ class Validator implements IValidator
             $valid = false;
 
             if ($decoded !== false) {
-                // TODO: allow different media types
-                if (stripos($schema->contentMediaType, 'text/') !== false) {
-                    $valid = true;
-                } elseif (stripos($schema->contentMediaType, 'json') !== false) {
-                    json_decode($decoded);
-                    $valid = json_last_error() === JSON_ERROR_NONE;
+                $media = $this->mediaTypes->resolve($schema->contentMediaType);
+                if ($media === null) {
+                    throw new UnknownMediaTypeException($schema, $schema->contentMediaType);
+                }
+                else {
+                    $valid = $media->validate($decoded, $schema->contentMediaType);
                 }
             }
 

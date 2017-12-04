@@ -92,4 +92,14 @@ interface IValidator
      */
     public function getLoader();
 
+    /**
+     * @param IMediaTypeContainer|null $media
+     * @return IValidator
+     */
+    public function setMediaType(IMediaTypeContainer $media = null): self;
+
+    /**
+     * @return IMediaTypeContainer|null
+     */
+    public function getMediaType();
 }

@@ -15,33 +15,40 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Test;
+namespace Opis\JsonSchema;
 
-
-use Opis\JsonSchema\ISchemaLoader;
-use Opis\JsonSchema\IValidator;
-use Opis\JsonSchema\Loaders\File;
-use Opis\JsonSchema\Validator;
-
-trait JsonValidatorTrait
+class MediaTypeContainer implements IMediaTypeContainer
 {
 
-    protected $validator = null;
+    /** @var array */
+    protected $types = [
+        'application/json' => MediaTypes\Json::class,
+        'text/plain' => MediaTypes\Text::class,
+    ];
 
-    protected function getValidator(): IValidator
+    /**
+     * @inheritDoc
+     */
+    public function resolve(string $type)
     {
-        if (!$this->validator) {
-            $this->validator = $this->createValidator();
+        if (!isset($this->types[$type])) {
+            return null;
         }
-        return $this->validator;
+        if (is_string($this->types[$type])) {
+            $class = $this->types[$type];
+            $this->types[$type] = new $class();
+        }
+        return $this->types[$type];
     }
 
-    protected function createValidator(ISchemaLoader $loader = null, bool $use_default = true): IValidator
+    /**
+     * @param string $type
+     * @param IMediaType $media
+     * @return MediaTypeContainer
+     */
+    public function add(string $type, IMediaType $media): self
     {
-        if ($loader === null) {
-            $loader = new File( 'schema:', [__DIR__ . '/schemas']);
-        }
-        return new Validator(null, $loader, null, null, null, $use_default);
+        $this->types[$type] = $media;
+        return $this;
     }
-
 }
