@@ -18,7 +18,8 @@
 namespace Opis\JsonSchema;
 
 use Opis\JsonSchema\Exception\{
-    FilterNotFoundException, InvalidJsonPointerException, InvalidSchemaException, SchemaNotFoundException, SchemaPropertyException, UnknownMediaTypeException
+    FilterNotFoundException, InvalidJsonPointerException, InvalidSchemaException,
+    SchemaNotFoundException, SchemaPropertyException, UnknownMediaTypeException
 };
 use stdClass;
 
@@ -41,7 +42,13 @@ class Validator implements IValidator
     protected $mediaTypes = null;
 
     /** @var bool */
-    protected $useDefaultProperty = false;
+    protected $defaultSupport = true;
+
+    /** @var bool */
+    protected $varsSupport = true;
+
+    /** @var bool */
+    protected $filtersSupport = true;
 
     /**
      * Validator constructor.
@@ -50,21 +57,18 @@ class Validator implements IValidator
      * @param IFormatContainer|null $formats
      * @param IFilterContainer|null $filters
      * @param IMediaTypeContainer|null $media
-     * @param bool $use_default_property
      */
     public function __construct(IValidatorHelper $helper = null,
                                 ISchemaLoader $loader = null,
                                 IFormatContainer $formats = null,
                                 IFilterContainer $filters = null,
-                                IMediaTypeContainer $media = null,
-                                bool $use_default_property = true)
+                                IMediaTypeContainer $media = null)
     {
         $this->helper = $helper ?? new ValidatorHelper();
         $this->formats = $formats ?? new FormatContainer();
         $this->mediaTypes = $media ?? new MediaTypeContainer();
         $this->loader = $loader;
         $this->filters = $filters;
-        $this->useDefaultProperty = $use_default_property;
     }
 
     /**
@@ -186,23 +190,61 @@ class Validator implements IValidator
     }
 
     /**
-     * Use default property from schema
+     * Use default keyword from schema
      * @param bool $use_default
      * @return Validator
      */
-    public function useDefaultProperty(bool $use_default): self
+    public function defaultSupport(bool $use_default): self
     {
-        $this->useDefaultProperty = $use_default;
+        $this->defaultSupport = $use_default;
         return $this;
     }
 
     /**
-     * Checks if default property is used
+     * Checks if default keyword is used
      * @return bool
      */
-    public function isDefaultPropertyUsed(): bool
+    public function hasDefaultSupport(): bool
     {
-        return $this->useDefaultProperty;
+        return $this->defaultSupport;
+    }
+
+    /**
+     * Use $vars keyword from schema
+     * @param bool $vars
+     * @return Validator
+     */
+    public function varsSupport(bool $vars): self
+    {
+        $this->varsSupport = $vars;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasVarsSupport(): bool
+    {
+        return $this->varsSupport;
+    }
+
+    /**
+     * Use $filters keyword from schema
+     * @param bool $filters
+     * @return Validator
+     */
+    public function filtersSupport(bool $filters): self
+    {
+        $this->filtersSupport = $filters;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFiltersSupport(): bool
+    {
+        return $this->filtersSupport;
     }
 
     /**
@@ -256,7 +298,7 @@ class Validator implements IValidator
         $ref = $schema->{'$ref'};
 
         // $vars
-        if (property_exists($schema, Schema::VARS_PROP)) {
+        if ($this->varsSupport && property_exists($schema, Schema::VARS_PROP)) {
             if (!is_object($schema->{Schema::VARS_PROP})) {
                 throw new SchemaPropertyException(
                     $schema,
@@ -390,7 +432,7 @@ class Validator implements IValidator
 
         $defaults = null;
         // Set defaults if used
-        if ($this->useDefaultProperty && is_object($data) && is_object($schema) && property_exists($schema, 'properties')) {
+        if ($this->defaultSupport && is_object($data) && is_object($schema) && property_exists($schema, 'properties')) {
             foreach ($schema->properties as $property => $value) {
                 if (property_exists($data, $property) || !is_object($value) || !property_exists($value, 'default')) {
                     continue;
@@ -411,7 +453,7 @@ class Validator implements IValidator
             return false;
         }
 
-        if (!$this->validateFilters($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag)) {
+        if ($this->filtersSupport && !$this->validateFilters($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag)) {
             return false;
         }
 
@@ -1168,8 +1210,7 @@ class Validator implements IValidator
                 $media = $this->mediaTypes->resolve($schema->contentMediaType);
                 if ($media === null) {
                     throw new UnknownMediaTypeException($schema, $schema->contentMediaType);
-                }
-                else {
+                } else {
                     $valid = $media->validate($decoded, $schema->contentMediaType);
                 }
             }

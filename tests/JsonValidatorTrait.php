@@ -41,7 +41,10 @@ trait JsonValidatorTrait
         if ($loader === null) {
             $loader = new File( 'schema:', [__DIR__ . '/schemas']);
         }
-        return new Validator(null, $loader, null, null, null, $use_default);
+        $validator = new Validator();
+        $validator->setLoader($loader);
+        $validator->defaultSupport($use_default);
+        return $validator;
     }
 
 }

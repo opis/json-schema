@@ -63,10 +63,10 @@ class BasicTest extends \PHPUnit_Framework_TestCase
         $result = $validator->uriValidation((object)["a" => 5], "schema:/basic.json#/definitions/def");
         $this->assertTrue($result->hasErrors());
 
-        $validator->useDefaultProperty(false);
+        $validator->defaultSupport(false);
         $result = $validator->uriValidation((object)[], "schema:/basic.json#/definitions/def");
         $this->assertTrue($result->hasErrors());
-        $validator->useDefaultProperty(true);
+        $validator->defaultSupport(true);
     }
 
     public function testConditionals()
