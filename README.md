@@ -349,3 +349,62 @@ else {
 }
 ```
 
+#### Exceptions
+
+```php
+<?php
+
+use Opis\JsonSchema\{
+    Validator,
+    ValidationResult
+};
+use Opis\JsonSchema\Exception\{
+    AbstractSchemaException,
+    DuplicateSchemaException,
+    FilterNotFoundException,
+    InvalidJsonPointerException,
+    InvalidSchemaDraftException,
+    InvalidSchemaException,
+    SchemaDraftNotSupportedException,
+    SchemaNotFoundException,
+    SchemaKeywordException,
+    UnknownMediaTypeException
+};
+
+$validator = new Validator();
+
+try {
+    /** @var ValidationResult $result */
+    $result = $validator->uriValidation("str", "http://example.com/unexistent/schema.json");
+}
+catch (DuplicateSchemaException $e) {
+    // Schema contains duplicates for $id (after resolving to base).
+}
+catch (FilterNotFoundException $e) {
+    // Filter was not found. 
+}
+catch (InvalidJsonPointerException $e) {
+    // Pointer is not valid.
+}
+catch (InvalidSchemaDraftException $e) {
+    // $schema property is invalid.
+}
+catch (InvalidSchemaException $e) {
+    // Schema is not a boolean or an object.
+}
+catch (SchemaDraftNotSupportedException $e) {
+    // Draft version is not supported.
+}
+catch (SchemaNotFoundException $e) {
+    // Schema could not be resolved by loader.
+}
+catch (SchemaKeywordException $e) {
+    // A keyword from schema is invalid.
+}
+catch (UnknownMediaTypeException $e) {
+    // MEdia type is not registered.
+}
+catch (AbstractSchemaException $e) {
+    // Any schema exception.
+}
+```
