@@ -576,7 +576,7 @@ class Validator implements IValidator
         }
 
         // if, then, else
-        if (property_exists($schema, 'if')) {
+        if (property_exists($schema, 'if') && $document->draft() !== '06') {
             if (!is_bool($schema->if) && !is_object($schema->if)) {
                 throw new SchemaPropertyException(
                     $schema,
