@@ -109,12 +109,16 @@ REGEX;
 
     /**
      * @param string $uri
+     * @param bool $require_scheme
      * @return bool
      */
-    public static function isValid(string $uri): bool
+    public static function isValid(string $uri, bool $require_scheme = true): bool
     {
         $uri = parse_url($uri);
-        if (!$uri || !isset($uri['scheme']) || $uri['scheme'] === '') {
+        if (!$uri) {
+            return false;
+        }
+        if ($require_scheme && (!isset($uri['scheme']) || $uri['scheme'] === '')) {
             return false;
         }
         if (isset($uri['host'])) {

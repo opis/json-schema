@@ -34,6 +34,7 @@ class FormatContainer implements IFormatContainer
             'relative-json-pointer' => Formats\RelativeJsonPointer::class,
             'time' => Formats\Time::class,
             'uri' => Formats\Uri::class,
+            'uri-reference' => Formats\UriReference::class,
             'uri-template' => Formats\UriTemplate::class,
         ]
     ];

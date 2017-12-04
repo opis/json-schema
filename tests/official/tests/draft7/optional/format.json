@@ -181,7 +181,6 @@
         ]
     },
     {
-        "skip": true,
         "description": "validation of URI References",
         "schema": {"format": "uri-reference"},
         "tests": [
@@ -201,6 +200,7 @@
                 "valid": true
             },
             {
+                "skip": true,
                 "description": "an invalid URI Reference",
                 "data": "\\\\WINDOWS\\fileshare",
                 "valid": false
@@ -216,6 +216,7 @@
                 "valid": true
             },
             {
+                "skip": true,
                 "description": "an invalid URI fragment",
                 "data": "#frag\\ment",
                 "valid": false

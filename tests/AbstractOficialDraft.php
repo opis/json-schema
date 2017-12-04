@@ -35,7 +35,7 @@ abstract class AbstractOficialDraft extends \PHPUnit_Framework_TestCase
 
     public function testOptional()
     {
-        //$this->doTests($this->getFolderPath() . '/optional');
+        $this->doTests($this->getFolderPath() . '/optional');
     }
 
     protected function getFolderPath(): string

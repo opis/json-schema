@@ -19,13 +19,13 @@ namespace Opis\JsonSchema\Formats;
 
 use Opis\JsonSchema\IFormat;
 
-class Uri implements IFormat
+class UriReference implements IFormat
 {
     /**
      * @inheritDoc
      */
     public function validate($data): bool
     {
-        return \Opis\JsonSchema\URI::isValid($data);
+        return \Opis\JsonSchema\URI::isValid($data, false);
     }
 }
