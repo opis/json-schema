@@ -261,7 +261,7 @@ $schema = (object) [
                 // constant
                 "prop" => "age",
                 // relative json-pointer applied to current data,
-                "ageRegions" => (object)[
+                "ageRegion" => (object)[
                     '$ref' => "1/region"
                 ],
             ]
