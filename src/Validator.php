@@ -364,10 +364,8 @@ class Validator implements IValidator
     protected function validateKeywords(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
     {
         // here the $ref is already resolved
-        $ok = true;
 
         $defaults = null;
-
         // Set defaults if used
         if ($this->useDefaultProperty && is_object($data) && is_object($schema) && property_exists($schema, 'properties')) {
             foreach ($schema->properties as $property => $value) {
@@ -379,34 +377,22 @@ class Validator implements IValidator
         }
 
         if (!$this->validateCommons($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag, $defaults)) {
-            $ok = false;
-            if ($bag->isFull()) {
-                return false;
-            }
+            return false;
         }
 
         if (!$this->validateProperties($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag, $defaults)) {
-            $ok = false;
-            if ($bag->isFull()) {
-                return false;
-            }
+            return false;
         }
 
         if (!$this->validateConditionals($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag)) {
-            $ok = false;
-            if ($bag->isFull()) {
-                return false;
-            }
+            return false;
         }
 
         if (!$this->validateFilters($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag)) {
-            $ok = false;
-            if ($bag->isFull()) {
-                return false;
-            }
+            return false;
         }
 
-        return $ok;
+        return true;
     }
 
     /**
@@ -1638,9 +1624,9 @@ class Validator implements IValidator
                 }
 
                 if ($defaults) {
-                    foreach ($defaults as $prop => $value) {
-                        $data->{$prop} = $value;
-                        unset($value, $prop);
+                    foreach ($defaults as $prop => $def) {
+                        $data->{$prop} = $def;
+                        unset($def, $prop);
                     }
                     $defaults = null;
                 }

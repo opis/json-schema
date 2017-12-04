@@ -431,6 +431,7 @@ REGEX;
                     }
                 }
                 elseif (is_object($var['value'])) {
+                    /** @noinspection PhpWrongForeachArgumentTypeInspection */
                     foreach ($var['value'] as $prop => $v) {
                         $list[] = static::encodeTemplateString((string) $prop, $table['allow']);
                         $list[] = static::encodeTemplateString((string) $v, $table['allow']);

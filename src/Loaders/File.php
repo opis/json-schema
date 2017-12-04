@@ -17,7 +17,6 @@
 
 namespace Opis\JsonSchema\Loaders;
 
-use Opis\JsonSchema\ISchemaLoader;
 use Opis\JsonSchema\Schema;
 
 class File extends Memory

@@ -29,8 +29,9 @@ class SchemaDraftNotSupportedException extends AbstractSchemaException
     protected $draft;
 
     /**
-     * InvalidSchemaDraftException constructor.
+     * SchemaDraftNotSupportedException constructor.
      * @param stdClass $schema
+     * @param string $draft
      * @param Throwable|null $previous
      */
     public function __construct(stdClass $schema, string $draft, Throwable $previous = null)
