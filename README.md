@@ -14,12 +14,13 @@ Json Schema
 
 - Fast validation (you can set maximum number of errors for a validation)
 - Support for absolute and relative json pointers
-- Support for if-then-else
+- Support for if-then-else (draft-07)
 - Support for uri-templates and variables
 - Most of the string formats are supported
 - Support for custom formats
 - Support for default value
 - Support for custom filters
+- Support for custom media types
 
 
 ## License
@@ -42,105 +43,22 @@ This library is available on [Packagist](https://packagist.org/packages/opis/jso
 }
 ```
 
-
 ### Documentation
 
-#### Simple validation
+Current implementation extends standards by adding `$vars` and `$filters` keywords.
 
-```php
-<?php
+#### $vars keyword
 
-use Opis\JsonSchema\Validator;
-use Opis\JsonSchema\Loaders\Memory as MemoryLoader;
-use Opis\JsonSchema\FilterContainer;
-use Opis\JsonSchema\IFilter;
+`$vars` keyword is used in conjunction with `$ref` (if `$ref` is an uri-template).
 
-$validator = new Validator();
+Properties:
+- must be an object
+- can reference any data
+- can reference data by using `$ref` property (json pointer)
 
-// without loader
+To disable `$vars` use `Opis\JsonSchema\Validator::varsSupport(false)`.
 
-$result = $validator->dataValidation(6, (object) [
-    'type' => 'integer',
-    'multipleOf' => 2
-]);
-
-if ($result->isValid()) {
-    echo "valid";
-}
-else {
-    echo "invalid";
-    // $result->getFirstError();
-    
-    /** @var \Opis\JsonSchema\ValidationError $error */
-    // foreach ($result->getErrors() as $error) {
-        // do something
-    //}
-}
-
-// memory loader
-
-$loader = new MemoryLoader();
-
-$loader->add((object) [
-    "type" => "integer",
-    "minimum" => 0
-], "urn:positive-integer");
-
-$loader->add((object) [
-    "type" => "string",
-    "format" => "email"
-], "urn:mail");
-
-$loader->add((object) [
-    "type" => "object",
-    "properties" => (object) [
-        "age" => (object)['$ref' => "urn:positive-integer"],
-        "mail" => (object)['$ref' => "urn:mail"],
-    ],
-    "required" => ["age", "mail"]
-], "urn:simple-person");
-
-// use memory loader
-$validator->setLoader($loader);
-
-$result = $validator->uriValidation("someone@example.com", "urn:mail");
-
-$result = $validator->uriValidation((object) [
-    "age" => 23,
-    "mail" => "someone@example.com",
-], "urn:simple-person");
-
-// use filters
-
-$filters = new FilterContainer();
-
-$filters->add("number", "modulo", new class implements IFilter {
-    /**
-     * @inheritDoc
-     */
-    public function validate($data, array $args): bool {
-        $d = $args['divisor'] ?? 1;
-        $r = $args['reminder'] ?? 0;
-        return $data % $d == $r;
-    }
-});
-
-$validator->setFilters($filters);
-
-$result = $validator->dataValidation(7, (object) [
-    "type" => "integer",
-    '$filters' => (object) [
-        '$func' => 'modulo',
-        '$vars' => (object) [
-            'divisor' => 4,
-            'reminder' => 3    
-        ],
-    ]
-]);
-
-```
-
-#### Usage of variables ($vars) for $ref (uri-template)
+Example
 
 ```json
 {
@@ -168,7 +86,21 @@ For the following data
 ```
 the `$ref` will be `http://example.com/absolute/path/some-file.json#static-fragment`
 
-#### Usage of filters in schema ($filters)
+
+#### $filters keyword
+
+`$filters` keyword is used to add arbitrary filters in schema. 
+
+Properties:
+
+- `$filters` can be an object or an array of objects
+- filter name is given by `$func` property
+- can have arguments (using `$vars` property)
+- filters will be checked only if the data matches the schema
+
+To disable `$filters` use `Opis\JsonSchema\Validator::filtersSupport(false)`.
+
+Example
 
 ```json
 {
@@ -195,9 +127,225 @@ the `$ref` will be `http://example.com/absolute/path/some-file.json#static-fragm
                 "$func": "filter_name_1"
             },
             {
-                "$func": "filter_name_2"
+                "$func": "filter_name_2",
+                "$vars": {
+                    "arg1": 5,
+                    "arg2": "some arg",
+                    "arg3": {
+                        "$ref": "/absolute/path/to/data"
+                    }
+                }
             }
         ]
     }
 }
 ```
+
+### PHP Examples
+
+#### Basic example
+
+```php
+<?php
+
+use Opis\JsonSchema\{
+    Validator,
+    ValidationResult,
+    ValidationError
+};
+
+$validator = new Validator();
+
+
+$schema = (object)[
+    'minLength' => 3
+];
+/** @var ValidationResult $result */
+$result = $validator->dataValidation("abc", $schema);
+
+if ($result->isValid()) {
+    echo "Valid", PHP_EOL;
+}
+else {
+    /** @var ValidationError $error */
+    $error = $result->getFirstError();
+    echo "Invalid, error: ", $error->error(), PHP_EOL;
+}
+
+```
+
+#### Loader
+
+```php
+<?php
+
+use Opis\JsonSchema\{
+    Validator,
+    ValidationResult,
+    ValidationError,
+    Loaders\Memory as MemoryLoader
+};
+
+$loader = new MemoryLoader();
+
+$loader->add((object) [
+    "type" => "integer",
+    "minimum" => 0
+], "urn:positive-integer");
+
+$loader->add((object) [
+    "type" => "string",
+    "format" => "email"
+], "urn:mail");
+
+$loader->add((object) [
+    "type" => "object",
+    "properties" => (object) [
+        "age" => (object)['$ref' => "urn:positive-integer"],
+        "mail" => (object)['$ref' => "urn:mail"],
+    ],
+    "required" => ["age", "mail"]
+], "urn:simple-person");
+
+$validator = new Validator();
+$validator->setLoader($loader);
+
+/** @var ValidationResult $result */
+$result = $validator->uriValidation("someone@example.com", "urn:mail");
+if ($result->isValid()) {
+    echo "Valid e-mail", PHP_EOL;
+}
+else {
+    /** @var ValidationError $error */
+    $err = $result->getFirstError();
+    echo "Invalid e-mail, error: ", $err->error(), PHP_EOL;
+}
+
+/** @var ValidationResult $result */
+$result = $validator->uriValidation((object) [
+    "age" => 23,
+    "mail" => "someone@example.com",
+], "urn:simple-person");
+
+if ($result->isValid()) {
+    echo "Valid simple-person", PHP_EOL;
+}
+else {
+    /** @var ValidationError $error */
+    $err = $result->getFirstError();
+    echo "Invalid simple-person, error: ", $err->error(), PHP_EOL;
+}
+```
+
+#### Vars
+
+```php
+<?php
+
+use Opis\JsonSchema\{
+    Validator,
+    ValidationResult,
+    ValidationError
+};
+
+$schema = (object) [
+    "type" => "object",
+    "properties" => (object) [
+        "region" => (object)[
+            "enum" => ["eu", "us"],
+        ],
+        "age" => (object)[
+            '$ref' => "#/definitions/{+prop}-{+ageRegion}",
+            '$vars' => (object)[
+                // constant
+                "prop" => "age",
+                // relative json-pointer applied to current data,
+                "ageRegions" => (object)[
+                    '$ref' => "1/region"
+                ],
+            ]
+        ]
+    ],
+    "required" => ["region"],
+    "definitions" => (object)[
+        "age-eu" => (object)[
+            "type" => "integer",
+            "minimum" => 18,
+        ],
+        "age-us" => (object)[
+            "type" => "integer",
+            "minimum" => 21,
+        ],
+    ]
+];
+
+$validator = new Validator();
+
+/** @var ValidationResult $result */
+$result = $validator->dataValidation((object) [
+    "age" => 20,
+    "region" => "eu",
+], $schema);
+
+if ($result->isValid()) {
+    echo "Valid", PHP_EOL;
+}
+else {
+    /** @var ValidationError $error */
+    $err = $result->getFirstError();
+    echo "Invalid, error: ", $err->error(), PHP_EOL;
+}
+```
+
+#### Filters
+
+```php
+<?php
+
+use Opis\JsonSchema\{
+    Validator,
+    ValidationResult,
+    ValidationError,
+    FilterContainer,
+    IFilter
+};
+
+$filters = new FilterContainer();
+
+$filters->add("number", "modulo", new class implements IFilter {
+    /**
+     * @inheritDoc
+     */
+    public function validate($data, array $args): bool {
+        $d = $args['divisor'] ?? 1;
+        $r = $args['reminder'] ?? 0;
+        return $data % $d == $r;
+    }
+});
+
+$validator = new Validator();
+$validator->setFilters($filters);
+
+$schema = (object) [
+    "type" => "integer",
+    '$filters' => (object) [
+        '$func' => 'modulo',
+        '$vars' => (object) [
+            'divisor' => 4,
+            'reminder' => 3
+        ],
+    ]
+];
+
+/** @var ValidationResult $result */
+$result = $validator->dataValidation(7, $schema);
+if ($result->isValid()) {
+    echo "Valid", PHP_EOL;
+}
+else {
+    /** @var ValidationError $error */
+    $err = $result->getFirstError();
+    echo "Invalid, error: ", $err->error(), PHP_EOL;
+}
+```
+
