@@ -22,7 +22,7 @@ Json Schema
 - Support for custom media types
 - Support for default value
 - Support for custom filters
-- Support for custom variables
+- Support for custom variables (local and global)
 
 ## License
 
@@ -39,7 +39,7 @@ This library is available on [Packagist](https://packagist.org/packages/opis/jso
 ```json
 {
     "require": {
-        "opis/json-schema": "^1.0.0"
+        "opis/json-schema": "^1.0.1"
     }
 }
 ```
@@ -256,12 +256,13 @@ $schema = (object) [
             "enum" => ["eu", "us"],
         ],
         "age" => (object)[
-            '$ref' => "#/definitions/{+prop}-{+ageRegion}",
+            // #/definitions/age-[eu|us]
+            '$ref' => "#/{+globalVar}/{+localVar}-{+dataRefVar}",
             '$vars' => (object)[
-                // constant
-                "prop" => "age",
+                // local constant
+                "localVar" => "age",
                 // relative json-pointer applied to current data,
-                "ageRegion" => (object)[
+                "dataRefVar" => (object)[
                     '$ref' => "1/region"
                 ],
             ]
@@ -281,6 +282,11 @@ $schema = (object) [
 ];
 
 $validator = new Validator();
+
+// Set global variables 
+$validator->setGlobalVars([
+    'globalVar' => 'definitions'
+]);
 
 /** @var ValidationResult $result */
 $result = $validator->dataValidation((object) [
