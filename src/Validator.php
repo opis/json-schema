@@ -50,6 +50,9 @@ class Validator implements IValidator
     /** @var bool */
     protected $filtersSupport = true;
 
+    /** @var array */
+    protected $globalVars = [];
+
     /**
      * Validator constructor.
      * @param IValidatorHelper|null $helper
@@ -248,6 +251,24 @@ class Validator implements IValidator
     }
 
     /**
+     * @param array $vars
+     * @return Validator
+     */
+    public function setGlobalVars(array $vars): self
+    {
+        $this->globalVars = $vars;
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getGlobalVars(): array
+    {
+        return $this->globalVars;
+    }
+
+    /**
      * Validates a schema
      * @param $document_data
      * @param $data
@@ -298,17 +319,26 @@ class Validator implements IValidator
         $ref = $schema->{'$ref'};
 
         // $vars
-        if ($this->varsSupport && property_exists($schema, Schema::VARS_PROP)) {
-            if (!is_object($schema->{Schema::VARS_PROP})) {
-                throw new SchemaKeywordException(
-                    $schema,
-                    Schema::VARS_PROP,
-                    $schema->{Schema::VARS_PROP},
-                    "'" . Schema::VARS_PROP . "' keyword must be an object, " . gettype($schema->{Schema::VARS_PROP}) . " given"
-                );
+        if ($this->varsSupport) {
+            if (property_exists($schema, Schema::VARS_PROP)) {
+                if (!is_object($schema->{Schema::VARS_PROP})) {
+                    throw new SchemaKeywordException(
+                        $schema,
+                        Schema::VARS_PROP,
+                        $schema->{Schema::VARS_PROP},
+                        "'" . Schema::VARS_PROP . "' keyword must be an object, " . gettype($schema->{Schema::VARS_PROP}) . " given"
+                    );
+                }
+                $vars = $this->deepClone($schema->{Schema::VARS_PROP});
+                $this->resolveVars($vars, $document_data, $data_pointer);
+                if ($this->globalVars) {
+                    $vars = (array) $vars;
+                    $vars += $this->globalVars;
+                }
             }
-            $vars = $this->deepClone($schema->{Schema::VARS_PROP});
-            $this->resolveVars($vars, $document_data, $data_pointer);
+            else {
+                $vars = $this->globalVars;
+            }
             $ref = URI::parseTemplate($ref, $vars);
             unset($vars);
         }
@@ -934,24 +964,28 @@ class Validator implements IValidator
 
         /** @var array $filters */
         $filters = null;
-        if (is_object($schema->{Schema::FILTERS_PROP})) {
+        if (is_string($schema->{Schema::FILTERS_PROP})) {
+            $filters = [(object)[Schema::FUNC_NAME => $schema->{Schema::FILTERS_PROP}]];
+        }
+        elseif (is_object($schema->{Schema::FILTERS_PROP})) {
             $filters = [$schema->{Schema::FILTERS_PROP}];
         } elseif (is_array($schema->{Schema::FILTERS_PROP})) {
             $filters = $schema->{Schema::FILTERS_PROP};
             if (count($filters) === 0) {
-                throw new SchemaKeywordException(
-                    $schema,
-                    Schema::FILTERS_PROP,
-                    $schema->{Schema::FILTERS_PROP},
-                    "'" . Schema::FILTERS_PROP . "' keyword must not be empty"
-                );
+                return true;
             }
+            foreach ($filters as &$filter) {
+                if (is_string($filter)) {
+                    $filter = (object)[Schema::FUNC_NAME => $filter];
+                }
+            }
+            unset($filter);
         } else {
             throw new SchemaKeywordException(
                 $schema,
                 Schema::FILTERS_PROP,
                 $schema->{Schema::FILTERS_PROP},
-                "'" . Schema::FILTERS_PROP . "' keyword must be an object or an array of objects, " . gettype($schema->{Schema::FILTERS_PROP}) . " given"
+                "'" . Schema::FILTERS_PROP . "' keyword must be a string, an object or an array of objects, " . gettype($schema->{Schema::FILTERS_PROP}) . " given"
             );
         }
 
@@ -964,7 +998,7 @@ class Validator implements IValidator
                     $schema,
                     Schema::FILTERS_PROP,
                     $schema->{Schema::FILTERS_PROP},
-                    "'" . Schema::FILTERS_PROP . "' keyword must be an object or an array of objects, found " . gettype($filter)
+                    "'" . Schema::FILTERS_PROP . "' keyword must be a string, an object or an array of objects, found " . gettype($filter)
                 );
             }
             if (!property_exists($filter, Schema::FUNC_NAME)) {
@@ -1008,8 +1042,11 @@ class Validator implements IValidator
                 $vars = $this->deepClone($filter->{Schema::VARS_PROP});
                 $this->resolveVars($vars, $document_data, $data_pointer);
                 $vars = (array)$vars;
+                if ($this->globalVars) {
+                    $vars += $this->globalVars;
+                }
             } else {
-                $vars = [];
+                $vars = $this->globalVars;
             }
 
             if (!$filterObj->validate($data, $vars)) {
