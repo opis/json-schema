@@ -19,6 +19,7 @@ namespace Opis\JsonSchema\Test;
 
 use Opis\JsonSchema\FilterContainer;
 use Opis\JsonSchema\IFilter;
+use Opis\JsonSchema\Validator;
 
 class FilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -26,6 +27,7 @@ class FilterTest extends \PHPUnit_Framework_TestCase
 
     public function testFilters()
     {
+        /** @var Validator $validator */
         $validator = $this->getValidator();
 
         $fc = new FilterContainer();
@@ -99,6 +101,33 @@ class FilterTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($result->hasErrors());
 
         $result = $validator->uriValidation(7, "schema:/filter.json#/definitions/multi");
+        $this->assertTrue($result->hasErrors());
+
+        // str
+
+        $result = $validator->uriValidation("a", "schema:/filter.json#/definitions/str");
+        $this->assertTrue($result->isValid());
+
+        $result = $validator->uriValidation("ab", "schema:/filter.json#/definitions/str");
+        $this->assertTrue($result->hasErrors());
+
+        // globals
+
+        $validator->setGlobalVars([
+            'divisor' => 2,
+            'reminder' => 0
+        ]);
+
+        $result = $validator->uriValidation(6, "schema:/filter.json#/definitions/globals");
+        $this->assertTrue($result->isValid());
+
+        $result = $validator->uriValidation(12, "schema:/filter.json#/definitions/globals");
+        $this->assertTrue($result->isValid());
+
+        $result = $validator->uriValidation(2, "schema:/filter.json#/definitions/globals");
+        $this->assertTrue($result->hasErrors());
+
+        $result = $validator->uriValidation(8, "schema:/filter.json#/definitions/globals");
         $this->assertTrue($result->hasErrors());
 
 

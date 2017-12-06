@@ -17,6 +17,8 @@
 
 namespace Opis\JsonSchema\Test;
 
+use Opis\JsonSchema\Validator;
+
 class RefTest extends \PHPUnit_Framework_TestCase
 {
     use JsonValidatorTrait;
@@ -78,7 +80,12 @@ class RefTest extends \PHPUnit_Framework_TestCase
 
     public function testVars()
     {
+        /** @var Validator $validator */
         $validator = $this->getValidator();
+
+        $validator->setGlobalVars([
+            'prefix' => 'valid'
+        ]);
 
         $result = $validator->uriValidation((object)["age" => 18, "regionData" => "eu"], "schema:/var-ref.json");
         $this->assertTrue($result->isValid());

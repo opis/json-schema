@@ -34,6 +34,21 @@
                     }
                 }
             ]
+        },
+        "str": {
+            "type": "string",
+            "$filters": "oddLen"
+        },
+        "globals": {
+            "$filters": [
+                "modulo",
+                {
+                    "$func": "modulo",
+                    "$vars": {
+                        "divisor": 3
+                    }
+                }
+            ]
         }
     }
 }

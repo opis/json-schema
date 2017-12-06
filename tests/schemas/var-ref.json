@@ -6,7 +6,7 @@
             "enum": ["eu", "us"]
         },
         "age": {
-            "$ref": "#/definitions/valid-{+what}-{+region}",
+            "$ref": "#/definitions/{prefix}-{+what}-{+region}",
             "$vars": {
                 "what": "age",
                 "region": {"$ref": "1/regionData"}
