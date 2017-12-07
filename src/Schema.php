@@ -34,9 +34,8 @@ class Schema implements ISchema
     const ID_PROP = '$id';
 
     const WALK_IGNORE_PROPERTIES = [
-        'type', 'default', 'const', 'enum',
-        'title', 'description', 'readOnly', 'writeOnly', 'examples',
-        self::FILTERS_PROP, self::FUNC_NAME, '$comment',
+        'default', 'const', 'enum',
+        self::FILTERS_PROP, self::VARS_PROP
     ];
 
     /** @var string */
