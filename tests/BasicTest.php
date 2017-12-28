@@ -27,6 +27,9 @@ class BasicTest extends \PHPUnit_Framework_TestCase
     {
         $validator = $this->getValidator();
 
+        $result = $validator->dataValidation("abc", (object)["minLength" => 3]);
+        $this->assertTrue($result->isValid());
+
         $result = $validator->uriValidation(10, "schema:/basic.json#/definitions/constant");
         $this->assertTrue($result->isValid());
 

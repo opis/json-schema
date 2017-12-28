@@ -63,9 +63,9 @@ class Schema implements ISchema
         }
 
         if ($id === null) {
-            $id = uniqid("urn:");
+            $id = uniqid("json-schema-id:/");
         }
-        $id = URI::normalize($id);
+        $id = URI::merge($id, $id);
         if (substr($id, -1) !== '#') {
             throw new InvalidSchemaIdException($id);
         }
