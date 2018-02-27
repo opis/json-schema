@@ -509,14 +509,6 @@ class Validator implements IValidator
 
         // type
         if (property_exists($schema, 'type')) {
-            if (!is_string($schema->type) && !is_array($schema->type)) {
-                throw new SchemaKeywordException(
-                    $schema,
-                    'type',
-                    $schema->type,
-                    "'type' keyword must be a string or an array of strings, " . gettype($schema->type) . " given"
-                );
-            }
             if (is_string($schema->type)) {
                 if (!$this->helper->typeExists($schema->type)) {
                     throw new SchemaKeywordException(
@@ -526,7 +518,7 @@ class Validator implements IValidator
                         "'type' keyword contains unknown value: " . $schema->type
                     );
                 }
-            } else {
+            } elseif (is_array($schema->type)) {
                 /** @noinspection PhpParamsInspection */
                 if (count($schema->type) === 0) {
                     throw new SchemaKeywordException(
@@ -564,7 +556,15 @@ class Validator implements IValidator
                     }
                 }
                 unset($type);
+            } else {
+                throw new SchemaKeywordException(
+                    $schema,
+                    'type',
+                    $schema->type,
+                    "'type' keyword must be a string or an array of strings, " . gettype($schema->type) . " given"
+                );
             }
+
             if (!$this->helper->isValidType($data, $schema->type)) {
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'type', [
@@ -840,8 +840,9 @@ class Validator implements IValidator
                 );
             }
             $newbag = $bag->createByDiff();
-            $errors = [];
+            $errors = null;
             $valid = true;
+
             foreach ($schema->allOf as &$one) {
                 if (!is_bool($one) && !is_object($one)) {
                     throw new SchemaKeywordException(
@@ -906,6 +907,10 @@ class Validator implements IValidator
                 break;
             case 'object':
                 $valid = $this->validateObject($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag, $defaults);
+                // Setup unused defaults
+                if (!$valid && $defaults) {
+                    $this->setObjectDefaults($data, $defaults);
+                }
                 break;
         }
 
@@ -1728,13 +1733,7 @@ class Validator implements IValidator
                     );
                 }
 
-                if ($defaults) {
-                    foreach ($defaults as $prop => $def) {
-                        $data->{$prop} = $def;
-                        unset($def, $prop);
-                    }
-                    $defaults = null;
-                }
+                $this->setObjectDefaults($data, $defaults);
                 $valid = $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $value, $bag);
                 if (!$valid) {
                     $ok = false;
@@ -1893,6 +1892,7 @@ class Validator implements IValidator
                 );
             }
 
+            $newbag = $bag->createByDiff();
             foreach ($schema->patternProperties as $pattern => &$property_schema) {
                 $regex = '/' . $pattern . '/u';
                 foreach ($properties as $name) {
@@ -1912,17 +1912,22 @@ class Validator implements IValidator
                         $checked_properties[] = $name;
                     }
                     $data_pointer[] = $name;
-                    $valid = $this->validateSchema($document_data, $data->{$name}, $data_pointer, $parent_data_pointer, $document, $property_schema, $bag);
+                    $valid = $this->validateSchema($document_data, $data->{$name}, $data_pointer, $parent_data_pointer, $document, $property_schema, $newbag);
                     array_pop($data_pointer);
-                    if (!$valid) {
-                        $ok = false;
-                        if ($bag->isFull()) {
-                            return false;
-                        }
+                    if (!$valid && $newbag->isFull()) {
+                        break 2;
                     }
                 }
             }
             unset($property_schema, $regex);
+            if ($newbag->hasErrors()) {
+                $ok = false;
+                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'patternProperties', [], $newbag->getErrors()));
+                if ($bag->isFull()) {
+                    return false;
+                }
+            }
+            unset($newbag);
         }
 
         // additionalProperties
@@ -1935,27 +1940,46 @@ class Validator implements IValidator
                     "'additionalProperties' keyword must be a boolean or an object, " . gettype($schema->additionalProperties) . " given"
                 );
             }
+            $newbag = $bag->createByDiff();
             foreach (array_diff($properties, $checked_properties) as $property) {
                 $data_pointer[] = $property;
-                $valid = $this->validateSchema($document_data, $data->{$property}, $data_pointer, $parent_data_pointer, $document, $schema->additionalProperties, $bag);
+                $valid = $this->validateSchema($document_data, $data->{$property}, $data_pointer, $parent_data_pointer, $document, $schema->additionalProperties, $newbag);
                 array_pop($data_pointer);
-                if (!$valid) {
-                    $ok = false;
-                    if ($bag->isFull()) {
-                        return false;
-                    }
+                unset($property);
+                if (!$valid && $newbag->isFull()) {
+                    break;
                 }
             }
-            unset($property);
+            if ($newbag->hasErrors()) {
+                $ok = false;
+                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'additionalProperties', [], $newbag->getErrors()));
+                if ($bag->isFull()) {
+                    return false;
+                }
+            }
+            unset($newbag);
         }
 
-        if ($defaults) {
-            foreach ($defaults as $property => $value) {
-                $data->{$property} = $value;
-            }
-            $defaults = null;
-        }
+        // set defaults
+        $this->setObjectDefaults($data, $defaults);
+
         return $ok;
+    }
+
+    /**
+     * @param $data
+     * @param $defaults
+     */
+    protected function setObjectDefaults($data, array &$defaults = null)
+    {
+        if (is_object($data) && $defaults) {
+            foreach ($defaults as $property => $value) {
+                if (!property_exists($data, $property)) {
+                    $data->{$property} = $value;
+                }
+            }
+        }
+        $defaults = null;
     }
 
     /**
