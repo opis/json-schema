@@ -65,7 +65,7 @@ final class ValidationResult
      */
     public function isFull(): bool
     {
-        return $this->maxErrors >= $this->totalErrors;
+        return $this->maxErrors <= $this->totalErrors;
     }
 
     /**
