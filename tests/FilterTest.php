@@ -20,8 +20,9 @@ namespace Opis\JsonSchema\Test;
 use Opis\JsonSchema\FilterContainer;
 use Opis\JsonSchema\IFilter;
 use Opis\JsonSchema\Validator;
+use PHPUnit\Framework\TestCase;
 
-class FilterTest extends \PHPUnit_Framework_TestCase
+class FilterTest extends TestCase
 {
     use JsonValidatorTrait;
 

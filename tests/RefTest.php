@@ -18,8 +18,9 @@
 namespace Opis\JsonSchema\Test;
 
 use Opis\JsonSchema\Validator;
+use PHPUnit\Framework\TestCase;
 
-class RefTest extends \PHPUnit_Framework_TestCase
+class RefTest extends TestCase
 {
     use JsonValidatorTrait;
 

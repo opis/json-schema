@@ -17,7 +17,9 @@
 
 namespace Opis\JsonSchema\Test;
 
-class MapTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class MapTest extends TestCase
 {
     use JsonValidatorTrait;
 

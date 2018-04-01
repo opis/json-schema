@@ -22,8 +22,9 @@ use Opis\JsonSchema\IValidator;
 use Opis\JsonSchema\Loaders\File;
 use Opis\JsonSchema\Schema;
 use Opis\JsonSchema\Validator;
+use PHPUnit\Framework\TestCase;
 
-abstract class AbstractOficialDraft extends \PHPUnit_Framework_TestCase
+abstract class AbstractOficialDraft extends TestCase
 {
 
     const URL = 'http://localhost:1234';
