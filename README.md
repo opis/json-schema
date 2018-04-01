@@ -21,8 +21,9 @@ Json Schema
 - Support for custom formats
 - Support for custom media types
 - Support for default value
-- Support for custom filters
-- Support for custom variables (local and global)
+- Support for custom filters (see `$filters`)
+- Support for custom variables (local and global, see `$vars`)
+- Schema reuse (see `$map`)
 
 ## License
 
@@ -39,14 +40,14 @@ This library is available on [Packagist](https://packagist.org/packages/opis/jso
 ```json
 {
     "require": {
-        "opis/json-schema": "^1.0.4"
+        "opis/json-schema": "^1.0.5"
     }
 }
 ```
 
 ### Documentation
 
-Current implementation extends standards by adding `$vars` and `$filters` keywords.
+Current implementation extends standards by adding `$vars`, `$filters` and `$map` keywords.
 
 #### $vars keyword
 
@@ -56,6 +57,7 @@ Properties:
 - must be an object
 - can reference any data
 - can reference data by using `$ref` property (json pointer)
+- can map referenced arrays using `$each` (see `$map` for example)
 
 To disable `$vars` use `Opis\JsonSchema\Validator::varsSupport(false)`.
 
@@ -139,6 +141,153 @@ Example
             }
         ]
     }
+}
+```
+
+
+#### $map keyword
+
+`$map` keyword is used in conjunction with `$ref` (if `$ref` is an uri-template) to map existing object to a new structure.
+
+Properties:
+- behaves like `$vars` (but can also be an array, not only an object)
+- schema referenced by `$ref` will receive the mapped object for validation 
+(meaning that the schema should validate an object or an array)
+- designed for schema reuse
+
+To disable `$map` use `Opis\JsonSchema\Validator::mapSupport(false)`.
+
+Example
+
+Let's assume that a 3rd party gives us some standard validation rules for users.
+
+```json
+{
+    "$id": "http://example.com/standards.json#",
+
+    "definitions": {
+        "standard-user": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "birthday": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/standard-user-permission"
+                    }
+                }
+            },
+            "required": ["name", "permissions"],
+            "additionalProperties": false
+        },
+        "standard-user-permission": {
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string",
+                    "enum": ["create", "read", "update", "delete"]
+                },
+                "enabled": {
+                    "type": "boolean"
+                }
+            },
+            "required": ["name", "enabled"],
+            "additionalProperties": false
+        }
+    }
+}
+```
+
+We can create or own user structure and still validate it using the provided schemas.
+
+```json
+{
+    "type": "object",
+    "properties": {
+        "first-name": {
+            "type": "string"
+        },
+        "last-name": {
+            "type": "string"
+        },
+        "blog-permissions": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "required": ["first-name", "last-name", "blog-permissions"],
+    "additionalProperties": false,
+
+    "$comment": "Below we will validate using the standards",
+    "allOf": [
+        {
+            "$ref": "http://example.com/standards.json#/definitions/standard-user",
+            "$map": {
+                "name": {
+                    "$ref": "0/first-name",
+                    "$comment": "We map name value using first-name from our current object"
+                },
+
+                "$comment": "Our user doesn't have a birthday, so we just provide a valid one",
+                "birthday": "1970-01-01",
+
+                "permissions": {
+                    "$ref": "0/blog-permissions",
+
+                    "$comment": "Since our permissions have only string values we must convert them to an object"
+                    "$each": {
+                        "name": {
+                            "$ref": "0",
+                            "$comment": "Use the current string as name (it is a valid json pointer)"
+                        },
+
+                        "$comment": "Again, we provide a valid value for enabled"
+                        "enabled": true
+                    }
+                }
+            }
+        }
+    ]
+}
+```
+
+So, for the following data
+
+```json
+{
+    "first-name": "Json-Schema",
+    "last-name": "Opis",
+    "permissions": [
+        "create",
+        "read"
+    ]
+}
+```
+
+the mapped result (data that will be validated) is
+
+```json
+{
+    "name": "Json-Schema",
+    "birthday": "1970-01-01",
+    "permissions": [
+        {
+            "name": "create",
+            "enabled": true
+        },
+        {
+            "name": "read",
+            "enabled": true
+        }
+    ]
 }
 ```
 
