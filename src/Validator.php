@@ -50,6 +50,9 @@ class Validator implements IValidator
     /** @var bool */
     protected $filtersSupport = true;
 
+    /** @var bool */
+    protected $mapSupport = true;
+
     /** @var array */
     protected $globalVars = [];
 
@@ -251,6 +254,24 @@ class Validator implements IValidator
     }
 
     /**
+     * @param bool $map
+     * @return Validator
+     */
+    public function mapSupport(bool $map): self
+    {
+        $this->mapSupport = $map;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasMapSupport(): bool
+    {
+        return $this->mapSupport && $this->varsSupport;
+    }
+
+    /**
      * @param array $vars
      * @return Validator
      */
@@ -315,32 +336,28 @@ class Validator implements IValidator
      */
     protected function validateRef(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, stdClass $schema, ValidationResult $bag): bool
     {
-
         $ref = $schema->{'$ref'};
 
         // $vars
         if ($this->varsSupport) {
-            if (property_exists($schema, Schema::VARS_PROP)) {
-                if (!is_object($schema->{Schema::VARS_PROP})) {
-                    throw new SchemaKeywordException(
-                        $schema,
-                        Schema::VARS_PROP,
-                        $schema->{Schema::VARS_PROP},
-                        "'" . Schema::VARS_PROP . "' keyword must be an object, " . gettype($schema->{Schema::VARS_PROP}) . " given"
-                    );
-                }
-                $vars = $this->deepClone($schema->{Schema::VARS_PROP});
-                $this->resolveVars($vars, $document_data, $data_pointer);
-                if ($this->globalVars) {
-                    $vars = (array) $vars;
-                    $vars += $this->globalVars;
-                }
+            $ref = URI::parseTemplate($ref, $this->getVars($document_data, $data_pointer, $schema));
+        }
+
+        $map_used = $this->mapSupport && property_exists($schema, Schema::MAP_PROP);
+
+        // $map
+        if ($map_used) {
+            unset($data);
+            $data = $this->deepClone($schema->{Schema::MAP_PROP});
+            $this->resolveVars($data,$document_data, $data_pointer);
+
+            unset($document_data);
+            $document_data = &$data;
+
+            if ($data_pointer) {
+                $parent_data_pointer = array_merge($parent_data_pointer, $data_pointer);
+                $data_pointer = [];
             }
-            else {
-                $vars = $this->globalVars;
-            }
-            $ref = URI::parseTemplate($ref, $vars);
-            unset($vars);
         }
 
         // Check if is relative json pointer
@@ -348,6 +365,7 @@ class Validator implements IValidator
             if (!JsonPointer::isEscapedPointer($ref)) {
                 throw new InvalidJsonPointerException($ref);
             }
+
             $schema = JsonPointer::getDataByRelativePointer(
                 $document->resolve(),
                 $relative,
@@ -357,6 +375,7 @@ class Validator implements IValidator
             if ($schema === $this) {
                 throw new InvalidJsonPointerException($ref);
             }
+
             return $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
         }
 
@@ -371,6 +390,7 @@ class Validator implements IValidator
                 if ($schema === $this) {
                     throw new InvalidJsonPointerException($pointer);
                 }
+
                 return $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
             }
             unset($pointer);
@@ -385,6 +405,7 @@ class Validator implements IValidator
             if (!JsonPointer::isEscapedPointer($fragment)) {
                 throw new InvalidJsonPointerException($fragment);
             }
+
             // try to resolve locally
             $schema = $document->resolve($base_ref . '#');
 
@@ -406,10 +427,15 @@ class Validator implements IValidator
                         throw new InvalidJsonPointerException($fragment);
                     }
                 }
-                $parent_data_pointer = array_merge($parent_data_pointer, $data_pointer);
-                $data_pointer = [];
-                unset($document_data);
-                $document_data = &$data;
+
+                if (!$map_used) {
+                    unset($document_data);
+                    $document_data = &$data;
+                    if ($data_pointer) {
+                        $parent_data_pointer = array_merge($parent_data_pointer, $data_pointer);
+                        $data_pointer = [];
+                    }
+                }
             } else {
                 if ($fragment !== '' && $fragment !== '/') {
                     $schema = JsonPointer::getDataByPointer($document->resolve(), $fragment, $this);
@@ -436,13 +462,19 @@ class Validator implements IValidator
         if (!($document instanceof ISchema)) {
             throw new SchemaNotFoundException($base_ref);
         }
-        $schema = $document->resolve($ref);
-        $parent_data_pointer = array_merge($parent_data_pointer, $data_pointer);
-        $data_pointer = [];
-        unset($document_data);
-        $document_data = &$data;
-        return $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
 
+        $schema = $document->resolve($ref);
+
+        if (!$map_used) {
+            unset($document_data);
+            $document_data = &$data;
+            if ($data_pointer) {
+                $parent_data_pointer = array_merge($parent_data_pointer, $data_pointer);
+                $data_pointer = [];
+            }
+        }
+
+        return $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
     }
 
     /**
@@ -1983,6 +2015,38 @@ class Validator implements IValidator
     }
 
     /**
+     * @param $document_data
+     * @param $data_pointer
+     * @param stdClass $schema
+     * @return array
+     */
+    protected function getVars(&$document_data, &$data_pointer, stdClass $schema): array
+    {
+        if (!property_exists($schema, Schema::VARS_PROP)) {
+            return $this->globalVars;
+        }
+
+        if (!is_object($schema->{Schema::VARS_PROP})) {
+            throw new SchemaKeywordException(
+                $schema,
+                Schema::VARS_PROP,
+                $schema->{Schema::VARS_PROP},
+                "'" . Schema::VARS_PROP . "' keyword must be an object, " . gettype($schema->{Schema::VARS_PROP}) . " given"
+            );
+        }
+
+        $vars = $this->deepClone($schema->{Schema::VARS_PROP});
+        $this->resolveVars($vars, $document_data, $data_pointer);
+
+        if ($this->globalVars) {
+            $vars = (array) $vars;
+            $vars += $this->globalVars;
+        }
+
+        return $vars;
+    }
+
+    /**
      * Clones a variable in depth
      * @param $vars
      * @return mixed
@@ -2017,7 +2081,7 @@ class Validator implements IValidator
      * @param $data
      * @param array $data_pointer
      */
-    protected function resolveVars(&$vars, &$data, array &$data_pointer)
+    protected function resolveVars(&$vars, &$data, array &$data_pointer = [])
     {
         if (is_object($vars)) {
             if (property_exists($vars, '$ref') && is_string($vars->{'$ref'})) {
@@ -2034,14 +2098,22 @@ class Validator implements IValidator
                 if ($resolved === $this) {
                     throw new InvalidJsonPointerException($ref);
                 }
+                if (is_array($resolved) && property_exists($vars, '$each') && is_object($vars->{'$each'})) {
+                    foreach ($resolved as $index => &$item) {
+                        $copy = $this->deepClone($vars->{'$each'});
+                        $this->resolveVars($copy,$item);
+                        $resolved[$index] = $copy;
+                        unset($copy, $item, $index);
+                    }
+                }
+
                 $vars = $resolved;
                 return;
             }
-            goto LOOP;
         } elseif (!is_array($vars)) {
             return;
         }
-        LOOP:
+
         foreach ($vars as $name => &$var) {
             if (is_array($var) || is_object($var)) {
                 $this->resolveVars($var, $data, $data_pointer);

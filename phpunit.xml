@@ -5,6 +5,7 @@
             <file>./tests/RefTest.php</file>
             <file>./tests/TypesTest.php</file>
             <file>./tests/FilterTest.php</file>
+            <file>./tests/MapTest.php</file>
         </testsuite>
         <testsuite name="Official">
             <file>./tests/OfficialDraft7.php</file>

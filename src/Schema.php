@@ -32,10 +32,11 @@ class Schema implements ISchema
     const FILTERS_PROP = '$filters';
     const FUNC_NAME = '$func';
     const ID_PROP = '$id';
+    const MAP_PROP = '$map';
 
     const WALK_IGNORE_PROPERTIES = [
         'default', 'const', 'enum',
-        self::FILTERS_PROP, self::VARS_PROP
+        self::FILTERS_PROP, self::VARS_PROP, self::MAP_PROP
     ];
 
     /** @var string */

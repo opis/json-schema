@@ -1,0 +1,124 @@
+{
+    "$id": "schema:/maps.json#",
+    "definitions": {
+        "user": {
+            "type": "object",
+            "properties": {
+                "first-name": {
+                    "type": "string"
+                },
+                "last-name": {
+                    "type": "string"
+                },
+                "age": {
+                    "type": "number"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "name": {
+                                "type": "string"
+                            },
+                            "enabled": {
+                                "type": "boolean"
+                            }
+                        },
+                        "required": ["name", "enabled"],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "required": ["first-name", "last-name", "age", "permissions"],
+            "additionalProperties": false,
+
+            "$comment": "Making sure that the user is 'standard'",
+            "allOf": [
+                {
+                    "$ref": "#/definitions/standard-user-name",
+                    "$map": {
+                        "first": {"$ref": "0/first-name"},
+                        "last": {"$ref": "0/last-name"}
+                    },
+                    "$comment": "Map first and last name"
+                },
+                {
+                    "$ref": "#/definitions/standard-user-age",
+                    "$map": {
+                        "age": {"$ref": "0/age"}
+                    },
+                    "$comment": "Map only 'age' field to pass additionalProperties check"
+                }
+            ]
+        },
+
+        "extended-user": {
+            "$comment": "",
+            "type": "object",
+            "properties": {
+                "name": {
+                    "type": "string"
+                },
+                "permissions": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                }
+            },
+            "required": ["name", "permissions"],
+            "additionalProperties": false,
+
+            "allOf": [
+                {
+                    "$ref": "#/definitions/user",
+                    "$map": {
+                        "first-name": {"$ref": "0/name"},
+                        "last-name": "",
+                        "age": 100,
+                        "permissions": {
+                            "$ref": "0/permissions",
+                            "$each": {
+                                "name": {"$ref": "0"},
+                                "enabled": true
+                            },
+                            "$comment": "We are using '0' as relative json-pointer to match the string value"
+                        }
+                    },
+                    "$comment": "Map first-name and use a default for last-name and age. Use an $each mapper for perms."
+                }
+            ]
+        },
+
+        "$comment": "Below are the standards provided by some 3rd party",
+        "standard-user-name": {
+            "type": "object",
+            "properties": {
+                "first": {
+                    "type": "string"
+                },
+                "last": {
+                    "type": "string"
+                },
+                "middle": {
+                    "type": ["string", "null"]
+                }
+            },
+            "required": ["first", "last"],
+            "additionalProperties": false
+        },
+        "standard-user-age": {
+            "type": "object",
+            "properties": {
+                "age": {
+                    "type": "integer",
+                    "minimum": 1,
+                    "maximum": 200
+                }
+            },
+            "required": ["age"],
+            "additionalProperties": false
+        }
+    }
+}
