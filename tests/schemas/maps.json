@@ -65,9 +65,12 @@
                     "items": {
                         "type": "string"
                     }
+                },
+                "permissions-are-enabled": {
+                    "type": "boolean"
                 }
             },
-            "required": ["name", "permissions"],
+            "required": ["name", "permissions", "permissions-are-enabled"],
             "additionalProperties": false,
 
             "allOf": [
@@ -81,7 +84,7 @@
                             "$ref": "0/permissions",
                             "$each": {
                                 "name": {"$ref": "0"},
-                                "enabled": true
+                                "enabled": {"$ref": "2/permissions-are-enabled"}
                             },
                             "$comment": "We are using '0' as relative json-pointer to match the string value"
                         }

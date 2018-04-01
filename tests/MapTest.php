@@ -41,6 +41,7 @@ class MapTest extends TestCase
         $result = $validator->uriValidation((object) [
             "name" => "admin",
             "permissions" => ["edit", "delete"],
+            "permissions-are-enabled" => true,
         ], "schema:/maps.json#/definitions/extended-user");
         $this->assertTrue($result->isValid());
     }

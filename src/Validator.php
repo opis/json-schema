@@ -2099,14 +2099,17 @@ class Validator implements IValidator
                     throw new InvalidJsonPointerException($ref);
                 }
                 if (is_array($resolved) && property_exists($vars, '$each') && is_object($vars->{'$each'})) {
+                    $pointer = $relative['pointer'] ?? [];
                     foreach ($resolved as $index => &$item) {
                         $copy = $this->deepClone($vars->{'$each'});
-                        $this->resolveVars($copy,$item);
-                        $resolved[$index] = $copy;
+                        $pointer[] = $index;
+                        $this->resolveVars($copy,$data,$pointer);
+                        array_pop($pointer);
+                        $item = $copy;
                         unset($copy, $item, $index);
                     }
+                    unset($pointer);
                 }
-
                 $vars = $resolved;
                 return;
             }
