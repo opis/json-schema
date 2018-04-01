@@ -40,7 +40,7 @@ This library is available on [Packagist](https://packagist.org/packages/opis/jso
 ```json
 {
     "require": {
-        "opis/json-schema": "^1.0.5"
+        "opis/json-schema": "^1.0.6"
     }
 }
 ```
