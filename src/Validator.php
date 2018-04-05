@@ -2038,8 +2038,9 @@ class Validator implements IValidator
         $vars = $this->deepClone($schema->{Schema::VARS_PROP});
         $this->resolveVars($vars, $document_data, $data_pointer);
 
+        $vars = (array) $vars;
+
         if ($this->globalVars) {
-            $vars = (array) $vars;
             $vars += $this->globalVars;
         }
 
