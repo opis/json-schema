@@ -191,6 +191,9 @@ REGEX;
         }
 
         if (isset($components['scheme'])) {
+            if ('file' === $components['scheme']) {
+                $uri = '//' . $uri;
+            }
             return $components['scheme'] . ':' . $uri;
         }
 
