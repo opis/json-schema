@@ -1,0 +1,180 @@
+{
+    "1.x": [
+        {
+            "title": "Opis Json Schema",
+            "pages": [
+                {
+                    "title": "About",
+                    "url": "/1.x/",
+                    "description": "About this library"
+                },
+                {
+                    "title": "Quick start",
+                    "url": "/1.x/quick-start.html",
+                    "description": "Some quick examples for using opis json schema"
+                }
+            ]
+        },
+        {
+            "title": "Basics",
+            "pages": [
+                {
+                    "title": "Structure",
+                    "url": "/1.x/structure.html",
+                    "description": "Json Schema structure and metadata keywords"
+                },
+                {
+                    "title": "Generics",
+                    "url": "/1.x/generics.html",
+                    "description": "Generic validation keywords"
+                },
+                {
+                    "title": "String type",
+                    "url": "/1.x/string.html",
+                    "description": "Keywords for string type"
+                },
+                {
+                    "title": "Number type",
+                    "url": "/1.x/number.html",
+                    "description": "Keywords for number type"
+                },
+                {
+                    "title": "Integer type",
+                    "url": "/1.x/integer.html",
+                    "description": "Description for integer type"
+                },
+                {
+                    "title": "Boolean type",
+                    "url": "/1.x/boolean.html",
+                    "description": "Description for boolean type"
+                },
+                {
+                    "title": "Null type",
+                    "url": "/1.x/null.html",
+                    "description": "Description for null type"
+                },
+                {
+                    "title": "Object type",
+                    "url": "/1.x/object.html",
+                    "description": "Keywords for object type"
+                },
+                {
+                    "title": "Array type",
+                    "url": "/1.x/array.html",
+                    "description": "Keywords for array type"
+                },
+                {
+                    "title": "Formats",
+                    "url": "/1.x/formats.html",
+                    "description": "Default formats"
+                },
+                {
+                    "title": "Default value",
+                    "url": "/1.x/default-value.html",
+                    "description": "Default value keyword"
+                },
+                {
+                    "title": "Conditional subschemas",
+                    "url": "/1.x/conditional-subschemas.html",
+                    "description": "Keywords for applying conditional subschemas"
+                },
+                {
+                    "title": "Multiple subschemas",
+                    "url": "/1.x/multiple-subschemas.html",
+                    "description": "Keywords for applying multiple subschemas"
+                }
+            ]
+        },
+        {
+            "title": "Reusability",
+            "pages": [
+                {
+                    "title": "References",
+                    "url": "/1.x/ref-keyword.html",
+                    "description": "$ref keyword"
+                },
+                {
+                    "title": "Definitions",
+                    "url": "/1.x/definitions.html",
+                    "description": "definitions keyword"
+                },
+                {
+                    "title": "Pointers",
+                    "url": "/1.x/pointers.html",
+                    "description": "Schema referencing"
+                }
+            ]
+        },
+        {
+            "title": "Advanced features",
+            "pages": [
+                {
+                    "title": "Variables",
+                    "url": "/1.x/variables.html",
+                    "description": "$vars keyword"
+                },
+                {
+                    "title": "URI Templates",
+                    "url": "/1.x/uri-template.html",
+                    "description": "Using URI templates with $vars keyword"
+                },
+                {
+                    "title": "Filters",
+                    "url": "/1.x/filters.html",
+                    "description": "$filters keyword"
+                },
+                {
+                    "title": "Mappers",
+                    "url": "/1.x/mappers.html",
+                    "description": "$map keyword"
+                }
+            ]
+        },
+        {
+            "title": "API",
+            "pages": [
+                {
+                    "title": "Introduction",
+                    "url": "/1.x/php-intro.html",
+                    "description": "API introduction"
+                },
+                {
+                    "title": "Validator",
+                    "url": "/1.x/php-validator.html",
+                    "description": "Validator object"
+                },
+                {
+                    "title": "Validation result",
+                    "url": "/1.x/php-validation-result.html",
+                    "description": "Validation result and errors"
+                },
+                {
+                    "title": "Loader",
+                    "url": "/1.x/php-loader.html",
+                    "description": "Loader object"
+                },
+                {
+                    "title": "Filters",
+                    "url": "/1.x/php-filter.html",
+                    "description": "Create a new json schema filter"
+                },
+                {
+                    "title": "Formats",
+                    "url": "/1.x/php-format.html",
+                    "description": "Create a new json schema format"
+                },
+                {
+                    "title": "Media types",
+                    "url": "/1.x/php-media-type.html",
+                    "description": "Create a new json schema media (MIME) type"
+                },
+                {
+                    "title": "Schema structure",
+                    "url": "/1.x/php-schema.html",
+                    "description": "Internal structure of a schema"
+                }
+            ]
+        }
+    ]
+}
+
