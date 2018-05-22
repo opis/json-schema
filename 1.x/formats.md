@@ -38,7 +38,7 @@ usually different data types have different formats.
 
 Opis Json Schema provides the following formats for `string` type.
 
-Please note that formats starting with `idn-` require [PHP intl extension](http://php.net/manual/en/book.intl.php){:target=_blank} 
+Please note that formats starting with `idn-` require [PHP intl extension](http://php.net/manual/en/book.intl.php){:target="_blank"} 
 to work correctly.
 {:.alert.alert-info}
 

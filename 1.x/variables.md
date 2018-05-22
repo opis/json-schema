@@ -18,13 +18,14 @@ to make your life easier.
 - substitution variables for [URI templates](uri-template.html)
 - arguments to [filters](filters.html)
 
-`$vars` keyword support is enabled by default, to disable it use `Opis\JsonSchema\Validator::varsSupport(false)`.
-{:.alert.alert-info}
-
 ## General structure
 
 In a json schema document, `$vars` must be an object but 
 the values inside `$vars` can be anything.
+
+
+`$vars` keyword support is enabled by default, to disable it use `Opis\JsonSchema\Validator::varsSupport(false)`.
+{:.alert.alert-info}
 
 Example of `$vars`:
 
@@ -278,4 +279,4 @@ the `$ref`s will be
 | `prop-a` | `http://example.com/vendor/1.0/a.json` | **global** variable `VENDOR_VERSION` is `1.0` |
 | `prop-b` | `http://example.com/vendor/2.0/b.json` | **local** variable `VENDOR_VERSION` is `2.0` |
 | `prop-c` | `http://example.com/vendor/1.0/c.json` | **global** variable `VENDOR_VERSION` is `1.0` and there is no local variable `VENDOR_VERSION` |
-{:.table}
+{:.table.table-striped}

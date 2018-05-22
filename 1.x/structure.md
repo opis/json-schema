@@ -10,7 +10,8 @@ keywords: opis, php, json, schema, validation, structure, metadata
 
 Json Schema it's a declarative way to write validations. It contains
 only the steps that need to be performed in order to validate something.
-The format used to write these steps is, of course, [JSON](https://www.json.org/){:target=_blank}.
+The format used to write these steps is, of course, 
+[JSON](https://www.json.org/){:target="_blank"}.
 
 **Opis Json Schema** is the software/library (for PHP) that performs those steps
 and tells you the validation status.

@@ -111,15 +111,15 @@ rule to `our-user.json`
 }
 ```
 
-`$map` keyword is enabled by default, to disable it use `Opis\JsonSchema\Validator::mapSupport(false)`.
-Also, please note that `$map` will not work if `$vars` support is disabled.
-{:.alert.alert-info}
-
 ## General structure
 
 In a json schema document, `$map` is evaluated like [$vars](variables.html),
 the difference is that `$map` can also be an array (`$vars` can only be an object)
 and can only be used in conjunction with `$ref`.
+
+`$map` keyword is enabled by default, to disable it use `Opis\JsonSchema\Validator::mapSupport(false)`.
+Also, please note that `$map` will not work if `$vars` support is disabled.
+{:.alert.alert-info}
 
 Example for `$map`
 
@@ -181,7 +181,7 @@ can use `$each` keyword.
                         "title": {"$ref": "0/name"},
                         "weight": {"$ref": "0#"}
                     }
-                }
+                },
                 "hide-title": true
             }
         }
@@ -197,7 +197,7 @@ Considering data to be
     "list": [
         {"index": 5, "name": "A"},
         {"index": 10, "name": "B"},
-        {"index": 8, "name": "C"},
+        {"index": 8, "name": "C"}
     ]
 }
 ```

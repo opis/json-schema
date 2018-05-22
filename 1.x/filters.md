@@ -27,6 +27,9 @@ last property checked.
 In a json schema document, `$filters` can be: 
 a string, an object or an array of strings and objects.
 
+`$filters` keyword support is enabled by default, to disable it use `Opis\JsonSchema\Validator::filtersSupport(false)`.
+{:.alert.alert-info}
+
 If your filter doesn't need any arguments (besides the value that is validated)
 you can use it like a string.
 
@@ -70,6 +73,6 @@ You can even use multiple filters by creating an array.
 }
 ```
 
-Please note that if you use an array of filters and one filter is not
-valid the following filters will not be called.
+Please note that if you use an array of filters and one filter doesn't
+validate the data, the remaining filters will not be called.
 {:.alert.alert-warning}

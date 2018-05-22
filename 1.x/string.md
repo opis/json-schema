@@ -32,11 +32,11 @@ Unicode characters.
 Please note that in order to calculate the length of a string,
 Opis Json Schema uses the following libraries/functions, 
 depending which one is available on your system: 
-[Opis String](https://github.com/opis/string){:target=_blank} 
+[Opis String](https://github.com/opis/string){:target="_blank"} 
 (recommended, add it with `composer require opis/string`),
-[mb_strlen](http://php.net/manual/en/function.mb-strlen.php){:target=_blank}
-(you must enable [mb_string](http://php.net/manual/en/book.mbstring.php){:target=_blank} extension for PHP),
-[strlen](http://php.net/manual/en/function.strlen.php){:target=_blank} 
+[mb_strlen](http://php.net/manual/en/function.mb-strlen.php){:target="_blank"}
+(you must enable [mb_string](http://php.net/manual/en/book.mbstring.php){:target="_blank"} extension for PHP),
+[strlen](http://php.net/manual/en/function.strlen.php){:target="_blank"} 
 (will not always return the correct length of a string with Unicode characters).
 {:.alert.alert-info}
 
@@ -106,7 +106,7 @@ Value of this keyword must be a string representing a valid regular
 expression.
 
 Please note that the delimiter used by Opis Json Schema is `/` (slash)
-and the modifier is `u` ([PCRE_UTF8](http://php.net/manual/en/reference.pcre.pattern.modifiers.php){:target=_blank}).
+and the modifier is `u` ([PCRE_UTF8](http://php.net/manual/en/reference.pcre.pattern.modifiers.php){:target="_blank"}).
 {:.alert.alert-info}
 
 ```json
@@ -133,8 +133,8 @@ between `a` and `z`. The rest of the string can be any character.
 {:.alert.alert-danger}
 
 For more information about PHP regular expressions, you can read about
-- [Pattern Syntax](http://php.net/manual/en/reference.pcre.pattern.syntax.php){:target=_blank}
-- [preg_match function](http://php.net/manual/en/function.preg-match.php){:target=_blank}
+- [Pattern Syntax](http://php.net/manual/en/reference.pcre.pattern.syntax.php){:target="_blank"}
+- [preg_match function](http://php.net/manual/en/function.preg-match.php){:target="_blank"}
 
 ### contentEncoding
 

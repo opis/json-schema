@@ -53,7 +53,7 @@ Here are some examples about how absolute json pointers work:
 | `/info/onStock` | `true` |
 | `/a~1b` | `"a"` |
 | `/inexistent/path` | error |
-{:.table}
+{:.table.table-striped}
 
 You can find more details about the structure of absolute json pointers [here](https://tools.ietf.org/html/rfc6901){:target="_blank"}.
 
@@ -99,7 +99,7 @@ the desired schemas.
 | `http://example.com/schema.json#/definitions/personal/email` | `{"type": "string", "format": "email"}` |
 | `http://example.com/schema.json#/definitions/personal/birthday` | `{"type": "string", "format": "date"}` |
 | `http://example.com/schema.json#/inexistent/path` | error |
-{:.table}
+{:.table.table-striped}
 
 Now lets see a complex example that uses the [`$ref` keyword](ref-keyword.html#ref).
 
@@ -159,7 +159,7 @@ the `properties` keyword.
 | info | `http://example.com/path/info.json#` |
 | root | `http://example.com/other/path/to/schema.json#/definitions/root` |
 | external | `http://external.example.com/some-schema.json#/definitions/name` |
-{:.table}
+{:.table.table-striped}
 
 These are the steps in order to perform validation for __email__ property
 
@@ -221,7 +221,7 @@ we have the following table
 | `1/a~1b` | `"a"` |
 | `1/inexstent/path` | error |
 | `2` | error |
-{:.table}
+{:.table.table-striped}
 
 Considering that our current location is `"http://example.com"` (absolute json pointer `/features/1/url`)
 we have the following table
@@ -241,7 +241,7 @@ we have the following table
 | `3/inexstent/path` | error |
 | `3#` | error |
 | `4` | error |
-{:.table}
+{:.table.table-striped}
 
 You can find more details about the structure of relative json pointers [here](https://tools.ietf.org/html/draft-luff-relative-json-pointer-00){:target="_blank"}.
 

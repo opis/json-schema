@@ -13,6 +13,9 @@ When a data doesn't have a corresponding value, the value of this keyword
 will be used instead to do the validation checks.
 This keyword is not mandatory and the value of this keyword can be anything.
 
+`default` keyword support is enabled by default, to disable it use `Opis\JsonSchema\Validator::defaultSupport(false)`.
+{:.alert.alert-info}
+
 ```json
 {
   "type": "object",
@@ -33,7 +36,6 @@ This keyword is not mandatory and the value of this keyword can be anything.
 
 `{"prop1": 5}` - invalid (not a string)
 {:.alert.alert-danger}
-
 
 Please pay attention when using `default`! The value of the keyword must pass
 the validations!

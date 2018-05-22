@@ -62,10 +62,10 @@ support, and [mappers](mappers.html) to allow hardcore schema reuse.
 Not to mention that you can create [custom formats](php-format.html) and [media types](php-media-type.html).
 
 In 99.9999% of custom validation cases, [creating a filter](php-filter.html) is enough,
-but if you still think that a new keyword is needed please open a [GitHub issue](https://github.com/opis/json-schema/issues){:target=_blank} to get in touch.
+but if you still think that a new keyword is needed please open a [GitHub issue](https://github.com/opis/json-schema/issues){:target="_blank"} to get in touch.
  
 #### I cannot find the information I need on this site, what can I do?
 
-Well, you can always [create a GitHub issue](https://github.com/opis/json-schema/issues){:target=_blank} explaining your problem.
+Well, you can always [create a GitHub issue](https://github.com/opis/json-schema/issues){:target="_blank"} explaining your problem.
 
  
