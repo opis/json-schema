@@ -13,25 +13,17 @@ Json Schema
 **The library's key features:**
 
 - Fast validation (you can set maximum number of errors for a validation)
-- Supports [json pointer](https://tools.ietf.org/html/rfc6901)
-- Support [relative json pointer](https://tools.ietf.org/html/draft-luff-relative-json-pointer-00)
-- Support for [uri-template](https://tools.ietf.org/html/rfc6570)
-- Support for if-then-else (draft-07)
-- Most of the string formats are supported
-- Support for custom formats
-- Support for custom media types
-- Support for default value
-- Support for custom filters (see `$filters`)
-- Support for custom variables (local and global, see `$vars`)
-- Schema reuse (see `$map`)
-
-## License
-
-**Opis Json Schema** is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0). 
-
-## Requirements
-
-* PHP 7 or higher
+- Custom schema document [loaders](https://www.opis.io/json-schema/1.x/php-loader.html)
+- Support for [if-then-else](https://www.opis.io/json-schema/1.x/conditional-subschemas.html#if-then-else)
+- Most of the [string formats](https://www.opis.io/json-schema/1.x/formats.html#provided-formats) are supported
+- Support for custom [formats](https://www.opis.io/json-schema/1.x/php-format.html)
+- Support for custom [media types](https://www.opis.io/json-schema/1.x/php-media-type.html)
+- Support for [default value](https://www.opis.io/json-schema/1.x/default-value.html)
+- Support for custom variables using [`$vars` keyword](https://www.opis.io/json-schema/1.x/variables.html)
+- Support for custom filters using [`$filters` keyword](https://www.opis.io/json-schema/1.x/filters.html)
+- Advanced schema reuse using [`$map` keyword](https://www.opis.io/json-schema/1.x/mappers.html)
+- Support for [json pointers](https://www.opis.io/json-schema/1.x/pointers.html) (absolute and relative pointers)
+- Support for [URI templates](https://www.opis.io/json-schema/1.x/uri-template.html)
 
 ## Installation
 
@@ -41,253 +33,27 @@ This library is available on [Packagist](https://packagist.org/packages/opis/jso
 composer require opis/json-schema
 ```
 
-### Documentation
+## Requirements
 
-Current implementation extends standards by adding `$vars`, `$filters` and `$map` keywords.
+* PHP 7 or higher
 
-#### $vars keyword
+## License
 
-`$vars` keyword is used in conjunction with `$ref` (if `$ref` is an uri-template).
+**Opis Json Schema** is licensed under the [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0). 
 
-Properties:
-- must be an object
-- can reference any data
-- can reference data by using `$ref` property (json pointer)
-- can map referenced arrays using `$each` (see `$map` for example)
+## Documentation
 
-To disable `$vars` use `Opis\JsonSchema\Validator::varsSupport(false)`.
+We provide documentation for all json schema keywords, structure, and of course the API
+for this library. Check out the documentation at [opis.io/json-schema](https://www.opis.io/json-schema).
 
-Example
+Current implementation extends standards by adding 
+[`$vars`](https://www.opis.io/json-schema/1.x/variables.html), 
+[`$filters`](https://www.opis.io/json-schema/1.x/filters.html) 
+and [`$map`](https://www.opis.io/json-schema/1.x/mappers.html) keywords.
 
-```json
-{
-    "type": "object",
-    "properties": {
-        "prop1": {"type": "string"},
-        "prop2": {
-            "$ref": "http://example.com/{file}.json{#fragment}",
-            "$vars": {
-                "fragment": "static-fragment",
-                "file": {"$ref": "1/prop1"} 
-            }
-        }
-    },
-    "required": ["prop1"]
-}
-```
+## Examples
 
-For the following data
-```json
-{
-    "prop1": "some-file",
-    "prop2": null
-}
-```
-the `$ref` will be `http://example.com/absolute/path/some-file.json#static-fragment`
-
-
-#### $filters keyword
-
-`$filters` keyword is used to add arbitrary filters in schema. 
-
-Properties:
-
-- `$filters` can be an object or an array of objects
-- filter name is given by `$func` property
-- can have arguments (using `$vars` property)
-- filters will be checked only if the data matches the schema
-
-To disable `$filters` use `Opis\JsonSchema\Validator::filtersSupport(false)`.
-
-Example
-
-```json
-{
-    "simple": {
-        "$filters": {
-            "$func": "filter_name"
-        }
-    },
-    "with_vars": {
-        "$filters": {
-            "$func": "filter_name",
-            "$vars": {
-                "arg1": 5,
-                "arg2": "some arg",
-                "arg3": {
-                    "$ref": "2/relative/path"
-                }
-            }
-        }
-    },
-    "multiple": {
-        "$filters": [
-            {
-                "$func": "filter_name_1"
-            },
-            {
-                "$func": "filter_name_2",
-                "$vars": {
-                    "arg1": 5,
-                    "arg2": "some arg",
-                    "arg3": {
-                        "$ref": "/absolute/path/to/data"
-                    }
-                }
-            }
-        ]
-    }
-}
-```
-
-
-#### $map keyword
-
-`$map` keyword is used in conjunction with `$ref` (if `$ref` is an uri-template) to map existing object to a new structure.
-
-Properties:
-- behaves like `$vars` (but can also be an array, not only an object)
-- schema referenced by `$ref` will receive the mapped object for validation 
-(meaning that the schema should validate an object or an array)
-- designed for schema reuse
-
-To disable `$map` use `Opis\JsonSchema\Validator::mapSupport(false)`.
-
-Example
-
-Let's assume that a 3rd party gives us some standard validation rules for users.
-
-```json
-{
-    "$id": "http://example.com/standards.json#",
-
-    "definitions": {
-        "standard-user": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string"
-                },
-                "birthday": {
-                    "type": "string",
-                    "format": "date"
-                },
-                "permissions": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/standard-user-permission"
-                    }
-                }
-            },
-            "required": ["name", "permissions"],
-            "additionalProperties": false
-        },
-        "standard-user-permission": {
-            "type": "object",
-            "properties": {
-                "name": {
-                    "type": "string",
-                    "enum": ["create", "read", "update", "delete"]
-                },
-                "enabled": {
-                    "type": "boolean"
-                }
-            },
-            "required": ["name", "enabled"],
-            "additionalProperties": false
-        }
-    }
-}
-```
-
-We can create or own user structure and still validate it using the provided schemas.
-
-```json
-{
-    "type": "object",
-    "properties": {
-        "first-name": {
-            "type": "string"
-        },
-        "last-name": {
-            "type": "string"
-        },
-        "blog-permissions": {
-            "type": "array",
-            "items": {
-                "type": "string"
-            }
-        }
-    },
-    "required": ["first-name", "last-name", "blog-permissions"],
-    "additionalProperties": false,
-
-    "$comment": "Below we will validate using the standards",
-    "allOf": [
-        {
-            "$ref": "http://example.com/standards.json#/definitions/standard-user",
-            "$map": {
-                "name": {
-                    "$ref": "0/first-name",
-                    "$comment": "We map name value using first-name from our current object"
-                },
-
-                "$comment": "Our user doesn't have a birthday, so we just provide a valid one",
-                "birthday": "1970-01-01",
-
-                "permissions": {
-                    "$ref": "0/blog-permissions",
-
-                    "$comment": "Since our permissions have only string values we must convert them to an object",
-                    "$each": {
-                        "name": {
-                            "$ref": "0",
-                            "$comment": "Use the current string as name (it is a valid json pointer)"
-                        },
-
-                        "$comment": "Again, we provide a valid value for enabled",
-                        "enabled": true
-                    }
-                }
-            }
-        }
-    ]
-}
-```
-
-So, for the following data
-
-```json
-{
-    "first-name": "Json-Schema",
-    "last-name": "Opis",
-    "permissions": [
-        "create",
-        "read"
-    ]
-}
-```
-
-the mapped result (data that will be validated) is
-
-```json
-{
-    "name": "Json-Schema",
-    "birthday": "1970-01-01",
-    "permissions": [
-        {
-            "name": "create",
-            "enabled": true
-        },
-        {
-            "name": "read",
-            "enabled": true
-        }
-    ]
-}
-```
-
-### PHP Examples
+For more examples please go to the [documentation page](https://www.opis.io/json-schema).
 
 #### Basic example
 
@@ -302,10 +68,13 @@ use Opis\JsonSchema\{
 
 $validator = new Validator();
 
+$schema = <<<'JSON'
+{
+    "type": "string",
+    "minLength": 3
+}
+JSON;
 
-$schema = (object)[
-    'minLength' => 3
-];
 /** @var ValidationResult $result */
 $result = $validator->dataValidation("abc", $schema);
 
@@ -315,12 +84,11 @@ if ($result->isValid()) {
 else {
     /** @var ValidationError $error */
     $error = $result->getFirstError();
-    echo "Invalid, error: ", $error->keyword(), PHP_EOL;
+    echo "Invalid, error on keyword: ", $error->keyword(), PHP_EOL;
 }
-
 ```
 
-#### Loader
+#### Using a schema document loader
 
 ```php
 <?php
@@ -334,24 +102,40 @@ use Opis\JsonSchema\{
 
 $loader = new MemoryLoader();
 
-$loader->add((object) [
-    "type" => "integer",
-    "minimum" => 0
-], "urn:positive-integer");
+$loader->add(<<<'JSON'
+{
+    "$id": "urn:positive-integer",
+    
+    "type": "integer",
+    "minimum": 0
+}
+JSON
+);
 
-$loader->add((object) [
-    "type" => "string",
-    "format" => "email"
-], "urn:mail");
+$loader->add(<<<'JSON'
+{
+    "$id": "urn:mail",
+    
+    "type": "string",
+    "format": "email"
+}
+JSON
+);
 
-$loader->add((object) [
-    "type" => "object",
-    "properties" => (object) [
-        "age" => (object)['$ref' => "urn:positive-integer"],
-        "mail" => (object)['$ref' => "urn:mail"],
-    ],
-    "required" => ["age", "mail"]
-], "urn:simple-person");
+$loader->add(<<<'JSON'
+{
+    "$id": "urn:simple-person",
+    
+    "type": "object",
+    "properties": {
+        "age": {"$ref": "urn:positive-integer"},
+        "mail": {"$ref": "urn:mail"}
+    },
+    "required": ["age", "mail"],
+    "additionalProperties": false
+}
+JSON
+);
 
 $validator = new Validator();
 $validator->setLoader($loader);
@@ -364,7 +148,7 @@ if ($result->isValid()) {
 else {
     /** @var ValidationError $error */
     $err = $result->getFirstError();
-    echo "Invalid e-mail, error: ", $err->keyword(), PHP_EOL;
+    echo "Invalid e-mail, error on keyword: ", $err->keyword(), PHP_EOL;
 }
 
 /** @var ValidationResult $result */
@@ -379,11 +163,11 @@ if ($result->isValid()) {
 else {
     /** @var ValidationError $error */
     $err = $result->getFirstError();
-    echo "Invalid simple-person, error: ", $err->keyword(), PHP_EOL;
+    echo "Invalid simple-person, error on keyword: ", $err->keyword(), PHP_EOL;
 }
 ```
 
-#### Vars
+#### Using variables ($vars) to dynamically load sub-schemas
 
 ```php
 <?php
@@ -394,37 +178,37 @@ use Opis\JsonSchema\{
     ValidationError
 };
 
-$schema = (object) [
-    "type" => "object",
-    "properties" => (object) [
-        "region" => (object)[
-            "enum" => ["eu", "us"],
-        ],
-        "age" => (object)[
-            // #/definitions/age-[eu|us]
-            '$ref' => "#/{+globalVar}/{+localVar}-{+dataRefVar}",
-            '$vars' => (object)[
-                // local constant
-                "localVar" => "age",
-                // relative json-pointer applied to current data,
-                "dataRefVar" => (object)[
-                    '$ref' => "1/region"
-                ],
-            ]
-        ]
-    ],
-    "required" => ["region"],
-    "definitions" => (object)[
-        "age-eu" => (object)[
-            "type" => "integer",
-            "minimum" => 18,
-        ],
-        "age-us" => (object)[
-            "type" => "integer",
-            "minimum" => 21,
-        ],
-    ]
-];
+$schema = <<<'JSON'
+{
+    "type": "object",
+    "properties": {
+        "region": {
+            "enum": ["eu", "us"]
+        },
+        "age": {
+            "$ref": "#/{+globalVar}/{+localVar}-{+dataRefVar}",
+            "$vars": {
+                "localVar": "age",
+                "dataRefVar": {
+                    "$ref": "1/region"
+                }
+            }
+        }
+    },
+    "required": ["region"],
+    
+    "definitions": {
+        "age-eu": {
+            "type": "integer",
+            "minimum": 18
+        },
+        "age-us": {
+            "type": "integer",
+            "minimum": 21
+        }
+    }
+}
+JSON;
 
 $validator = new Validator();
 
@@ -445,11 +229,11 @@ if ($result->isValid()) {
 else {
     /** @var ValidationError $error */
     $err = $result->getFirstError();
-    echo "Invalid, error: ", $err->keyword(), PHP_EOL;
+    echo "Invalid, error on keyword: ", $err->keyword(), PHP_EOL;
 }
 ```
 
-#### Filters
+#### Using a custom filter ($filters)
 
 ```php
 <?php
@@ -465,9 +249,6 @@ use Opis\JsonSchema\{
 $filters = new FilterContainer();
 
 $filters->add("number", "modulo", new class implements IFilter {
-    /**
-     * @inheritDoc
-     */
     public function validate($data, array $args): bool {
         $d = $args['divisor'] ?? 1;
         $r = $args['reminder'] ?? 0;
@@ -478,16 +259,18 @@ $filters->add("number", "modulo", new class implements IFilter {
 $validator = new Validator();
 $validator->setFilters($filters);
 
-$schema = (object) [
-    "type" => "integer",
-    '$filters' => (object) [
-        '$func' => 'modulo',
-        '$vars' => (object) [
-            'divisor' => 4,
-            'reminder' => 3
-        ],
-    ]
-];
+$schema = <<<'JSON'
+{
+    "type": "integer",
+    "$filters": {
+        "$func": "modulo",
+        "$vars": {
+            "divisor": 4,
+            "reminder": 3
+        }
+    }
+}
+JSON;
 
 /** @var ValidationResult $result */
 $result = $validator->dataValidation(7, $schema);
@@ -497,66 +280,94 @@ if ($result->isValid()) {
 else {
     /** @var ValidationError $error */
     $err = $result->getFirstError();
-    echo "Invalid, error: ", $err->keyword(), PHP_EOL;
+    echo "Invalid, error on keyword: ", $err->keyword(), PHP_EOL;
 }
 ```
 
-#### Exceptions
+#### Using a mapper ($map)
 
 ```php
 <?php
 
 use Opis\JsonSchema\{
     Validator,
-    ValidationResult
+    ValidationResult,
+    ValidationError,
+    Loaders\Memory as MemoryLoader
 };
-use Opis\JsonSchema\Exception\{
-    AbstractSchemaException,
-    DuplicateSchemaException,
-    FilterNotFoundException,
-    InvalidJsonPointerException,
-    InvalidSchemaDraftException,
-    InvalidSchemaException,
-    SchemaDraftNotSupportedException,
-    SchemaNotFoundException,
-    SchemaKeywordException,
-    UnknownMediaTypeException
-};
+
+$loader = new MemoryLoader();
+
+$loader->add(<<<'JSON'
+{
+    "$id": "urn:basic-user",
+    
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 120
+        },
+        "email": {
+            "type": "string",
+            "format": "email"
+        }
+    },
+    "required": ["name", "email"],
+    "additionalProperties": false
+}
+JSON
+);
+
+$loader->add(<<<'JSON'
+{
+    "$id": "urn:born-user",
+    
+    "type": "object",
+    "properties": {
+        "birthday": {
+            "type": "string",
+            "format": "date"
+        }
+    },
+    "required": ["fullName", "primaryEmail", "birthday"],
+    
+    "allOf": [
+        {
+            "$ref": "urn:basic-user",
+            "$map": {
+                "name": {
+                    "$ref": "0/fullName"
+                },
+                "email": {
+                    "$ref": "0/primaryEmail"
+                }
+            }
+        }
+    ]
+}
+JSON
+);
 
 $validator = new Validator();
+$validator->setLoader($loader);
 
-try {
-    /** @var ValidationResult $result */
-    $result = $validator->uriValidation("str", "http://example.com/unexistent/schema.json");
+$user = (object) [
+    "fullName" => "John Doe",
+    "primaryEmail" => "john.doe@example.com",
+    "birthday" => "1970-01-01",
+];
+
+/** @var ValidationResult $result */
+$result = $validator->uriValidation($user, "urn:born-user");
+
+if ($result->isValid()) {
+    echo "Valid", PHP_EOL;
 }
-catch (DuplicateSchemaException $e) {
-    // Schema contains duplicates for $id (after resolving to base).
-}
-catch (FilterNotFoundException $e) {
-    // Filter was not found. 
-}
-catch (InvalidJsonPointerException $e) {
-    // Pointer is not valid.
-}
-catch (InvalidSchemaDraftException $e) {
-    // $schema property is invalid.
-}
-catch (InvalidSchemaException $e) {
-    // Schema is not a boolean or an object.
-}
-catch (SchemaDraftNotSupportedException $e) {
-    // Draft version is not supported.
-}
-catch (SchemaNotFoundException $e) {
-    // Schema could not be resolved by loader.
-}
-catch (SchemaKeywordException $e) {
-    // A keyword from schema is invalid.
-}
-catch (UnknownMediaTypeException $e) {
-    // MEdia type is not registered.
-}
-catch (AbstractSchemaException $e) {
-    // Any schema exception.
+else {
+    /** @var ValidationError $error */
+    $error = $result->getFirstError();
+    echo "Invalid, error on keyword: ", $error->keyword(), PHP_EOL;
 }
 ```
