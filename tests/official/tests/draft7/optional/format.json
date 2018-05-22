@@ -362,7 +362,6 @@
         "schema": {"format": "idn-email"},
         "tests": [
             {
-                "skip": true,
                 "description": "a valid idn e-mail (example@example.test in Hangul)",
                 "data": "실례@실례.테스트",
                 "valid": true

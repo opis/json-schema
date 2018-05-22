@@ -26,7 +26,7 @@ class FormatContainer implements IFormatContainer
             'date' => Formats\Date::class,
             'date-time' => Formats\DateTime::class,
             'email' => Formats\Email::class,
-            'idn-email' => Formats\Email::class,
+            'idn-email' => Formats\IdnEmail::class,
             'hostname' => Formats\Hostname::class,
             'idn-hostname' => Formats\IdnHostname::class,
             'ipv4' => Formats\IPv4::class,

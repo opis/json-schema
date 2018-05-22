@@ -37,10 +37,12 @@ class IdnEmail extends AbstractFormat
     public function validate($data): bool
     {
         if ($this->hasIntl) {
-            $data = idn_to_ascii($data, IDNA_CHECK_CONTEXTJ | IDNA_USE_STD3_RULES | IDNA_CHECK_BIDI, INTL_IDNA_VARIANT_UTS46);
-            if ($data === false) {
+            if (!preg_match('/^(?<name>.+)@(?<domain>.+)$/u', $data, $m)) {
                 return false;
             }
+            $m['name'] = idn_to_ascii($m['name'], 0, INTL_IDNA_VARIANT_UTS46);
+            $m['domain'] = idn_to_ascii($m['domain'], 0, INTL_IDNA_VARIANT_UTS46);
+            $data = $m['name'] . '@' . $m['domain'];
         }
         return $this->validateFilter($data, FILTER_VALIDATE_EMAIL);
     }
