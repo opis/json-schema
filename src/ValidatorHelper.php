@@ -36,7 +36,14 @@ class ValidatorHelper implements IValidatorHelper
     public function __construct(int $scale = 10)
     {
         $this->scale = $scale;
-        $this->strLengthFunc = function_exists('mb_strlen') ? 'mb_strlen' : 'strlen';
+        if (class_exists('\\Opis\String\\UnicodeString', true)) {
+            $this->strLengthFunc = function (string $data): int {
+                return \Opis\String\UnicodeString::from($data)->length();
+            };
+        }
+        else {
+            $this->strLengthFunc = function_exists('mb_strlen') ? 'mb_strlen' : 'strlen';
+        }
         $this->useBCMath = function_exists('bcdiv');
     }
 

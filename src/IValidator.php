@@ -41,7 +41,7 @@ interface IValidator
 
     /**
      * @param $data
-     * @param \stdClass|boolean $schema
+     * @param \stdClass|boolean|string $schema
      * @param int $max_errors
      * @param ISchemaLoader|null $loader
      * @return ValidationResult

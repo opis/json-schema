@@ -178,4 +178,13 @@ class Schema implements ISchema
         }
     }
 
+    /**
+     * @param string $json
+     * @param string|null $id
+     * @return Schema
+     */
+    public static function fromJsonString(string $json, string $id = null): self
+    {
+        return new self(json_decode($json, false), $id);
+    }
 }

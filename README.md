@@ -37,12 +37,8 @@ Json Schema
 
 This library is available on [Packagist](https://packagist.org/packages/opis/json-schema) and can be installed using [Composer](http://getcomposer.org).
 
-```json
-{
-    "require": {
-        "opis/json-schema": "^1.0.7"
-    }
-}
+```bash
+composer require opis/json-schema
 ```
 
 ### Documentation
@@ -242,14 +238,14 @@ We can create or own user structure and still validate it using the provided sch
                 "permissions": {
                     "$ref": "0/blog-permissions",
 
-                    "$comment": "Since our permissions have only string values we must convert them to an object"
+                    "$comment": "Since our permissions have only string values we must convert them to an object",
                     "$each": {
                         "name": {
                             "$ref": "0",
                             "$comment": "Use the current string as name (it is a valid json pointer)"
                         },
 
-                        "$comment": "Again, we provide a valid value for enabled"
+                        "$comment": "Again, we provide a valid value for enabled",
                         "enabled": true
                     }
                 }
@@ -319,7 +315,7 @@ if ($result->isValid()) {
 else {
     /** @var ValidationError $error */
     $error = $result->getFirstError();
-    echo "Invalid, error: ", $error->error(), PHP_EOL;
+    echo "Invalid, error: ", $error->keyword(), PHP_EOL;
 }
 
 ```
@@ -368,7 +364,7 @@ if ($result->isValid()) {
 else {
     /** @var ValidationError $error */
     $err = $result->getFirstError();
-    echo "Invalid e-mail, error: ", $err->error(), PHP_EOL;
+    echo "Invalid e-mail, error: ", $err->keyword(), PHP_EOL;
 }
 
 /** @var ValidationResult $result */
@@ -383,7 +379,7 @@ if ($result->isValid()) {
 else {
     /** @var ValidationError $error */
     $err = $result->getFirstError();
-    echo "Invalid simple-person, error: ", $err->error(), PHP_EOL;
+    echo "Invalid simple-person, error: ", $err->keyword(), PHP_EOL;
 }
 ```
 
@@ -449,7 +445,7 @@ if ($result->isValid()) {
 else {
     /** @var ValidationError $error */
     $err = $result->getFirstError();
-    echo "Invalid, error: ", $err->error(), PHP_EOL;
+    echo "Invalid, error: ", $err->keyword(), PHP_EOL;
 }
 ```
 
@@ -501,7 +497,7 @@ if ($result->isValid()) {
 else {
     /** @var ValidationError $error */
     $err = $result->getFirstError();
-    echo "Invalid, error: ", $err->error(), PHP_EOL;
+    echo "Invalid, error: ", $err->keyword(), PHP_EOL;
 }
 ```
 

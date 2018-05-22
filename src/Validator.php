@@ -107,7 +107,8 @@ class Validator implements IValidator
      */
     public function dataValidation($data, $schema, int $max_errors = 1, ISchemaLoader $loader = null): ValidationResult
     {
-        return $this->schemaValidation($data, new Schema($schema), $max_errors, $loader);
+        $schema = is_string($schema) ? Schema::fromJsonString($schema) : new Schema($schema);
+        return $this->schemaValidation($data, $schema, $max_errors, $loader);
     }
 
     /**

@@ -61,6 +61,9 @@ class Memory implements ISchemaLoader
      */
     public function add($data, string $id = null): self
     {
+        if (is_string($data)) {
+            $data = json_decode($data, false);
+        }
         return $this->register(new Schema($data, $id));
     }
 

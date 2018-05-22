@@ -19,7 +19,6 @@ namespace Opis\JsonSchema;
 
 final class ValidationError
 {
-
     /** @var mixed */
     protected $data;
 
@@ -30,10 +29,10 @@ final class ValidationError
     protected $schema;
 
     /** @var string */
-    protected $error;
+    protected $keyword;
 
     /** @var array */
-    protected $errorArgs;
+    protected $keywordArgs;
 
     /** @var ValidationError[] */
     protected $subErrors;
@@ -44,17 +43,24 @@ final class ValidationError
      * @param array $data_pointer
      * @param array $parent_data_pointer
      * @param \stdClass|boolean $schema
-     * @param string $error
-     * @param array $args
+     * @param string $keyword
+     * @param array $keywordArgs
      * @param ValidationError[] $sub_errors
      */
-    public function __construct($data, array $data_pointer, array $parent_data_pointer, $schema, string $error, array $args = [], array $sub_errors = [])
-    {
+    public function __construct(
+        $data,
+        array $data_pointer,
+        array $parent_data_pointer,
+        $schema,
+        string $keyword,
+        array $keywordArgs = [],
+        array $sub_errors = []
+    ) {
         $this->data = $data;
         $this->dataPointer = $parent_data_pointer ? array_merge($parent_data_pointer, $data_pointer) : $data_pointer;
         $this->schema = $schema;
-        $this->error = $error;
-        $this->errorArgs = $args;
+        $this->keyword = $keyword;
+        $this->keywordArgs = $keywordArgs;
         $this->subErrors = $sub_errors;
     }
 
@@ -84,18 +90,36 @@ final class ValidationError
 
     /**
      * @return string
+     * @deprecated
      */
     public function error(): string
     {
-        return $this->error;
+        return $this->keyword;
+    }
+
+    /**
+     * @return array
+     * @deprecated
+     */
+    public function errorArgs(): array
+    {
+        return $this->keywordArgs;
+    }
+
+    /**
+     * @return string
+     */
+    public function keyword(): string
+    {
+        return $this->keyword;
     }
 
     /**
      * @return array
      */
-    public function errorArgs(): array
+    public function keywordArgs(): array
     {
-        return $this->errorArgs;
+        return $this->keywordArgs;
     }
 
     /**
