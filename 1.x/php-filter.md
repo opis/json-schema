@@ -79,3 +79,45 @@ Here is an example of schema that uses our modulo filter
 ```
 
 This schema validates `7` _(7 % 4 == 3)_ but does not validate `17` _(17 % 4 == 1 != 3)_.
+
+### Creating a "password match" filter
+
+```php
+<?php
+
+use Opis\JsonSchema\IFilter;
+
+class MatchFilter implements IFilter
+{
+    public function validate($value, array $args): bool {
+        if (!$args || !array_key_exists('value', $args)) {
+            return false;
+        }
+        return $value === $args['value'];
+    }
+}
+```
+
+You can use the above filter (considering that is named `match`) in a schema like this
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "password": {
+      "type": "string",
+      "minLength": 8
+    },
+    "repeatPassword": {
+      "type": "string",
+      "$filters": {
+        "$func": "match",
+        "$vars": {
+          "value": {"$ref": "1/password"}
+        }
+      }
+    }
+  },
+  "required": ["password", "repeatPassword"]
+}
+```

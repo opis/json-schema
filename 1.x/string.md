@@ -32,7 +32,7 @@ Unicode characters.
 Please note that in order to calculate the length of a string,
 Opis Json Schema uses the following libraries/functions, 
 depending which one is available on your system: 
-[Opis String](//opis.io/string){:target=_blank} 
+[Opis String](https://github.com/opis/string){:target=_blank} 
 (recommended, add it with `composer require opis/string`),
 [mb_strlen](http://php.net/manual/en/function.mb-strlen.php){:target=_blank}
 (you must enable [mb_string](http://php.net/manual/en/book.mbstring.php){:target=_blank} extension for PHP),
