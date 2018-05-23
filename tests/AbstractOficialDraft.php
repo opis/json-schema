@@ -37,6 +37,7 @@ abstract class AbstractOficialDraft extends TestCase
     public function testOptional()
     {
         $this->doTests($this->getFolderPath() . '/optional');
+        $this->doTests($this->getFolderPath() . '/optional/format');
     }
 
     protected function getFolderPath(): string
