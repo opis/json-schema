@@ -34,10 +34,16 @@ class RefTest extends TestCase
         $result = $validator->uriValidation((object)['name' => 'Name', 'age' => 23], "schema:/simple-ref.json");
         $this->assertTrue($result->isValid());
 
+        $result = $validator->uriValidation((object)['name' => 'Name', '/' => 'slash'], "schema:/simple-ref.json");
+        $this->assertTrue($result->isValid());
+
         $result = $validator->uriValidation((object)['name' => 'name'], "schema:/simple-ref.json");
         $this->assertTrue($result->hasErrors());
 
         $result = $validator->uriValidation((object)['name' => 'Name', 'age' => 8.5], "schema:/simple-ref.json");
+        $this->assertTrue($result->hasErrors());
+
+        $result = $validator->uriValidation((object)['name' => 'Name', '/' => 'backslash'], "schema:/simple-ref.json");
         $this->assertTrue($result->hasErrors());
 
         //

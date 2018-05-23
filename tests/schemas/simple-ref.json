@@ -3,7 +3,8 @@
     "type": "object",
     "properties": {
         "name": {"$ref": "/my-name.json"},
-        "age": {"$ref": "#age"}
+        "age": {"$ref": "#age"},
+        "/": {"$ref": "#/definitions/~1"}
     },
     "required": ["name"],
     "definitions": {
@@ -12,6 +13,9 @@
             "type": "integer",
             "minimum": 0,
             "maximum": 200
+        },
+        "/": {
+            "const": "slash"
         }
     }
 }
