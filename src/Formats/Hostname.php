@@ -17,13 +17,15 @@
 
 namespace Opis\JsonSchema\Formats;
 
-class Hostname extends AbstractFormat
+use Opis\JsonSchema\IFormat;
+
+class Hostname implements IFormat
 {
     /**
      * @inheritDoc
      */
     public function validate($data): bool
     {
-        return $this->validateRegex($data, \Opis\JsonSchema\URI::HOSTNAME_REGEX);
+        return \Opis\JsonSchema\URI::isValidHostname($data);
     }
 }

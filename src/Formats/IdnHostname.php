@@ -17,7 +17,9 @@
 
 namespace Opis\JsonSchema\Formats;
 
-class IdnHostname extends AbstractFormat
+use Opis\JsonSchema\IFormat;
+
+class IdnHostname implements IFormat
 {
 
     /** @var bool */
@@ -37,12 +39,12 @@ class IdnHostname extends AbstractFormat
     public function validate($data): bool
     {
         if ($this->hasIntl) {
-            $data = idn_to_ascii($data, IDNA_CHECK_CONTEXTJ | IDNA_USE_STD3_RULES | IDNA_CHECK_BIDI, INTL_IDNA_VARIANT_UTS46);
+            $data = idn_to_ascii($data, 0, INTL_IDNA_VARIANT_UTS46);
             if ($data === false) {
                 return false;
             }
         }
-        return $this->validateRegex($data, \Opis\JsonSchema\URI::HOSTNAME_REGEX);
+        return \Opis\JsonSchema\URI::isValidHostname($data);
     }
 
 }
