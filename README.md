@@ -15,7 +15,7 @@ Json Schema
 - Fast validation (you can set maximum number of errors for a validation)
 - Custom schema document [loaders](https://www.opis.io/json-schema/1.x/php-loader.html)
 - Support for [if-then-else](https://www.opis.io/json-schema/1.x/conditional-subschemas.html#if-then-else)
-- Most of the [string formats](https://www.opis.io/json-schema/1.x/formats.html#provided-formats) are supported
+- Support for all [string formats](https://www.opis.io/json-schema/1.x/formats.html#provided-formats) are supported
 - Support for custom [formats](https://www.opis.io/json-schema/1.x/php-format.html)
 - Support for custom [media types](https://www.opis.io/json-schema/1.x/php-media-type.html)
 - Support for [default value](https://www.opis.io/json-schema/1.x/default-value.html)
