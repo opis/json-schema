@@ -175,7 +175,6 @@
                 "valid": true
             },
             {
-                "skip": true,
                 "description": "an invalid uri-template",
                 "data": "http://example.com/dictionary/{term:1}/{term",
                 "valid": false
