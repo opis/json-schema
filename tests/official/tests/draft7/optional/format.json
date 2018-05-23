@@ -199,7 +199,6 @@
                 "valid": true
             },
             {
-                "skip": true,
                 "description": "an invalid URI Reference",
                 "data": "\\\\WINDOWS\\fileshare",
                 "valid": false

@@ -33,6 +33,8 @@ class URI
 
     const FRAGMENT_REGEX = '/^(?:(%[0-9a-f]{2})|[a-z0-9\-\/?:@._~!\$&\'\(\)*+,;=])*$/i';
 
+    const PATH_REGEX = '/^(?:(%[0-9a-f]{2})|[a-z0-9\/:@\-._~\!\$&\'\(\)*+,;=])*$/i';
+
     const HOSTNAME_REGEX = '/^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9]){1,63}\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9]){1,63}$/i';
 
     const TEMPLATE_VARSPEC_REGEX = '~^(?<varname>[a-zA-Z0-9\_\%\.]+)(?:(?<explode>\*)?|\:(?<prefix>\d+))?$~';
@@ -123,11 +125,14 @@ REGEX;
         if ($require_scheme && (!isset($uri['scheme']) || $uri['scheme'] === '')) {
             return false;
         }
-        if (isset($uri['host'])) {
-            return static::isValidHostname($uri['host']);
+        if (isset($uri['host']) && !static::isValidHostname($uri['host'])) {
+            return false;
         }
-        if (isset($uri['fragment']) && $uri['fragment'] !== '') {
-            return (bool) preg_match(static::FRAGMENT_REGEX, $uri['fragment']);
+        if (isset($uri['path']) && !static::isValidPath($uri['path'])) {
+            return false;
+        }
+        if (isset($uri['fragment']) && !static::isValidFragment($uri['fragment'])) {
+            return false;
         }
         return true;
     }
@@ -145,6 +150,24 @@ REGEX;
             $host = $m['ip'];
         }
         return filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+    }
+
+    /**
+     * @param string $path
+     * @return bool
+     */
+    public static function isValidPath(string $path): bool
+    {
+        return (bool) preg_match(static::PATH_REGEX, $path);
+    }
+
+    /**
+     * @param string $fragment
+     * @return bool
+     */
+    public static function isValidFragment(string $fragment): bool
+    {
+        return (bool) preg_match(static::FRAGMENT_REGEX, $fragment);
     }
 
     /**
