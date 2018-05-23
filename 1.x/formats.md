@@ -36,9 +36,9 @@ usually different data types have different formats.
 
 ## Provided formats
 
-Opis Json Schema provides the following formats for `string` type.
+Opis Json Schema provides the all formats for `string` type defined in json schema specifications.
 
-Please note that formats starting with `idn-` require [PHP intl extension](http://php.net/manual/en/book.intl.php){:target="_blank"} 
+Please note that formats starting with `idn-` or `iri` require [PHP intl extension](http://php.net/manual/en/book.intl.php){:target="_blank"} 
 to work correctly.
 {:.alert.alert-info}
 
@@ -368,4 +368,47 @@ uri template or uri-reference.
 {:.alert.alert-success}
 
 `"http://a_example.com/file.php{?q,r}"` - invalid
+{:.alert.alert-danger}
+
+### iri
+
+A string is valid against this format if it represents a valid IRI.
+
+```json
+{
+    "type": "string",
+    "format": "iri"
+}
+```
+
+`"http://ƒøø.ßår/?∂éœ=πîx#πîüx"` - valid
+{:.alert.alert-success}
+
+`"http://ƒøø.com/blah_(wîkïpédiå)_blah#ßité-1"` - valid
+{:.alert.alert-success}
+
+`"http:// ƒøø.com"` - invalid
+{:.alert.alert-danger}
+
+### iri-reference
+
+A string is valid against this format if it represents a valid IRI reference.
+
+```json
+{
+    "type": "string",
+    "format": "iri-reference"
+}
+```
+
+`"//ƒøø.ßår/?∂éœ=πîx#πîüx"` - valid
+{:.alert.alert-success}
+
+`"#ƒrägmênt"` - valid
+{:.alert.alert-success}
+
+`"http://ƒøø.com/blah_(wîkïpédiå)_blah#ßité-1"` - valid
+{:.alert.alert-success}
+
+`"\\\\WINDOWS\\filëßåré` - invalid
 {:.alert.alert-danger}
