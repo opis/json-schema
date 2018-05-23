@@ -1,6 +1,5 @@
 [
     {
-        "skip": true,
         "description": "ECMA 262 regex non-compliance",
         "schema": { "format": "regex" },
         "tests": [
