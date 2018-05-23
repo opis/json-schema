@@ -38,6 +38,8 @@ class FormatContainer implements IFormatContainer
             'uri' => Formats\Uri::class,
             'uri-reference' => Formats\UriReference::class,
             'uri-template' => Formats\UriTemplate::class,
+            'iri' => Formats\Iri::class,
+            'iri-reference' => Formats\IriReference::class,
         ]
     ];
 

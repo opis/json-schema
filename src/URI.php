@@ -149,7 +149,7 @@ REGEX;
         if (preg_match('/^\[(?<ip>[^\]]+)\]$/', $host, $m)) {
             $host = $m['ip'];
         }
-        return filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+        return (bool) filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
     }
 
     /**
