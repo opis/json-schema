@@ -85,7 +85,7 @@ exceptions.
 3. [title](#title)
 4. [description](#description)
 5. [examples](#examples)
-6. [$comment](#$comment)
+6. [$comment](#comment)
 
 ## $schema keyword
 

@@ -35,7 +35,7 @@ On this site you can find documentation about json schema itself and about [the 
 [title](structure.html#title),
 [description](structure.html#description),
 [examples](structure.html#examples),
-[$comment](structure.html#$comment)
+[$comment](structure.html#comment)
 - General keywords:
 [type](generics.html#type),
 [const](generics.html#const),
