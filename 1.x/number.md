@@ -33,6 +33,12 @@ The `number` type is used for validating integer and float values.
 The following keywords are supported by the `number` type, and evaluated
 in the presented order. All keywords are optional.
 
+1. [minimum](#minimum)
+2. [exclusiveMinimum](#exclusiveminimum)
+3. [maximum](#maximum)
+4. [exclusiveMaximum](#exclusivemaximum)
+5. [multipleOf](#multipleof)
+
 ### minimum
 
 A number is valid against this keyword if is greater than, or equal to, the

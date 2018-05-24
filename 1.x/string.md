@@ -45,6 +45,12 @@ depending which one is available on your system:
 The following keywords are supported by the `string` type, and evaluated
 in the presented order. All keywords are optional.
 
+1. [minLength](#minlength)
+2. [maxLength](#maxlength)
+3. [pattern](#pattern)
+4. [contentEncoding](#contentencoding)
+5. [contentMediaType](#contentmediatype)
+
 ### minLength
 
 A string is valid against this keyword if its length is greater then, 

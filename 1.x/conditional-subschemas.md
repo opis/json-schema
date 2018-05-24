@@ -17,6 +17,9 @@ The following keywords help you do that.
 The following keywords are supported by any instance type, and are evaluated in
 the presented order. All keywords are optional.
 
+1. [not](#not)
+2. [if-then-else](#if-then-else)
+
 ### not
 
 An instance is valid against this keyword if is **not** valid against 

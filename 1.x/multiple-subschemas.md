@@ -16,6 +16,10 @@ and the following keywords will help you combine subschemas into one validator.
 The following keywords are supported by any instance type, and are evaluated in
 the presented order. All keywords are optional.
 
+1. [anyOf](#anyof)
+2. [oneOf](#oneof)
+3. [allOf](#allof)
+
 ### anyOf
 
 An instance is valid against this keyword if is valid against **at least one** schema

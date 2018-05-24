@@ -42,6 +42,24 @@ Please note that formats starting with `idn-` or `iri` require [PHP intl extensi
 to work correctly.
 {:.alert.alert-info}
 
+1. [data](#date)
+2. [time](#time)
+3. [date-time](#date-time)
+4. [regex](#regex)
+5. [email](#email)
+6. [idn-email](#idn-email)
+7. [hostname](#hostname)
+8. [idn-hostname](#idn-email)
+9. [ipv4](#ipv4)
+10. [ipv6](#ipv6)
+11. [json-pointer](#json-pointer)
+12. [relative-json-pointer](#relative-json-pointer)
+13. [uri](#uri)
+14. [uri-reference](#uri-reference)
+15. [uri-template](#uri-template)
+16. [iri](#iri)
+17. [iri-reference](#iri-reference)
+
 ### date
 
 A string is valid against this format if it represents a date in

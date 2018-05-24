@@ -40,11 +40,6 @@ come in the form of **keywords**, and every keyword has a specific meaning.
 Keywords are applied to data starting from the root of the document schema,
 and descend to children.
 
-Some keywords are purely decorative (metadata keywords which just describe the author intent),
-some are for identifying a document or a subschema, and the rest are for
-validity checks. Usually keywords work independently, there are only a few
-exceptions.
-
 Here are some examples
 
 ```json
@@ -79,6 +74,18 @@ only if it holds a string.
 
 `123` - invalid
 {:.alert.alert-danger}
+
+Some keywords are purely decorative (metadata keywords which just describe the author intent),
+some are for identifying a document or a subschema, and the rest are for
+validity checks. Usually keywords work independently, there are only a few
+exceptions.
+
+1. [$schema](#$schema-keyword)
+2. [$id](#$id-keyword)
+3. [title](#title)
+4. [description](#description)
+5. [examples](#examples)
+6. [$comment](#$comment)
 
 ## $schema keyword
 
@@ -158,6 +165,19 @@ an array.
   "type": "number"
 }
 ``` 
+
+### $comment
+
+Contains an observation about the schema. The value of this keyword must be a string.
+
+```json
+{
+  "$comment": "We should replace this broken regex with format: email.",
+  
+  "type": "string",
+  "pattern": "[a-zA-Z0-9\\.]+@[a-zA-Z0-9]+\\.[a-zA-Z]{2,3}"
+}
+```
 
 ## Some schema document examples
 

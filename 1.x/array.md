@@ -39,6 +39,13 @@ The `array` type is used for validating ordered lists (indexed arrays).
 The following keywords are supported by the `array` type, and evaluated
 in the presented order. All keywords are optional.
 
+1. [minItems](#minitems)
+2. [maxItems](#maxitems)
+3. [unniqueItems](#uniqueitems)
+4. [contains](#contains)
+5. [items](#items)
+6. [additionalItems](#additionalitems)
+
 ### minItems
 
 An array is valid against this keyword, if the number of items it contains 

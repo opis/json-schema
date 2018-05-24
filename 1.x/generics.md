@@ -16,6 +16,10 @@ or by checking if the data value equals to a predefined value.
 The following keywords are supported by any type, and evaluated
 in the presented order. All keywords are optional.
 
+1. [type](#type)
+2. [const](#const)
+3. [enum](#enum)
+
 ### type
 
 The `type` keyword specifies the data type that a schema will use.

@@ -38,6 +38,15 @@ in the following order: `required`, `dependencies`, `minProperties`, `maxPropert
 `propertyNames`, `properties`, `patternProperties`, `additionalProperties`. 
 All keywords are optional.
 
+1. [properties](#properties)
+2. [required](#required)
+3. [dependencies](#dependencies)
+4. [minProperties](#minproperties)
+5. [maxProperties](#maxproperties)
+6. [propertyNames](#propertynames)
+7. [patternProperties](#patternproperties)
+8. [additionalProperties](#additionalproperties)
+
 ### properties
 
 An object is valid against this keyword if every property
@@ -301,7 +310,6 @@ every property name that starts with `int-` must be an integer.
 
 `{"str-a": "a", "int-b": 2.5}` - invalid (`int-b` property is float, not integer)
 {:.alert.alert-danger}
-
 
 ### additionalProperties
 
