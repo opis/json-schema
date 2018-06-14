@@ -31,7 +31,7 @@ These methods allow you to validate the data against a schema.
 #### dataValidation()
 
 Used to validate data when you have the schema as a 
-`\stdClass` object or as a `boolean` or as a valid json `string`.
+`\stdClass` object, as a `boolean` or as a valid json `string`.
 
 ```php
 $schema = (object) [
