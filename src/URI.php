@@ -281,7 +281,7 @@ REGEX;
             $uri['host'] = $base['host'];
             $uri['port'] = $base['port'];
             $uri['user'] = $base['user'];
-            $uri['pass'] = $base['path'];
+            $uri['pass'] = $base['pass'];
         }
 
         if (!isset($uri['path'])) {
