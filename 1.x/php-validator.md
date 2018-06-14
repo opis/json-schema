@@ -31,7 +31,7 @@ These methods allow you to validate the data against a schema.
 #### dataValidation()
 
 Used to validate data when you have the schema as a 
-`\stdClass` object or as a `boolean`.
+`\stdClass` object or as a `boolean` or as a valid json `string`.
 
 ```php
 $schema = (object) [
@@ -44,7 +44,7 @@ $result = $validator->dataValidation("abc", $schema);
 **Arguments**
 
 - `mixed` $data - the data to validate
-- `\stdClass|boolean` $schema - json schema
+- `\stdClass|boolean|string` $schema - json schema
 - [`int` $max_errors = `1`] - maximum numbers of validation errors that can occur before data is considered invalid (and method returns)
 - [`\Opis\JsonSchema\ISchemaLoader` $loader = `null`] - the loader used to resolve schemas by id
 
