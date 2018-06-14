@@ -11,7 +11,7 @@
         "end": "2018"
     },
     "title_suffix": " | Opis Json Schema",
-    "ga": false,
+    "ga": true,
     "logo": "/assets/v2/logo.svg",
     "favicon": "/assets/v2/favicon.png",
     "styles": [
