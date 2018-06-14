@@ -28,17 +28,101 @@ on how the schema is provided.
 
 These methods allow you to validate the data against a schema.
 
+The data must NOT be provided as a json encoded string, 
+because then it will always be considered a string. 
+Use the following table to map PHP types to JSON types.
+{:.alert.alert-warning}
+
+| PHP | JSON |
+|---|---|
+| [null](http://php.net/manual/en/language.types.null.php){:target="blank"} | [null](null.html) |
+| [bool / boolean](http://php.net/manual/en/language.types.boolean.php){:target="blank"} | [boolean](boolean.html) |
+| [int / integer](http://php.net/manual/en/language.types.integer.php){:target="blank"} | [integer](integer.html) or [number](number.html) |
+| [float / double](http://php.net/manual/en/language.types.float.php){:target="blank"} | [number](number.html) |
+| [string](http://php.net/manual/en/language.types.string.php){:target="blank"} | [string](string.html) |
+| [array (indexed - without keys)](http://php.net/manual/en/language.types.array.php){:target="blank"} | [array](array.html) |
+| [\stdClass](http://php.net/manual/en/reserved.classes.php){:target="blank"} | [object](object.html) |
+{:.table.table-striped}
+
+If you have your data as a json encoded string, you can use [json_decode](http://php.net/manual/en/function.json-decode.php){:target="blank"} 
+function to decode it.
+{:.alert.alert-info}
+
 #### dataValidation()
 
 Used to validate data when you have the schema as a 
 `\stdClass` object, as a `boolean` or as a valid json `string`.
 
 ```php
+// Validating a string
 $schema = (object) [
     'type' => 'string'
 ];
 
 $result = $validator->dataValidation("abc", $schema);
+
+// Validating a number
+$schema = (object) [
+    'type' => 'number'
+];
+
+$result = $validator->dataValidation(123.4, $schema);
+$result = $validator->dataValidation(-5, $schema);
+
+// Validating an object
+$schema = (object) [
+    'type' => 'object',
+    'properties' => (object) [
+        'name' => (object) [
+            'type' => 'string'
+        ]
+    ]
+];
+
+$result = $validator->dataValidation((object)["name" => "John Doe"], $schema);
+
+// Validating an array
+$schema = (object) [
+    'type' => 'array',
+    'items' => (object) [
+        'type' => 'integer'
+    ]
+];
+
+$result = $validator->dataValidation([5, 6, 7], $schema);
+
+// Validating a boolean
+$schema = (object) [
+    'type' => 'boolean'
+];
+
+$result = $validator->dataValidation(true, $schema);
+$result = $validator->dataValidation(false, $schema);
+
+// Validating null
+$schema = (object) [
+    'type' => 'null'
+];
+
+$result = $validator->dataValidation(null, $schema);
+
+// Validating an object using schema as string
+$schema = <<<'JSON'
+{
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        }
+    }
+}
+JSON;
+
+$result = $validator->dataValidation((object)["name" => "John Doe"], $schema);
+
+// Validating some data using a boolean schema
+$result = $validator->dataValidation($data, true); // always valid
+$result = $validator->dataValidation($data, false); // always invalid
 ```
 
 **Arguments**
@@ -60,7 +144,25 @@ Please note that the schema id is resolved to a document by the [loader](php-loa
 ```php
 $schema = "http://example.com/some/schema.json#";
 
-$result = $validator->uriValidation("the data", $schema);
+// Validating a string
+$result = $validator->uriValidation("some string", $schema);
+
+// Validating a number
+$result = $validator->uriValidation(123.4, $schema);
+$result = $validator->uriValidation(-5, $schema);
+
+// Validating an object
+$result = $validator->uriValidation((object)["name" => "John Doe"], $schema);
+
+// Validating an array
+$result = $validator->uriValidation(["a", "b", "c"], $schema);
+
+// Validating a boolean
+$result = $validator->uriValidation(true, $schema);
+$result = $validator->uriValidation(false, $schema);
+
+// Validating null
+$result = $validator->uriValidation(null, $schema);
 ```
 
 **Arguments**
@@ -79,7 +181,25 @@ Used to validate data when you have the schema as a `\Opis\JsonSchema\ISchema` o
 ```php
 $schema = \Opis\JsonSchema\Schema::fromJsonString('{"type": "string"}');
 
-$result = $validator->schemaValidation("abc", $schema);
+// Validating a string
+$result = $validator->uriValidation("some string", $schema);
+
+// Validating a number
+$result = $validator->uriValidation(123.4, $schema);
+$result = $validator->uriValidation(-5, $schema);
+
+// Validating an object
+$result = $validator->uriValidation((object)["name" => "John Doe"], $schema);
+
+// Validating an array
+$result = $validator->uriValidation(["a", "b", "c"], $schema);
+
+// Validating a boolean
+$result = $validator->uriValidation(true, $schema);
+$result = $validator->uriValidation(false, $schema);
+
+// Validating null
+$result = $validator->uriValidation(null, $schema);
 ```
 
 **Arguments**
