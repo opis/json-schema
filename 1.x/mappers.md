@@ -176,6 +176,7 @@ can use `$each` keyword.
             "$map": {
                 "name": {"$ref": "/title"},
                 "rows": {
+                    "$ref": "/list",
                     "$each": {
                         "id": {"$ref": "0/index"},
                         "title": {"$ref": "0/name"},
