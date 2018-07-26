@@ -8,7 +8,7 @@ keywords: opis, json, schema, validation, quick start
 
 # Quick start
 
-First thing is first, install the library
+First things first: install the library
 
 ```bash
 composer require opis/json-schema

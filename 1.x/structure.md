@@ -8,10 +8,10 @@ keywords: opis, php, json, schema, validation, structure, metadata
 
 # Json Schema structure
 
-Json Schema it's a declarative way to write validations. It contains
+Json Schema is a declarative way of writing validations. It contains
 only the steps that need to be performed in order to validate something.
 The format used to write these steps is, of course, 
-[JSON](https://www.json.org/){:target="_blank"}.
+[JSON](https://www.json.org/){:target="_blank"} itself.
 
 **Opis Json Schema** is the software/library (for PHP) that performs those steps
 and tells you the validation status.
@@ -19,7 +19,7 @@ and tells you the validation status.
 ## Data types
 
 Because json schema is written in JSON format, it supports all JSON
-types plus an addition - the integer type which is a subtype of number type.
+types plus an addition": the integer type, which is a subtype of the number type.
 
 - `string` - represents a string/text (`"a string"`, `"other string"`)
 - `number` - represents an integer or a float (`-5`, `10`, `-5.8`, `10.2`)
@@ -32,11 +32,11 @@ value can be any type (`{"key": "value", "other-key": 5}`)
 
 ## Document structure
 
-A valid json schema document must be a JSON object or boolean.
+A valid json schema document must be a JSON object or a boolean value.
 If it is a boolean, then the validation status is indicated by the value
 of the boolean: `true` - valid, `false` - invalid.
-If an object, it must contain the steps needed for validation. These steps
-come in the form of **keywords**, and every keyword has a specific meaning.
+If it is an object, then it must contain the steps needed for validation. 
+These steps come in the form of **keywords** and every keyword has a specific meaning.
 Keywords are applied to data starting from the root of the document schema,
 and descend to children.
 
@@ -76,8 +76,8 @@ only if it holds a string.
 {:.alert.alert-danger}
 
 Some keywords are purely decorative (metadata keywords which just describe the author intent),
-some are for identifying a document or a subschema, and the rest are for
-validity checks. Usually keywords work independently, there are only a few
+some are for identifying a document or a subschema, and the rest of them are for
+validity checks. Usually keywords work independently and there are only a few
 exceptions.
 
 1. [$schema](#$schema-keyword)
@@ -97,26 +97,25 @@ Currently the supported URIs are:
 - `http://json-schema.org/draft-07/schema#` - latest version 
 - `http://json-schema.org/draft-06/schema#` - previous version
 
-This keyword is not required, and if missing, the fallback is the latest
-version URI.
+This keyword is not required and if it is missing, the URI of the 
+latest schema version will be used instead.
 
-The only difference between draft 06 and 07 is that draft 06 does not
+The only difference between draft 06 and draft 07 is that draft 06 does not
 support [if-then-else keywords](conditional-subschemas.html#if-then-else). 
 
 ## $id keyword
 
-This keyword is used to specify an unique id for the document or document subschemas.
+This keyword is used to specify an unique ID for a document or a document subschemas.
 The value of this keyword must be a string representing an URI. All subschema
-ids are resolved relative to document id.
-It is not required, but as a best practice you should consider this
-required. 
+IDs are resolved relative to the document's ID.
+It is not a required keyword, but we recommend you using it, as a  best practice.
 
 The usage of this keyword will be covered in the next chapters.
 
 ## Metadata keywords
 
 These keywords are not used for validation, but to describe the
-validation and how it works. All keywords are optional.
+validation schema and how it works. All keywords are optional.
 
 ### title
 
@@ -127,7 +126,7 @@ keyword must be a string.
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://example.com/number.json#",
-  "title": "Test if number",
+  "title": "Test if it is a number",
   
   "type": "number"
 }
@@ -142,7 +141,7 @@ keyword must be a string.
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://example.com/number.json#",
-  "title": "Test if number",
+  "title": "Test if it is a number",
   "description": "A data is considered number if it is an integer or a float.",
   
   "type": "number"
@@ -158,7 +157,7 @@ an array.
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "http://example.com/number.json#",
-  "title": "Test if number",
+  "title": "Test if it is a number",
   "description": "A data is considered a number if is an integer or a float.",
   "examples": [-5.10, -2, 0, 5, 8.10],
   
