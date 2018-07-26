@@ -19,7 +19,7 @@ and tells you the validation status.
 ## Data types
 
 Because json schema is written in JSON format, it supports all JSON
-types plus an addition": the integer type, which is a subtype of the number type.
+types plus an addition: the integer type, which is a subtype of the number type.
 
 - `string` - represents a string/text (`"a string"`, `"other string"`)
 - `number` - represents an integer or a float (`-5`, `10`, `-5.8`, `10.2`)
@@ -37,8 +37,8 @@ If it is a boolean, then the validation status is indicated by the value
 of the boolean: `true` - valid, `false` - invalid.
 If it is an object, then it must contain the steps needed for validation. 
 These steps come in the form of **keywords** and every keyword has a specific meaning.
-Keywords are applied to data starting from the root of the document schema,
-and descend to children.
+Keywords are applied to data starting from the root of the document schema
+and descend to their children.
 
 Here are some examples
 
@@ -75,8 +75,8 @@ only if it holds a string.
 `123` - invalid
 {:.alert.alert-danger}
 
-Some keywords are purely decorative (metadata keywords which just describe the author intent),
-some are for identifying a document or a subschema, and the rest of them are for
+Some keywords are purely decorative, like metadata keywords, which just describe the author intent.
+Others are for identifying a document or a subschema, and the rest of them are for
 validity checks. Usually keywords work independently and there are only a few
 exceptions.
 
