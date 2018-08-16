@@ -25,6 +25,7 @@ use stdClass;
 
 class Validator implements IValidator
 {
+    const BELL = "\x07";
 
     /** @var IValidatorHelper */
     protected $helper = null;
@@ -1205,7 +1206,7 @@ class Validator implements IValidator
                     "'pattern' keyword must not be empty"
                 );
             }
-            $match = @preg_match('/' . $schema->pattern . '/u', $data);
+            $match = @preg_match(self::BELL . $schema->pattern . self::BELL . 'u', $data);
             if ($match === false) {
                 throw new SchemaKeywordException(
                     $schema,
@@ -1927,7 +1928,7 @@ class Validator implements IValidator
 
             $newbag = $bag->createByDiff();
             foreach ($schema->patternProperties as $pattern => &$property_schema) {
-                $regex = '/' . $pattern . '/u';
+                $regex = self::BELL . $pattern . self::BELL . 'u';
                 foreach ($properties as $name) {
                     $match = @preg_match($regex, $name);
                     if ($match === false) {
