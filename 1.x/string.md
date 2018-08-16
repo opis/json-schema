@@ -179,7 +179,7 @@ Out of the box, Opis Json Schema comes with the following media types
 - `text/plain` - any text
 - `application/json` - json encoded string
 
-If you want to add new media types (MIME types), please read about [Media Types](media-types.html).
+If you want to add new media types (MIME types), please read about [Media Types](php-media-type.html).
 
 ```json
 {
