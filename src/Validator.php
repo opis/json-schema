@@ -25,7 +25,7 @@ use stdClass;
 
 class Validator implements IValidator
 {
-    private const BELL = "\x07";
+    const BELL = "\x07";
 
     /** @var IValidatorHelper */
     protected $helper = null;
