@@ -1205,7 +1205,7 @@ class Validator implements IValidator
                     "'pattern' keyword must not be empty"
                 );
             }
-            $match = @preg_match('/' . $schema->pattern . '/u', $data);
+            $match = @preg_match('/' . str_replace('/', '\\/', $schema->pattern) . '/u', $data);
             if ($match === false) {
                 throw new SchemaKeywordException(
                     $schema,

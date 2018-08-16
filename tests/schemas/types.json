@@ -46,7 +46,7 @@
             },
             "pattern": {
                 "type": "string",
-                "pattern": "^[a-z]+$"
+                "pattern": "^[a-z|/]+$"
             }
         },
         "array": {
