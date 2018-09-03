@@ -1,6 +1,6 @@
 <?php
-/* ===========================================================================
- * Copyright 2018 Zindex Software
+/* ============================================================================
+ * Copyright © 2017-2018 The Opis Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,14 +19,13 @@ namespace Opis\JsonSchema\Formats;
 
 use Opis\JsonSchema\IFormat;
 
-class IdnHostname implements IFormat
+class IriReference implements IFormat
 {
-
     /** @var bool */
     protected $hasIntl = false;
 
     /**
-     * IdnEmail constructor.
+     * IriReference constructor.
      */
     public function __construct()
     {
@@ -39,12 +38,18 @@ class IdnHostname implements IFormat
     public function validate($data): bool
     {
         if ($this->hasIntl) {
-            $data = idn_to_ascii($data, 0, INTL_IDNA_VARIANT_UTS46);
-            if ($data === false) {
+            $data = parse_url($data);
+            if (!$data) {
                 return false;
             }
+            foreach (['host', 'path', 'fragment'] as $component) {
+                if (isset($data[$component])) {
+                    $data[$component] = idn_to_ascii($data[$component], 0, INTL_IDNA_VARIANT_UTS46);
+                }
+            }
+            $data = \Opis\JsonSchema\URI::build($data);
         }
-        return \Opis\JsonSchema\URI::isValidHostname($data);
-    }
 
+        return \Opis\JsonSchema\URI::isValid($data, false);
+    }
 }

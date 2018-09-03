@@ -209,6 +209,9 @@ class TypesTest extends TestCase
         $result = $validator->uriValidation("abc", "schema:/types.json#/definitions/string/pattern");
         $this->assertTrue($result->isValid());
 
+        $result = $validator->uriValidation("abc/", "schema:/types.json#/definitions/string/pattern");
+        $this->assertTrue($result->isValid());
+
         $result = $validator->uriValidation("Abc", "schema:/types.json#/definitions/string/pattern");
         $this->assertTrue($result->hasErrors());
 

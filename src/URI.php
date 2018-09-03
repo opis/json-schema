@@ -31,6 +31,10 @@ class URI
         'fragment' => null
     ];
 
+    const FRAGMENT_REGEX = '/^(?:(%[0-9a-f]{2})|[a-z0-9\-\/?:@._~!\$&\'\(\)*+,;=])*$/i';
+
+    const PATH_REGEX = '/^(?:(%[0-9a-f]{2})|[a-z0-9\/:@\-._~\!\$&\'\(\)*+,;=])*$/i';
+
     const HOSTNAME_REGEX = '/^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9]){1,63}\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9]){1,63}$/i';
 
     const TEMPLATE_VARSPEC_REGEX = '~^(?<varname>[a-zA-Z0-9\_\%\.]+)(?:(?<explode>\*)?|\:(?<prefix>\d+))?$~';
@@ -121,13 +125,49 @@ REGEX;
         if ($require_scheme && (!isset($uri['scheme']) || $uri['scheme'] === '')) {
             return false;
         }
-        if (isset($uri['host'])) {
-            if (preg_match( static::HOSTNAME_REGEX, $uri['host'])) {
-                return true;
-            }
-            return filter_var($uri['host'], FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+        if (isset($uri['host']) && !static::isValidHostname($uri['host'])) {
+            return false;
+        }
+        if (isset($uri['path']) && !static::isValidPath($uri['path'])) {
+            return false;
+        }
+        if (isset($uri['fragment']) && !static::isValidFragment($uri['fragment'])) {
+            return false;
         }
         return true;
+    }
+
+    /**
+     * @param string $host
+     * @return bool
+     */
+    public static function isValidHostname(string $host): bool
+    {
+        if (preg_match( static::HOSTNAME_REGEX, $host)) {
+            return true;
+        }
+        if (preg_match('/^\[(?<ip>[^\]]+)\]$/', $host, $m)) {
+            $host = $m['ip'];
+        }
+        return (bool) filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+    }
+
+    /**
+     * @param string $path
+     * @return bool
+     */
+    public static function isValidPath(string $path): bool
+    {
+        return (bool) preg_match(static::PATH_REGEX, $path);
+    }
+
+    /**
+     * @param string $fragment
+     * @return bool
+     */
+    public static function isValidFragment(string $fragment): bool
+    {
+        return (bool) preg_match(static::FRAGMENT_REGEX, $fragment);
     }
 
     /**
@@ -241,7 +281,7 @@ REGEX;
             $uri['host'] = $base['host'];
             $uri['port'] = $base['port'];
             $uri['user'] = $base['user'];
-            $uri['pass'] = $base['path'];
+            $uri['pass'] = $base['pass'];
         }
 
         if (!isset($uri['path'])) {
