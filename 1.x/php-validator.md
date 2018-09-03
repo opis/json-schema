@@ -182,24 +182,24 @@ Used to validate data when you have the schema as a `\Opis\JsonSchema\ISchema` o
 $schema = \Opis\JsonSchema\Schema::fromJsonString('{"type": "string"}');
 
 // Validating a string
-$result = $validator->uriValidation("some string", $schema);
+$result = $validator->schemaValidation("some string", $schema);
 
 // Validating a number
-$result = $validator->uriValidation(123.4, $schema);
-$result = $validator->uriValidation(-5, $schema);
+$result = $validator->schemaValidation(123.4, $schema);
+$result = $validator->schemaValidation(-5, $schema);
 
 // Validating an object
-$result = $validator->uriValidation((object)["name" => "John Doe"], $schema);
+$result = $validator->schemaValidation((object)["name" => "John Doe"], $schema);
 
 // Validating an array
-$result = $validator->uriValidation(["a", "b", "c"], $schema);
+$result = $validator->schemaValidation(["a", "b", "c"], $schema);
 
 // Validating a boolean
-$result = $validator->uriValidation(true, $schema);
-$result = $validator->uriValidation(false, $schema);
+$result = $validator->schemaValidation(true, $schema);
+$result = $validator->schemaValidation(false, $schema);
 
 // Validating null
-$result = $validator->uriValidation(null, $schema);
+$result = $validator->schemaValidation(null, $schema);
 ```
 
 **Arguments**
