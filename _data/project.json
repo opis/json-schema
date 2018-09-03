@@ -5,20 +5,20 @@
     "version": "1.0.8",
     "url": "/json-schema",
     "chapters": true,
-    "copyright": {
-        "owner": "The Opis Project",
-        "start": "2017",
-        "end": "2018"
-    },
+    "copyright": "2018 Zindex Software",
     "title_suffix": " | Opis Json Schema",
     "ga": true,
-    "logo": "/assets/v2/logo.svg",
-    "favicon": "/assets/v2/favicon.png",
+    "brand": {
+        "logo": "/assets/img/logo.svg",
+        "title": "opis",
+        "url": "https://opis.io/json-schema"
+    },
+    "favicon": "/assets/img/favicon.png",
     "styles": [
-        "/assets/v2/theme.css",
-        "/assets/v2/prism.css",
+        "/assets/css/theme.css",
+        "/assets/css/prism.css",
         "https://use.fontawesome.com/releases/v5.0.4/css/all.css",
-        "/assets/v2/style.css"
+        "/assets/css/style.css"
     ],
     "classes": {
         "body": "d-flex flex-column",
@@ -28,8 +28,8 @@
         "https://code.jquery.com/jquery-3.2.1.min.js",
         "https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js",
         "https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js",
-        "/assets/v2/prism.js",
-        "/assets/v2/script.js"
+        "/assets/js/prism.js",
+        "/assets/js/script.js"
     ],
     "current_version": 0,
     "versions": [

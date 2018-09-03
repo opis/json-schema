@@ -13,9 +13,9 @@ compress_html:
   blanklines: true
   profile: false
   startings: []
-favicon: /assets/v2/favicon.png
-layouts_dir: shared/_private/_layouts
-includes_dir: shared/_private/_includes
+favicon: /assets/img/favicon.png
+layouts_dir: shared/_layouts
+includes_dir: shared/_includes
 exclude: ["Gemfile", "Gemfile.lock", "composer.lock", "node_modules", "vendor", "tests",
 "vendor/bundle/", "vendor/cache/", "vendor/gems/", "vendor/ruby/", "shared"]
 plugins:
