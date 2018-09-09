@@ -80,8 +80,8 @@ Others are for identifying a document or a subschema, and the rest of them are f
 validity checks. Usually keywords work independently and there are only a few
 exceptions.
 
-1. [$schema](#$schema-keyword)
-2. [$id](#$id-keyword)
+1. [$schema](#schema-keyword)
+2. [$id](#id-keyword)
 3. [title](#title)
 4. [description](#description)
 5. [examples](#examples)
