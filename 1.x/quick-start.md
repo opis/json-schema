@@ -1,8 +1,8 @@
 ---
 layout: project
 version: 1.x
-title: Opis Json Schema Validation
-description: opis json schema validation quick start
+title: Quick start
+description: A short overview of the Opis JSON Schema library and of the JSON Schema standard
 keywords: opis, json, schema, validation, quick start
 ---
 # Quick start
