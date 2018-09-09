@@ -18,7 +18,7 @@ a set of data that represents the profile of some web application's user.
 For the sake of simplicity we don't care how we obtained these data, and we will simply assume that they are stored
 in a variable called `$data`. 
 
-Here is the content of this variable:
+Here is a possible content for this variable:
 ```json
 {
     "name": "John Doe",
@@ -54,8 +54,8 @@ Here is the content of this variable:
 
 ## The validator
 
-Now that we have our data, its time to start working to a validator for them. 
-The JSON contained in `$data` is in a form of an object with multiple
+Now that we have an idea over how our data are structured, its time to start creating validation schema. 
+The JSON contained in `$data` is structured as an object with multiple
 properties. All the properties are required to be present and adding additional properties is forbidden.
 The validation schema that follows these rules, looks something like bellow.
 
