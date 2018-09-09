@@ -8,7 +8,9 @@ keywords: opis, json, schema, validation, php, about
 
 # About
 
-**Opis Json Schema** is a PHP implementation for [json-schema](http://json-schema.org/){:target="_blank"} draft-07 and draft-06.
+**Opis JSON Schema** is a PHP implementation for the [JSON Schema](http://json-schema.org/){:target="_blank"}
+standard (draft-07 and draft-06), that will help you validate all sorts of JSON documents, 
+whether they are configuration files or a set of data sent to an RESTful API endpoint.
 
 ## Features
 
