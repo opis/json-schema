@@ -8,13 +8,13 @@ keywords: opis, json, schema, validation, quick start
 # Quick start
 
 * [The setup](#the-setup)
-* [The validator](#the-validator)
+* [The validation schema](#the-validation-schema)
 * [The PHP part](#the-php-part)
 
 ## The setup
 
-To better exemplify the benefits of using JSON Schema for validating JSON documents, were gonna build a validator for
-a set of data that represents the profile of some web application's user.
+To better exemplify the benefits of using JSON Schema for validating JSON documents, were gonna build a validation 
+schema for a set of data representing the profile of some web application's user.
 For the sake of simplicity we don't care how we obtained these data, and we will simply assume that they are stored
 in a variable called `$data`. 
 
@@ -52,7 +52,7 @@ Here is a possible content for this variable:
 }
 ```
 
-## The validator
+## The validation schema
 
 Now that we have an idea over how our data are structured, its time to start creating validation schema. 
 The JSON contained in `$data` is structured as an object with multiple
