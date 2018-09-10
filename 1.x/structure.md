@@ -5,11 +5,17 @@ title: Json Schema structure
 description: php opis json schema document structure and metadata
 keywords: opis, php, json, schema, validation, structure, metadata
 ---
+# JSON Schema structure
 
-# Json Schema structure
+* [Data types](#data-types)
+* [Document structure](#document-structure)
+* [$schema keyword](#schema-keyword)
+* [$id keyword](#id-keyword)
+* [Metadata keywords](#metadata-keywords)
+* [JSON Schema examples](#json-schema-examples)
 
-Json Schema is a declarative way of writing validations. It contains
-only the steps that need to be performed in order to validate something.
+JSON Schema is a declarative way of writing validation rules. It contains
+all the steps that are necessary to be performed in order to validate something.
 The format used to write these steps is, of course, 
 [JSON](https://www.json.org/){:target="_blank"} itself.
 
@@ -79,13 +85,6 @@ Some keywords are purely decorative, like metadata keywords, which just describe
 Others are for identifying a document or a subschema, and the rest of them are for
 validity checks. Usually keywords work independently and there are only a few
 exceptions.
-
-1. [$schema](#schema-keyword)
-2. [$id](#id-keyword)
-3. [title](#title)
-4. [description](#description)
-5. [examples](#examples)
-6. [$comment](#comment)
 
 ## $schema keyword
 
@@ -178,7 +177,7 @@ Contains an observation about the schema. The value of this keyword must be a st
 }
 ```
 
-## Some schema document examples
+## JSON Schema examples
 
 For most of the basic examples we will not use `$schema`, `$id` and metadata keywords,
 but when writing schemas it is recommended to use at least the `$id` keyword.
