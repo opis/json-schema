@@ -54,7 +54,7 @@ Here is a possible content for this variable:
 
 ## The validation schema
 
-Now that we have an idea over how our data are structured, its time to start creating validation schema. 
+Now that we have an idea over how our data are structured, its time to start creating a validation schema. 
 The JSON contained in `$data` is structured as an object with multiple
 properties. All the properties are required to be present and adding additional properties is forbidden.
 The validation schema that follows these rules, looks something like bellow.
@@ -127,7 +127,7 @@ This is a string that must be formatted as an email and its maximum length is of
 
 ##### website
 
-If the user doesn't have a website, then the value of this property must be `null`. Otherwise this is
+If the user doesn't have a website, then the value of this property must be `null`. Otherwise, this is
 a string of a maximum length of 128 characters, formatted as a [hostname](formats.html#hostname).
 
 ```json
@@ -147,7 +147,7 @@ The `country` property is a two-letter string representing the country's code.
 To keep things simple we only support United State, Canada and United Kingdom. 
 Therefore we could just use an [enum](generics.html#enum). The `address` property
 is just a string that can contains at most 128 characters. 
-Both these properties are required, and the object doesn't support aditional properties.
+Both these properties are required, and the object doesn't support additional properties.
 
 ```json
 {
@@ -155,7 +155,7 @@ Both these properties are required, and the object doesn't support aditional pro
         "type": "object",
         "properties": {
              "country": {
-                 "enum": ["US", "CA", "UK"]
+                 "enum": ["US", "CA", "GB"]
              },
              "address": {
                  "type": "string",
@@ -274,7 +274,7 @@ Now that we have finished defining validation rules, let's put all together and 
             "type": "object",
             "properties": {
                  "country": {
-                     "enum": ["US", "CA", "UK"]
+                     "enum": ["US", "CA", "GB"]
                  },
                  "address": {
                      "type": "string",
