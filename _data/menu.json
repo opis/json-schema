@@ -1,7 +1,7 @@
 {
     "1.x": [
         {
-            "title": "Opis Json Schema",
+            "title": "Opis JSON Schema",
             "pages": [
                 {
                     "title": "About",
@@ -11,12 +11,12 @@
                 {
                     "title": "Quick start",
                     "url": "/1.x/quick-start.html",
-                    "description": "Some quick examples for using opis json schema"
+                    "description": "Some quick examples about how to use Opis Json Schema"
                 }
             ]
         },
         {
-            "title": "Basics",
+            "title": "The Basics",
             "pages": [
                 {
                     "title": "Structure",
