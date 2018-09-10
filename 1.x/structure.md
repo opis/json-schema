@@ -2,7 +2,7 @@
 layout: project
 version: 1.x
 title: Json Schema structure
-description: php opis json schema document structure and metadata
+description: JSON Schema structure and metadata
 keywords: opis, php, json, schema, validation, structure, metadata
 ---
 # JSON Schema structure
