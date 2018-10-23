@@ -825,6 +825,7 @@ class Validator implements IValidator
                     "'oneOf' keyword must not be empty"
                 );
             }
+            $errors = [];
             $newbag = new ValidationResult(1);
             $count = 0;
             foreach ($schema->oneOf as &$one) {
@@ -841,6 +842,7 @@ class Validator implements IValidator
                         break;
                     }
                 }
+                $errors = array_merge($errors, $newbag->getErrors());
                 $newbag->clear();
             }
             unset($one, $newbag);
@@ -848,11 +850,12 @@ class Validator implements IValidator
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'oneOf', [
                     'matched' => $count,
-                ]));
+                ], $errors));
                 if ($bag->isFull()) {
                     return false;
                 }
             }
+            unset($errors);
         }
 
         // allOf
