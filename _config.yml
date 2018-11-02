@@ -4,6 +4,7 @@ kramdown:
   syntax_highlighter_opts:
     disable: true
 php: php?start_inline=1
+url: https://docs.opis.io/json-schema
 compress_html:
   clippings: []
   comments: []
@@ -22,4 +23,5 @@ plugins:
   - jekyll-coffeescript
   - jekyll-paginate
   - jekyll-redirect-from
+  - jekyll-sitemap
 
