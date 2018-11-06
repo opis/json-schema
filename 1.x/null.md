@@ -6,7 +6,7 @@ description: php opis json schema validation of null type
 keywords: opis, php, json, schema, null, validation
 ---
 
-# Boolean type
+# Null type
 
 The `null` type is used to validate the `null` value.
 

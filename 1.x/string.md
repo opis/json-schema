@@ -111,7 +111,7 @@ specified by the value of this keyword.
 Value of this keyword must be a string representing a valid regular
 expression.
 
-Please note that the delimiter used by Opis Json Schema is `/` (slash)
+Please note that the delimiter used by Opis Json Schema is `\x07` (bell)
 and the modifier is `u` ([PCRE_UTF8](http://php.net/manual/en/reference.pcre.pattern.modifiers.php){:target="_blank"}).
 {:.alert.alert-info}
 
