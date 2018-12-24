@@ -97,6 +97,12 @@ class ValidatorHelper implements IValidatorHelper
      */
     public function isValidType($value, $type): bool
     {
+        if ('string' == $type) {
+            $value = (string) $value;
+        } elseif (in_array($type, ['integer', 'float', 'number']])) {
+            $value = $value + 0;
+        }
+
         $value_type = $this->type($value, true);
         if (is_string($type)) {
             return $value_type === $type || ($value_type === 'integer' && $type === 'number');
