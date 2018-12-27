@@ -1,6 +1,6 @@
 {
-    "name": "opis/json-schema",
-    "description": "Json Schema Validator",
+    "name": "wwsoft/json-schema",
+    "description": "Json Schema Validator (forked from opis/json-schema)",
     "keywords": [
         "json",
         "schema",
