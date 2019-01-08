@@ -187,6 +187,24 @@ class TypesTest extends TestCase
         $result = $validator->uriValidation("name(at)example.com", "schema:/types.json#/definitions/string/format");
         $this->assertTrue($result->hasErrors());
 
+        $result = $validator->uriValidation("1970-01-01T10:05:08", "schema:/types.json#/definitions/string/date-time");
+        $this->assertTrue($result->isValid());
+
+        $result = $validator->uriValidation("1970-01-01T10:05:08.10", "schema:/types.json#/definitions/string/date-time");
+        $this->assertTrue($result->isValid());
+
+        $result = $validator->uriValidation("1970-01-01T10:05:08+01:00", "schema:/types.json#/definitions/string/date-time");
+        $this->assertTrue($result->isValid());
+
+        $result = $validator->uriValidation("Jan. 1st, 1970 at 1 p.m.", "schema:/types.json#/definitions/string/date-time");
+        $this->assertTrue($result->hasErrors());
+
+        $result = $validator->uriValidation("1970-01-01T", "schema:/types.json#/definitions/string/date-time");
+        $this->assertTrue($result->hasErrors());
+
+        $result = $validator->uriValidation("1970-01-01", "schema:/types.json#/definitions/string/date-time");
+        $this->assertTrue($result->hasErrors());
+
         // length
 
         $result = $validator->uriValidation("AA", "schema:/types.json#/definitions/string/length");
