@@ -47,6 +47,10 @@
             "pattern": {
                 "type": "string",
                 "pattern": "^[a-z|/]+$"
+            },
+            "date-time": {
+                "type": "string",
+                "format": "date-time"
             }
         },
         "array": {
