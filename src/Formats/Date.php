@@ -27,6 +27,9 @@ class Date extends AbstractFormat
      */
     public function validate($data): bool
     {
-        return $this->validateRegex($data, '/^' . self::REGEX . '$/i');
+        if ($this->validateRegex($data, '/^' . self::REGEX . '$/i')) {
+            $ymd = explode('-', $data);
+            return checkdate($ymd[1], $ymd[2], $ymd[0]);
+        } else return false;
     }
 }

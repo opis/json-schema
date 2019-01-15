@@ -51,6 +51,10 @@
             "date-time": {
                 "type": "string",
                 "format": "date-time"
+            },
+            "date": {
+                "type": "string",
+                "format": "date"
             }
         },
         "array": {
