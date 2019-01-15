@@ -24,6 +24,9 @@ class DateTime extends AbstractFormat
      */
     public function validate($data): bool
     {
-        return $this->validateRegex($data, '/^' . Date::REGEX . 'T' . Time::REGEX . '$/i');
+        if (!preg_match('/^' . Date::REGEX . 'T' . Time::REGEX . '$/i', $data, $m)) {
+            return false;
+        }
+        return checkdate($m['month'], $m['mday'], $m['fullyear']);
     }
 }

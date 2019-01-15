@@ -190,6 +190,9 @@ class TypesTest extends TestCase
         $result = $validator->uriValidation("1970-01-01T10:05:08", "schema:/types.json#/definitions/string/date-time");
         $this->assertTrue($result->isValid());
 
+        $result = $validator->uriValidation("1970-02-30T10:05:08", "schema:/types.json#/definitions/string/date-time");
+        $this->assertTrue($result->hasErrors());
+
         $result = $validator->uriValidation("1970-01-01T10:05:08.10", "schema:/types.json#/definitions/string/date-time");
         $this->assertTrue($result->isValid());
 
@@ -212,7 +215,7 @@ class TypesTest extends TestCase
         $this->assertTrue($result->hasErrors());
 
         $result = $validator->uriValidation("1970-02-28", "schema:/types.json#/definitions/string/date");
-        $this->assertFalse($result->hasErrors());
+        $this->assertTrue($result->isValid());
 
         // length
 
