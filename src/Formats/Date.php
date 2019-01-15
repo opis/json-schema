@@ -19,7 +19,6 @@ namespace Opis\JsonSchema\Formats;
 
 class Date extends AbstractFormat
 {
-
     const REGEX = '(?<fullyear>\d{4})-(?<month>0[1-9]|1[0-2])-(?<mday>0[1-9]|[12][0-9]|3[01])';
 
     /**
@@ -27,6 +26,10 @@ class Date extends AbstractFormat
      */
     public function validate($data): bool
     {
-        return $this->validateRegex($data, '/^' . self::REGEX . '$/i');
+        if (!preg_match('/^' . self::REGEX . '$/i', $data, $m)) {
+            return false;
+        }
+
+        return checkdate($m['month'], $m['mday'], $m['fullyear']);
     }
 }
