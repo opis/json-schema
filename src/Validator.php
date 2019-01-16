@@ -440,7 +440,7 @@ class Validator implements IValidator
                 }
             } else {
                 if ($fragment !== '' && $fragment !== '/') {
-                    $schema = JsonPointer::getDataByPointer($document->resolve(), $fragment, $this);
+                    $schema = JsonPointer::getDataByPointer($schema, $fragment, $this);
                     if ($schema === $this) {
                         throw new InvalidJsonPointerException($fragment);
                     }
