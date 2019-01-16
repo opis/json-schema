@@ -143,27 +143,40 @@ class Schema implements ISchema
             }
             return;
         }
+
         if (!is_object($schema)) {
             return;
         }
 
-        if (isset($schema->{'$ref'}) && is_string($schema->{'$ref'})) {
+        $has_ref = isset($schema->{'$ref'}) && is_string($schema->{'$ref'});
+
+        if (isset($schema->{static::ID_PROP}) && is_string($schema->{static::ID_PROP})) {
             // Set the base id
             $schema->{static::BASE_ID_PROP} = $id;
             // Add current path
             $schema->{static::PATH_PROP} = $path;
-            // Do not process $ref
-            return;
-        }
 
-        if (isset($schema->{static::ID_PROP}) && is_string($schema->{static::ID_PROP})) {
-            $schema->{static::BASE_ID_PROP} = $id;
             $id = URI::merge($schema->{static::ID_PROP}, $id);
             if (array_key_exists($id, $container)) {
                 throw new DuplicateSchemaException($id, $schema, $container);
             }
             $container[$id] = $schema;
+
+            // Do not process $ref
+            if ($has_ref) {
+                return;
+            }
+        } elseif ($has_ref) {
+            // Set the base id
+            $schema->{static::BASE_ID_PROP} = $id;
+            // Add current path
+            $schema->{static::PATH_PROP} = $path;
+
+            // Do not process $ref
+            return;
         }
+
+        unset($has_ref);
 
         foreach ($schema as $name => &$value) {
             if (is_null($value) || is_scalar($value)) {
