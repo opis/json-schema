@@ -51,7 +51,7 @@ class File extends Memory
         if (isset($this->schemas[$uri])) {
             return $this->schemas[$uri];
         }
-        if (strpos($uri, $this->prefix) !== 0) {
+        if ($this->prefixLength !== 0 && strpos($uri, $this->prefix) !== 0) {
             return null;
         }
         $path = substr($uri, $this->prefixLength);
