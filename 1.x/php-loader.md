@@ -45,10 +45,9 @@ You can use this loader to load schemas from filesystem.
 
 ```php
 <?php
-$loader = new \Opis\JsonSchema\Loaders\File(
-    "http://example.com/", 
-    "/path/to/schemas"
-);
+$loader = new \Opis\JsonSchema\Loaders\File("http://example.com/", [
+    "/path/to/schemas",
+]);
 $schema = $loader->loadSchema("http://example.com/string.json");
 // Will search the filesystem for /path/to/schemas/string.json
 ```
