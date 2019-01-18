@@ -25,8 +25,8 @@ of data sent to an RESTful API endpoint.
 - Support for custom variables using [`$vars` keyword](https://docs.opis.io/json-schema/1.x/variables.html)
 - Support for custom filters using [`$filters` keyword](https://docs.opis.io/json-schema/1.x/filters.html)
 - Advanced schema reuse using [`$map` keyword](https://docs.opis.io/json-schema/1.x/mappers.html)
-- Support for [json pointers](docs://www.opis.io/json-schema/1.x/pointers.html) (absolute and relative pointers)
-- Support for [URI templates](dosc://www.opis.io/json-schema/1.x/uri-template.html)
+- Support for [json pointers](https://docs.opis.io/json-schema/1.x/pointers.html) (absolute and relative pointers)
+- Support for [URI templates](https://docs.opis.io/json-schema/1.x/uri-template.html)
 
 ### Documentation
 
