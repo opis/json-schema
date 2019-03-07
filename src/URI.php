@@ -118,6 +118,9 @@ REGEX;
      */
     public static function isValid(string $uri, bool $require_scheme = true): bool
     {
+        if ($uri === '#') {
+            return !$require_scheme;
+        }
         $uri = parse_url($uri);
         if (!$uri) {
             return false;
