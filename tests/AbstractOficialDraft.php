@@ -40,16 +40,37 @@ abstract class AbstractOficialDraft extends TestCase
         $this->doTests($this->getFolderPath() . '/optional/format');
     }
 
+    public function testSelf()
+    {
+        $data = json_decode($this->getDraftSource(), false);
+
+        $validator = $this->getValidator();
+
+        $uri = "http://json-schema.org/draft-0{$this->getDraft()}/schema#";
+        $result = $validator->uriValidation($data, $uri);
+        $this->assertTrue($result->isValid());
+
+        $result = $validator->schemaValidation($data, new Schema($data));
+        $this->assertTrue($result->isValid());
+
+        $result = $validator->dataValidation($data, $data);
+        $this->assertTrue($result->isValid());
+    }
+
     protected function getFolderPath(): string
     {
         return __DIR__ . '/official/tests/draft' . $this->getDraft();
     }
 
+    protected function getDraftSource(): string
+    {
+        return file_get_contents(__DIR__ . '/official/drafts/draft' . $this->getDraft() . '.json');
+    }
+
     protected function getValidator(): IValidator
     {
         $loader = new File( self::URL, [__DIR__ . "/official/remotes"]);
-        $file = __DIR__ . '/official/drafts/draft' . $this->getDraft() . '.json';
-        $loader->add(json_decode(file_get_contents($file), false));
+        $loader->add(json_decode($this->getDraftSource(), false));
         return new Validator(null, $loader);
     }
 
