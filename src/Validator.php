@@ -1845,7 +1845,7 @@ class Validator implements IValidator
             if ($count > $schema->maxProperties) {
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'maxProperties', [
-                    'min' => $schema->maxProperties,
+                    'max' => $schema->maxProperties,
                     'count' => $count,
                 ]));
                 if ($bag->isFull()) {
