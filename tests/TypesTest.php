@@ -493,6 +493,15 @@ class TypesTest extends TestCase
         $result = $validator->uriValidation((object)["p0" => 1], "schema:/types.json#/definitions/object/pattern");
         $this->assertTrue($result->hasErrors());
 
+        $result = $validator->uriValidation(json_decode('{"12345": 0, "0": "something"}'), "schema:/types.json#/definitions/object/prop_names_numeric");
+        $this->assertTrue($result->isValid());
+
+        $result = $validator->uriValidation(json_decode('{"-12345": true, "1offender": "false"}'), "schema:/types.json#/definitions/object/prop_names_numeric");
+        $this->assertTrue($result->hasErrors());
+
+        $result = $validator->uriValidation(json_decode('{"noNumbersHere": true}'), "schema:/types.json#/definitions/object/prop_names_numeric");
+        $this->assertTrue($result->hasErrors());
+
         // dep
 
         $result = $validator->uriValidation((object)[], "schema:/types.json#/definitions/object/dep");
