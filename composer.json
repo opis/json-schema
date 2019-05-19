@@ -40,7 +40,8 @@
     "autoload-dev": {
         "psr-4": {
             "Opis\\JsonSchema\\Test\\": "tests/"
-        }
+        },
+        "files": ["tests/functions.php"]
     },
     "extra": {
         "branch-alias": {
