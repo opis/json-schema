@@ -383,6 +383,15 @@ class TypesTest extends TestCase
 
     }
 
+    public function testArrayIterator()
+    {
+        $validator = $this->getValidator();
+
+        $result = $validator->uriValidation(new \ArrayIterator([1, 2, 3]), "schema:/types.json#/definitions/array/simple");
+
+        $this->assertTrue($result->isValid());
+    }
+
     public function testObject()
     {
         $validator = $this->getValidator();

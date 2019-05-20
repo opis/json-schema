@@ -80,6 +80,21 @@ class ValidatorHelper implements IValidatorHelper
                 return "array";
             }
         }
+        if (is_iterable($value)) {
+            $ok = true;
+            $index = 0;
+            foreach ($value as $i => $v) {
+                if ($index !== $i) {
+                    $ok = false;
+                    break;
+                }
+
+                $index++;
+            }
+            if ($ok) {
+                return "array";
+            }
+        }
         // Otherwise consider it an object
         return "object";
     }
