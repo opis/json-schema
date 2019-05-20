@@ -25,6 +25,7 @@
     "require-dev": {
         "opis/string": "^1.4",
         "ext-bcmath": "*",
+        "ext-json": "*",
         "ext-mbstring": "*",
         "ext-intl": "*",
         "phpunit/phpunit": "^6.5"
