@@ -1782,7 +1782,7 @@ class Validator implements IValidator
             }
         }
 
-        $properties = array_keys(get_object_vars($data));
+        $properties = array_map('strval', array_keys(get_object_vars($data)));
 
         // minProperties
         if (property_exists($schema, 'minProperties')) {

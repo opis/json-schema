@@ -138,6 +138,13 @@
                     "^p[02468]$": {"type": "string"}
                 }
             },
+            "prop_names_numeric": {
+                "type": "object",
+                "propertyNames": {
+                    "type": "string",
+                    "pattern": "^(0|-?[1-9][0-9]*)$"
+                }
+            },
             "dep": {
                 "type": "object",
                 "dependencies": {

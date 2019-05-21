@@ -18,6 +18,7 @@
 namespace Opis\JsonSchema\Test;
 
 use PHPUnit\Framework\TestCase;
+use function Opis\JsonSchema\Test\array_to_object as a2o;
 
 class TypesTest extends TestCase
 {
@@ -387,7 +388,7 @@ class TypesTest extends TestCase
     {
         $validator = $this->getValidator();
 
-        $result = $validator->uriValidation((object)[], "schema:/types.json#/definitions/object/simple");
+        $result = $validator->uriValidation(a2o([]), "schema:/types.json#/definitions/object/simple");
         $this->assertTrue($result->isValid());
 
         $result = $validator->uriValidation(null, "schema:/types.json#/definitions/object/simple");
@@ -395,131 +396,140 @@ class TypesTest extends TestCase
 
         // interval
 
-        $result = $validator->uriValidation((object)["p1" => 1, "p2" => 2], "schema:/types.json#/definitions/object/interval");
+        $result = $validator->uriValidation(a2o(["p1" => 1, "p2" => 2]), "schema:/types.json#/definitions/object/interval");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1, "p2" => 2, "p3" => 3], "schema:/types.json#/definitions/object/interval");
+        $result = $validator->uriValidation(a2o(["p1" => 1, "p2" => 2, "p3" => 3]), "schema:/types.json#/definitions/object/interval");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1], "schema:/types.json#/definitions/object/interval");
+        $result = $validator->uriValidation(a2o(["p1" => 1]), "schema:/types.json#/definitions/object/interval");
         $this->assertTrue($result->hasErrors());
 
-        $result = $validator->uriValidation((object)["p1" => 1, "p2" => 2, "p3" => 3, "p4" => 4], "schema:/types.json#/definitions/object/interval");
+        $result = $validator->uriValidation(a2o(["p1" => 1, "p2" => 2, "p3" => 3, "p4" => 4]), "schema:/types.json#/definitions/object/interval");
         $this->assertTrue($result->hasErrors());
 
         // required
 
-        $result = $validator->uriValidation((object)["p1" => 1, "p2" => 2], "schema:/types.json#/definitions/object/required");
+        $result = $validator->uriValidation(a2o(["p1" => 1, "p2" => 2]), "schema:/types.json#/definitions/object/required");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1, "p2" => null, "p3" => 2], "schema:/types.json#/definitions/object/required");
+        $result = $validator->uriValidation(a2o(["p1" => 1, "p2" => null, "p3" => 2]), "schema:/types.json#/definitions/object/required");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1], "schema:/types.json#/definitions/object/required");
+        $result = $validator->uriValidation(a2o(["p1" => 1]), "schema:/types.json#/definitions/object/required");
         $this->assertTrue($result->hasErrors());
 
         // props
 
-        $result = $validator->uriValidation((object)[], "schema:/types.json#/definitions/object/props");
+        $result = $validator->uriValidation(a2o([]), "schema:/types.json#/definitions/object/props");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1], "schema:/types.json#/definitions/object/props");
+        $result = $validator->uriValidation(a2o(["p1" => 1]), "schema:/types.json#/definitions/object/props");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p2" => ""], "schema:/types.json#/definitions/object/props");
+        $result = $validator->uriValidation(a2o(["p2" => ""]), "schema:/types.json#/definitions/object/props");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1, "p2" => "str"], "schema:/types.json#/definitions/object/props");
+        $result = $validator->uriValidation(a2o(["p1" => 1, "p2" => "str"]), "schema:/types.json#/definitions/object/props");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1, "p2" => "str", "p3" => 2.5], "schema:/types.json#/definitions/object/props");
+        $result = $validator->uriValidation(a2o(["p1" => 1, "p2" => "str", "p3" => 2.5]), "schema:/types.json#/definitions/object/props");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => "str", "p2" => 1], "schema:/types.json#/definitions/object/props");
+        $result = $validator->uriValidation(a2o(["p1" => "str", "p2" => 1]), "schema:/types.json#/definitions/object/props");
         $this->assertTrue($result->hasErrors());
 
-        $result = $validator->uriValidation((object)["p2" => 1], "schema:/types.json#/definitions/object/props");
+        $result = $validator->uriValidation(a2o(["p2" => 1]), "schema:/types.json#/definitions/object/props");
         $this->assertTrue($result->hasErrors());
 
-        $result = $validator->uriValidation((object)["p1" => "str"], "schema:/types.json#/definitions/object/props");
+        $result = $validator->uriValidation(a2o(["p1" => "str"]), "schema:/types.json#/definitions/object/props");
         $this->assertTrue($result->hasErrors());
 
         // props additional
 
-        $result = $validator->uriValidation((object)[], "schema:/types.json#/definitions/object/props_additional");
+        $result = $validator->uriValidation(a2o([]), "schema:/types.json#/definitions/object/props_additional");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1], "schema:/types.json#/definitions/object/props_additional");
+        $result = $validator->uriValidation(a2o(["p1" => 1]), "schema:/types.json#/definitions/object/props_additional");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p2" => ""], "schema:/types.json#/definitions/object/props_additional");
+        $result = $validator->uriValidation(a2o(["p2" => ""]), "schema:/types.json#/definitions/object/props_additional");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1, "p2" => "str"], "schema:/types.json#/definitions/object/props_additional");
+        $result = $validator->uriValidation(a2o(["p1" => 1, "p2" => "str"]), "schema:/types.json#/definitions/object/props_additional");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1, "p2" => "str", "p5" => null], "schema:/types.json#/definitions/object/props_additional");
+        $result = $validator->uriValidation(a2o(["p1" => 1, "p2" => "str", "p5" => null]), "schema:/types.json#/definitions/object/props_additional");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["other" => null], "schema:/types.json#/definitions/object/props_additional");
+        $result = $validator->uriValidation(a2o(["other" => null]), "schema:/types.json#/definitions/object/props_additional");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 1, "p2" => "str", "other" => false], "schema:/types.json#/definitions/object/props_additional");
+        $result = $validator->uriValidation(a2o(["p1" => 1, "p2" => "str", "other" => false]), "schema:/types.json#/definitions/object/props_additional");
         $this->assertTrue($result->hasErrors());
 
         // pattern (propertyNames)
 
-        $result = $validator->uriValidation((object)[], "schema:/types.json#/definitions/object/pattern");
+        $result = $validator->uriValidation(a2o([]), "schema:/types.json#/definitions/object/pattern");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["prop" => 1], "schema:/types.json#/definitions/object/pattern");
+        $result = $validator->uriValidation(a2o(["prop" => 1]), "schema:/types.json#/definitions/object/pattern");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p1" => 5], "schema:/types.json#/definitions/object/pattern");
+        $result = $validator->uriValidation(a2o(["p1" => 5]), "schema:/types.json#/definitions/object/pattern");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p8" => "str"], "schema:/types.json#/definitions/object/pattern");
+        $result = $validator->uriValidation(a2o(["p8" => "str"]), "schema:/types.json#/definitions/object/pattern");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p5" => -3.2, "p6" => "str"], "schema:/types.json#/definitions/object/pattern");
+        $result = $validator->uriValidation(a2o(["p5" => -3.2, "p6" => "str"]), "schema:/types.json#/definitions/object/pattern");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p34" => false], "schema:/types.json#/definitions/object/pattern");
+        $result = $validator->uriValidation(a2o(["p34" => false]), "schema:/types.json#/definitions/object/pattern");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)["p3" => "5"], "schema:/types.json#/definitions/object/pattern");
+        $result = $validator->uriValidation(a2o(["p3" => "5"]), "schema:/types.json#/definitions/object/pattern");
         $this->assertTrue($result->hasErrors());
 
-        $result = $validator->uriValidation((object)["p0" => 1], "schema:/types.json#/definitions/object/pattern");
+        $result = $validator->uriValidation(a2o(["p0" => 1]), "schema:/types.json#/definitions/object/pattern");
+        $this->assertTrue($result->hasErrors());
+
+        $result = $validator->uriValidation(a2o(["12345" => 0, "0" => "something"]), "schema:/types.json#/definitions/object/prop_names_numeric");
+        $this->assertTrue($result->isValid());
+
+        $result = $validator->uriValidation(a2o(["-12345" => true, "1offender" => "false"]), "schema:/types.json#/definitions/object/prop_names_numeric");
+        $this->assertTrue($result->hasErrors());
+
+        $result = $validator->uriValidation(a2o(["noNumbersHere" => true]), "schema:/types.json#/definitions/object/prop_names_numeric");
         $this->assertTrue($result->hasErrors());
 
         // dep
 
-        $result = $validator->uriValidation((object)[], "schema:/types.json#/definitions/object/dep");
+        $result = $validator->uriValidation(a2o([]), "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)['e' => 1, 'a' => [1, 2], 'b' => null], "schema:/types.json#/definitions/object/dep");
+        $result = $validator->uriValidation(a2o(['e' => 1, 'a' => [1, 2], 'b' => null]), "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)['e' => 1, 'a' => [1, 2]], "schema:/types.json#/definitions/object/dep");
+        $result = $validator->uriValidation(a2o(['e' => 1, 'a' => [1, 2]]), "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->hasErrors());
 
-        $result = $validator->uriValidation((object)['e' => 1, 'a' => 1, 'b' => 2], "schema:/types.json#/definitions/object/dep");
+        $result = $validator->uriValidation(a2o(['e' => 1, 'a' => 1, 'b' => 2]), "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->hasErrors());
 
-        $result = $validator->uriValidation((object)['a' => 1, 'b' => 2], "schema:/types.json#/definitions/object/dep");
+        $result = $validator->uriValidation(a2o(['a' => 1, 'b' => 2]), "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)['c' => 1, 'd' => 2], "schema:/types.json#/definitions/object/dep");
+        $result = $validator->uriValidation(a2o(['c' => 1, 'd' => 2]), "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)['b' => 1, 'd' => 2], "schema:/types.json#/definitions/object/dep");
+        $result = $validator->uriValidation(a2o(['b' => 1, 'd' => 2]), "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)['a' => 'str'], "schema:/types.json#/definitions/object/dep");
+        $result = $validator->uriValidation(a2o(['a' => 'str']), "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->hasErrors());
 
-        $result = $validator->uriValidation((object)['c' => 1], "schema:/types.json#/definitions/object/dep");
+        $result = $validator->uriValidation(a2o(['c' => 1]), "schema:/types.json#/definitions/object/dep");
         $this->assertTrue($result->hasErrors());
 
     }
@@ -540,7 +550,7 @@ class TypesTest extends TestCase
         $result = $validator->uriValidation([1, 2, 3], "schema:/types.json#/definitions/combined");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation((object)['a' => null], "schema:/types.json#/definitions/combined");
+        $result = $validator->uriValidation(a2o(['a' => null]), "schema:/types.json#/definitions/combined");
         $this->assertTrue($result->isValid());
 
         $result = $validator->uriValidation(null, "schema:/types.json#/definitions/combined");
@@ -555,7 +565,7 @@ class TypesTest extends TestCase
         $result = $validator->uriValidation([1, 2], "schema:/types.json#/definitions/combined");
         $this->assertTrue($result->hasErrors());
 
-        $result = $validator->uriValidation((object)['b' => ''], "schema:/types.json#/definitions/combined");
+        $result = $validator->uriValidation(a2o(['b' => '']), "schema:/types.json#/definitions/combined");
         $this->assertTrue($result->hasErrors());
 
     }
