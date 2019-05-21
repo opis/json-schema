@@ -83,13 +83,20 @@ class Validator implements IValidator
      */
     public function schemaValidation($data, ISchema $schema, int $max_errors = 1, ISchemaLoader $loader = null): ValidationResult
     {
-        $default_loader = $this->loader;
-        if ($loader !== null) {
-            $this->loader = $loader;
-        }
         $bag = new ValidationResult($max_errors);
-        $this->validateSchema($data, $data, [], [], $schema, $schema->resolve(), $bag);
-        $this->loader = $default_loader;
+
+        if ($loader !== null) {
+            $default_loader = $this->loader;
+            $this->loader = $loader;
+            try {
+                $this->validateSchema($data, $data, [], [], $schema, $schema->resolve(), $bag);
+            } finally {
+                $this->loader = $default_loader;
+            }
+        } else {
+            $this->validateSchema($data, $data, [], [], $schema, $schema->resolve(), $bag);
+        }
+
         return $bag;
     }
 
