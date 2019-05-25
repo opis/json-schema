@@ -19,6 +19,9 @@ namespace Opis\JsonSchema;
 
 final class ValidationError
 {
+    /** @var string */
+    protected $message;
+
     /** @var mixed */
     protected $data;
 
@@ -39,6 +42,7 @@ final class ValidationError
 
     /**
      * ValidationError constructor.
+     * @param string $message
      * @param $data
      * @param array $data_pointer
      * @param array $parent_data_pointer
@@ -48,6 +52,7 @@ final class ValidationError
      * @param ValidationError[] $sub_errors
      */
     public function __construct(
+        string $message,
         $data,
         array $data_pointer,
         array $parent_data_pointer,
@@ -56,12 +61,21 @@ final class ValidationError
         array $keywordArgs = [],
         array $sub_errors = []
     ) {
+        $this->message = $message ?: "Unexplained error on keyword '$keyword'";
         $this->data = $data;
         $this->dataPointer = $parent_data_pointer ? array_merge($parent_data_pointer, $data_pointer) : $data_pointer;
         $this->schema = $schema;
         $this->keyword = $keyword;
         $this->keywordArgs = $keywordArgs;
         $this->subErrors = $sub_errors;
+    }
+
+    /**
+     * @return string
+     */
+    public function errorString(): string
+    {
+        return $this->message;
     }
 
     /**
@@ -78,6 +92,14 @@ final class ValidationError
     public function dataPointer(): array
     {
         return $this->dataPointer;
+    }
+
+    /**
+     * @return string
+     */
+    public function pointerString(): string
+    {
+        return '/' . implode('/', $this->dataPointer);
     }
 
     /**
@@ -136,5 +158,36 @@ final class ValidationError
     public function subErrorsCount(): int
     {
         return count($this->subErrors);
+    }
+
+    /**
+     * @return string
+     */
+    public function message(): string
+    {
+        return "{$this->pointerString()}: {$this->errorString()}";
+    }
+
+    /**
+     * @param string $errorSeparator
+     * @return string
+     */
+    public function messageWithSubs(string $errorSeparator = PHP_EOL): string
+    {
+        $messages = [];
+        $this->appendMessagesToArray($messages);
+        return implode($errorSeparator, $messages);
+    }
+
+    /**
+     * @param array &$messages
+     * @param int $nestingLevel
+     */
+    public function appendMessagesToArray(array &$messages, int $nestingLevel = 0)
+    {
+        $messages[] = "[$nestingLevel] {$this->message()}";
+        foreach($this->subErrors() as $sub) {
+            $sub->appendMessagesToArray($messages, $nestingLevel + 1);
+        }
     }
 }

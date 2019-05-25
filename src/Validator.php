@@ -315,9 +315,13 @@ class Validator implements IValidator
             if ($schema) {
                 return true;
             }
-            $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, '$schema', [
-                'schema' => $schema
-            ]));
+            $bag->addError(new ValidationError(
+                "Rejected by literal false schema",
+                $data, $data_pointer, $parent_data_pointer, $schema, '$schema',
+                [
+                    'schema' => $schema
+                ]
+            ));
             return false;
         }
 
@@ -608,10 +612,15 @@ class Validator implements IValidator
 
             if (!$this->helper->isValidType($data, $schema->type)) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'type', [
-                    'expected' => $schema->type,
-                    'used' => $this->helper->type($data, true),
-                ]));
+                $typeString = json_encode($schema->type);
+                $bag->addError(new ValidationError(
+                    "Expected type '$typeString', found '{$this->helper->type($data, true)}'",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'type',
+                    [
+                        'expected' => $schema->type,
+                        'used' => $this->helper->type($data, true),
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -622,9 +631,13 @@ class Validator implements IValidator
         if (property_exists($schema, 'const')) {
             if (!$this->helper->equals($data, $schema->const, $defaults)) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'const', [
-                    'expected' => $schema->const,
-                ]));
+                $bag->addError(new ValidationError(
+                    "Expected specific constant",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'const',
+                    [
+                        'expected' => $schema->const,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -660,9 +673,13 @@ class Validator implements IValidator
             unset($v);
             if (!$found) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'enum', [
-                    'expected' => $schema->enum,
-                ]));
+                $bag->addError(new ValidationError(
+                    "Expected value from enum",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'enum',
+                    [
+                        'expected' => $schema->enum,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -703,7 +720,10 @@ class Validator implements IValidator
             $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema->not, $newbag);
             if (!$newbag->hasErrors()) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'not'));
+                $bag->addError(new ValidationError(
+                    "Failed 'not': value must be not valid against schema provided",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'not'
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -736,7 +756,10 @@ class Validator implements IValidator
                     $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema->then, $newbag);
                     if ($newbag->hasErrors()) {
                         $ok = false;
-                        $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'then', [], $newbag->getErrors()));
+                        $bag->addError(new ValidationError(
+                            "Valid against 'if' schema, but not valid against 'then' schema",
+                            $data, $data_pointer, $parent_data_pointer, $schema, 'then', [], $newbag->getErrors()
+                        ));
                         if ($bag->isFull()) {
                             return false;
                         }
@@ -756,7 +779,10 @@ class Validator implements IValidator
                 $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema->else, $newbag);
                 if ($newbag->hasErrors()) {
                     $ok = false;
-                    $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'else', [], $newbag->getErrors()));
+                    $bag->addError(new ValidationError(
+                        "Not valid against 'if' schema, and not valid against 'else' schema",
+                        $data, $data_pointer, $parent_data_pointer, $schema, 'else', [], $newbag->getErrors()
+                    ));
                     if ($bag->isFull()) {
                         return false;
                     }
@@ -806,7 +832,10 @@ class Validator implements IValidator
             unset($one, $newbag);
             if (!$valid) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'anyOf', [], $errors));
+                $bag->addError(new ValidationError(
+                    "Failed 'anyOf': value must be valid against at least one schema",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'anyOf', [], $errors
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -855,9 +884,14 @@ class Validator implements IValidator
             unset($one, $newbag);
             if ($count !== 1) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'oneOf', [
-                    'matched' => $count,
-                ], $errors));
+                $bag->addError(new ValidationError(
+                    "Failed 'oneOf': value must be valid against exactly one schema, matched $count",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'oneOf',
+                    [
+                        'matched' => $count,
+                    ],
+                    $errors
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -906,7 +940,10 @@ class Validator implements IValidator
             unset($one, $newbag);
             if (!$valid) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'allOf', [], $errors));
+                $bag->addError(new ValidationError(
+                    "Failed 'allOf': value must be valid against all schemas provided",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'allOf', [], $errors
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -978,10 +1015,14 @@ class Validator implements IValidator
             if ($formatObj !== null) {
                 if (!$formatObj->validate($data)) {
                     $valid = false;
-                    $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'format', [
-                        'type' => $type,
-                        'format' => $schema->format,
-                    ]));
+                    $bag->addError(new ValidationError(
+                        "Unsatisfied format '$schema->format' for type '$type'",
+                        $data, $data_pointer, $parent_data_pointer, $schema, 'format',
+                        [
+                            'type' => $type,
+                            'format' => $schema->format,
+                        ]
+                    ));
                     if ($bag->isFull()) {
                         return false;
                     }
@@ -1108,10 +1149,14 @@ class Validator implements IValidator
         }
 
         if (!$valid) {
-            $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, Schema::FILTERS_PROP, [
-                'type' => $type,
-                'filter' => $filter_name,
-            ]));
+            $bag->addError(new ValidationError(
+                "Rejected by filter '$filter_name' for type '$type'",
+                $data, $data_pointer, $parent_data_pointer, $schema, Schema::FILTERS_PROP,
+                [
+                    'type' => $type,
+                    'filter' => $filter_name,
+                ]
+            ));
             return false;
         }
 
@@ -1155,10 +1200,14 @@ class Validator implements IValidator
             $len = $this->helper->stringLength($data);
             if ($len < $schema->minLength) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'minLength', [
-                    'min' => $schema->minLength,
-                    'length' => $len,
-                ]));
+                $bag->addError(new ValidationError(
+                    "String length ($len) below limit ($schema->minLength)",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'minLength',
+                    [
+                        'min' => $schema->minLength,
+                        'length' => $len,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1187,10 +1236,14 @@ class Validator implements IValidator
             $len = $this->helper->stringLength($data);
             if ($len > $schema->maxLength) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'maxLength', [
-                    'max' => $schema->maxLength,
-                    'length' => $len,
-                ]));
+                $bag->addError(new ValidationError(
+                    "String length ($len) exceeds limit ($schema->maxLength)",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'maxLength',
+                    [
+                        'max' => $schema->maxLength,
+                        'length' => $len,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1227,9 +1280,13 @@ class Validator implements IValidator
             }
             if (!$match) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'pattern', [
-                    'pattern' => $schema->pattern,
-                ]));
+                $bag->addError(new ValidationError(
+                    "Value does not match pattern",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'pattern',
+                    [
+                        'pattern' => $schema->pattern,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1261,9 +1318,13 @@ class Validator implements IValidator
 
             if ($decoded === false) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'contentEncoding', [
-                    'encoding' => $schema->contentEncoding,
-                ]));
+                $bag->addError(new ValidationError(
+                    "Expected content encoding '$schema->contentEncoding'",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'contentEncoding',
+                    [
+                        'encoding' => $schema->contentEncoding,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1303,9 +1364,13 @@ class Validator implements IValidator
 
             if (!$valid) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'contentMediaType', [
-                    'media' => $schema->contentMediaType,
-                ]));
+                $bag->addError(new ValidationError(
+                    "Expected content media type '$schema->contentMediaType'",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'contentMediaType',
+                    [
+                        'media' => $schema->contentMediaType,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1357,17 +1422,25 @@ class Validator implements IValidator
 
             if ($exclusive && $data == $schema->minimum) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'exclusiveMinimum', [
-                    'min' => $schema->minimum
-                ]));
+                $bag->addError(new ValidationError(
+                    "Value > $schema->minimum expected",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'exclusiveMinimum',
+                    [
+                        'min' => $schema->minimum
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
             } elseif ($data < $schema->minimum) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'minimum', [
-                    'min' => $schema->minimum
-                ]));
+                $bag->addError(new ValidationError(
+                    "Value >= $schema->minimum expected",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'minimum',
+                    [
+                        'min' => $schema->minimum
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1383,9 +1456,13 @@ class Validator implements IValidator
             }
             if ($data <= $schema->exclusiveMinimum) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'exclusiveMinimum', [
-                    'min' => $schema->exclusiveMinimum
-                ]));
+                $bag->addError(new ValidationError(
+                    "Value > $schema->exclusiveMinimum expected",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'exclusiveMinimum',
+                    [
+                        'min' => $schema->exclusiveMinimum
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1418,17 +1495,25 @@ class Validator implements IValidator
 
             if ($exclusive && $data == $schema->maximum) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'exclusiveMaximum', [
-                    'max' => $schema->maximum
-                ]));
+                $bag->addError(new ValidationError(
+                    "Value < $schema->maximum expected",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'exclusiveMaximum',
+                    [
+                        'max' => $schema->maximum
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
             } elseif ($data > $schema->maximum) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'maximum', [
-                    'max' => $schema->maximum
-                ]));
+                $bag->addError(new ValidationError(
+                    "Value <= $schema->maximum expected",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'maximum',
+                    [
+                        'max' => $schema->maximum
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1444,9 +1529,13 @@ class Validator implements IValidator
             }
             if ($data >= $schema->exclusiveMaximum) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'exclusiveMaximum', [
-                    'max' => $schema->exclusiveMaximum
-                ]));
+                $bag->addError(new ValidationError(
+                    "Value < $schema->exclusiveMaximum expected",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'exclusiveMaximum',
+                    [
+                        'max' => $schema->exclusiveMaximum
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1473,9 +1562,13 @@ class Validator implements IValidator
             }
             if (!$this->helper->isMultipleOf($data, $schema->multipleOf)) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'multipleOf', [
-                    'divisor' => $schema->multipleOf
-                ]));
+                $bag->addError(new ValidationError(
+                    "Multiple of $schema->multipleOf expected",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'multipleOf',
+                    [
+                        'divisor' => $schema->multipleOf
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1520,10 +1613,14 @@ class Validator implements IValidator
             }
             if (($count = count($data)) < $schema->minItems) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'minItems', [
-                    'min' => $schema->minItems,
-                    'count' => $count,
-                ]));
+                $bag->addError(new ValidationError(
+                    "At least $schema->minItems items expected, found $count",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'minItems',
+                    [
+                        'min' => $schema->minItems,
+                        'count' => $count,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1551,10 +1648,14 @@ class Validator implements IValidator
             }
             if (($count = count($data)) > $schema->maxItems) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'maxItems', [
-                    'max' => $schema->maxItems,
-                    'count' => $count,
-                ]));
+                $bag->addError(new ValidationError(
+                    "At most $schema->maxItems items expected, found $count",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'maxItems',
+                    [
+                        'max' => $schema->maxItems,
+                        'count' => $count,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1581,15 +1682,23 @@ class Validator implements IValidator
                         if ($this->helper->equals($data[$i], $data[$j])) {
                             $valid = false;
                             $dup = $data[$i];
+                            $indexA = $i;
+                            $indexB = $j;
                             break 2;
                         }
                     }
                 }
                 if (!$valid) {
                     $ok = false;
-                    $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'uniqueItems', [
-                        'duplicate' => $dup,
-                    ]));
+                    $bag->addError(new ValidationError(
+                        "Unique items expected, but [$indexA] equals [$indexB]",
+                        $data, $data_pointer, $parent_data_pointer, $schema, 'uniqueItems',
+                        [
+                            'duplicate' => $dup,
+                            'indexA' => $indexA,
+                            'indexB' => $indexB
+                        ]
+                    ));
                     if ($bag->isFull()) {
                         return false;
                     }
@@ -1616,7 +1725,10 @@ class Validator implements IValidator
             unset($value, $newbag);
             if (!$valid) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'contains', [], $errors));
+                $bag->addError(new ValidationError(
+                    "Missing expected item",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'contains', [], $errors
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1719,9 +1831,13 @@ class Validator implements IValidator
                 }
                 if (!property_exists($data, $prop) && !($defaults && array_key_exists($prop, $defaults))) {
                     $ok = false;
-                    $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'required', [
-                        'missing' => $prop,
-                    ]));
+                    $bag->addError(new ValidationError(
+                        "Missing required property '$prop'",
+                        $data, $data_pointer, $parent_data_pointer, $schema, 'required',
+                        [
+                            'missing' => $prop,
+                        ]
+                    ));
                     if ($bag->isFull()) {
                         return false;
                     }
@@ -1756,9 +1872,13 @@ class Validator implements IValidator
                         }
                         if (!property_exists($data, $prop) && !($defaults && array_key_exists($prop, $defaults))) {
                             $ok = false;
-                            $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'dependencies', [
-                                'missing' => $prop,
-                            ]));
+                            $bag->addError(new ValidationError(
+                                "Missing dependency '$prop' for property '$name'",
+                                $data, $data_pointer, $parent_data_pointer, $schema, 'dependencies',
+                                [
+                                    'missing' => $prop,
+                                ]
+                            ));
                             if ($bag->isFull()) {
                                 return false;
                             }
@@ -1815,10 +1935,14 @@ class Validator implements IValidator
             }
             if ($count < $schema->minProperties) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'minProperties', [
-                    'min' => $schema->minProperties,
-                    'count' => $count,
-                ]));
+                $bag->addError(new ValidationError(
+                    "At least $schema->minProperties properties expected, found $count",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'minProperties',
+                    [
+                        'min' => $schema->minProperties,
+                        'count' => $count,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1851,10 +1975,14 @@ class Validator implements IValidator
             }
             if ($count > $schema->maxProperties) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'maxProperties', [
-                    'max' => $schema->maxProperties,
-                    'count' => $count,
-                ]));
+                $bag->addError(new ValidationError(
+                    "At most $schema->maxProperties properties expected, found $count",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'maxProperties',
+                    [
+                        'max' => $schema->maxProperties,
+                        'count' => $count,
+                    ]
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1876,9 +2004,14 @@ class Validator implements IValidator
             foreach ($properties as $property) {
                 if (!$this->validateSchema($document_data, $property, $data_pointer, $parent_data_pointer, $document, $schema->propertyNames, $newbag)) {
                     $ok = false;
-                    $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'propertyNames', [
-                        'property' => $property
-                    ], $newbag->getErrors()));
+                    $bag->addError(new ValidationError(
+                        "Property '$property' violates 'propertyNames' requirements",
+                        $data, $data_pointer, $parent_data_pointer, $schema, 'propertyNames',
+                        [
+                            'property' => $property
+                        ],
+                        $newbag->getErrors()
+                    ));
                     if ($bag->isFull()) {
                         return false;
                     }
@@ -1966,7 +2099,10 @@ class Validator implements IValidator
             unset($property_schema, $regex);
             if ($newbag->hasErrors()) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'patternProperties', [], $newbag->getErrors()));
+                $bag->addError(new ValidationError(
+                    "Pattern property validation failed",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'patternProperties', [], $newbag->getErrors()
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
@@ -1996,7 +2132,10 @@ class Validator implements IValidator
             }
             if ($newbag->hasErrors()) {
                 $ok = false;
-                $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'additionalProperties', [], $newbag->getErrors()));
+                $bag->addError(new ValidationError(
+                    "Additional property validation failed",
+                    $data, $data_pointer, $parent_data_pointer, $schema, 'additionalProperties', [], $newbag->getErrors()
+                ));
                 if ($bag->isFull()) {
                     return false;
                 }
