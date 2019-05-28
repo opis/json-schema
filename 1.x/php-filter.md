@@ -51,7 +51,7 @@ use Opis\JsonSchema\{
 $filters = new FilterContainer();
 
 // Register our modulo filter
-$filters->add("number", "modulo", ModuloFilter());
+$filters->add("number", "modulo", new ModuloFilter());
 
 // Create a IValidator
 $validator = new Validator();
