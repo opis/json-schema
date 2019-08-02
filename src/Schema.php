@@ -35,7 +35,7 @@ class Schema implements ISchema
     const MAP_PROP = '$map';
 
     const WALK_IGNORE_PROPERTIES = [
-        'default', 'const', 'enum',
+        'const', 'enum',
         self::FILTERS_PROP, self::VARS_PROP, self::MAP_PROP
     ];
 
