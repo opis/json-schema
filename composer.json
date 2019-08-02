@@ -28,7 +28,7 @@
         "ext-json": "*",
         "ext-mbstring": "*",
         "ext-intl": "*",
-        "phpunit/phpunit": "^6.5"
+        "phpunit/phpunit": "^6.5 || ^7.0"
     },
     "suggest": {
         "opis/string": "A standalone library for manipulating multibyte strings"
