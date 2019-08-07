@@ -40,6 +40,7 @@ class FormatContainer implements IFormatContainer
             'uri-template' => Formats\UriTemplate::class,
             'iri' => Formats\Iri::class,
             'iri-reference' => Formats\IriReference::class,
+            'uuid' => Formats\Uuid::class,
         ]
     ];
 
