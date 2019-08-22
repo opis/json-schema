@@ -1,0 +1,23 @@
+[
+    {
+        "description": "validation of uuid values",
+        "schema": {"format": "uuid"},
+        "tests": [
+            {
+                "description": "a valid uuid string",
+                "data": "a175112a-1043-4344-80ec-2deb09cb615e",
+                "valid": true
+            },
+            {
+                "description": "a valid uppercase uuid string",
+                "data": "A175112A-1043-4344-80EC-2DEB09CB615E",
+                "valid": true
+            },
+            {
+                "description": "an invalid uuid string",
+                "data": "a175112a-1043-4344-80ec",
+                "valid": false
+            }
+        ]
+    }
+]
