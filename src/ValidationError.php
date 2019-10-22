@@ -137,4 +137,42 @@ final class ValidationError
     {
         return count($this->subErrors);
     }
+
+    /**
+     * @return bool
+     */
+    public function hasSubErrors(): bool
+    {
+        return $this->subErrorsCount() > 0;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return array(
+            'data' => $this->data(),
+            'dataPointer' => $this->dataPointer(),
+            'keywordArgs' => $this->keywordArgs(),
+            'hasSubErrors' => $this->hasSubErrors(),
+            'subErrors' => $this->subErrors()
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function toJson(): string
+    {
+        return (string)json_encode($this->toArray());
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->toJson();
+    }
 }

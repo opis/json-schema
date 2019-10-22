@@ -136,4 +136,43 @@ final class ValidationResult
         }
         return new self($max);
     }
+
+    /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return array(
+            'hasErrors' => $this->hasErrors(),
+            'errors' => $this->getErrorsAsArray(),
+            'maxErrors' => $this->maxErrors(),
+            'totalErrors' => $this->totalErrors()
+        );
+    }
+
+    /**
+     * @return string
+     */
+    public function toJson(): string
+    {
+        return (string)json_encode($this->toArray());
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        return $this->toJson();
+    }
+
+    /**
+     * @return array
+     */
+    private function getErrorsAsArray(): array
+    {
+        return array_map(static function (ValidationError $error){
+            return $error->toArray();
+        }, $this->getErrors());
+    }
 }
