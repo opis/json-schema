@@ -10,7 +10,7 @@ Validate JSON documents
 
 **Opis JSON Schema** is a PHP implementation for the [JSON Schema] standard (draft-07 and draft-06), that
 will help you validate all sorts of JSON documents, whether they are configuration files or a set 
-of data sent to an RESTful API endpoint.
+of data sent to a RESTful API endpoint.
 
 
 **The library's key features:**
