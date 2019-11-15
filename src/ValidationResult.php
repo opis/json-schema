@@ -98,7 +98,7 @@ final class ValidationResult
     public function getFirstError()
     {
         if ($this->errors) {
-            return reset($this->errors);
+            return \reset($this->errors);
         }
         return null;
     }

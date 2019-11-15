@@ -39,7 +39,7 @@ class FilterTest extends TestCase
              */
             public function validate($data, array $args): bool
             {
-                return strlen($data) % 2 === 1;
+                return \strlen($data) % 2 === 1;
             }
         });
 

@@ -29,7 +29,7 @@ abstract class AbstractFormat implements IFormat
      */
     protected function validateRegex($data, string $regex): bool
     {
-        return (bool) preg_match($regex, $data);
+        return (bool) \preg_match($regex, $data);
     }
 
     /**
@@ -40,7 +40,7 @@ abstract class AbstractFormat implements IFormat
      */
     protected function validateFilter($data, int $filter, $options = null): bool
     {
-        return filter_var($data, $filter, $options) !== false;
+        return \filter_var($data, $filter, $options) !== false;
     }
 
 }

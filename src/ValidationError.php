@@ -57,7 +57,7 @@ final class ValidationError
         array $sub_errors = []
     ) {
         $this->data = $data;
-        $this->dataPointer = $parent_data_pointer ? array_merge($parent_data_pointer, $data_pointer) : $data_pointer;
+        $this->dataPointer = $parent_data_pointer ? \array_merge($parent_data_pointer, $data_pointer) : $data_pointer;
         $this->schema = $schema;
         $this->keyword = $keyword;
         $this->keywordArgs = $keywordArgs;
@@ -135,6 +135,6 @@ final class ValidationError
      */
     public function subErrorsCount(): int
     {
-        return count($this->subErrors);
+        return \count($this->subErrors);
     }
 }

@@ -232,7 +232,7 @@ class TypesTest extends TestCase
         $result = $validator->uriValidation("A", "schema:/types.json#/definitions/string/length");
         $this->assertTrue($result->hasErrors());
 
-        $result = $validator->uriValidation(str_repeat('A', 11), "schema:/types.json#/definitions/string/length");
+        $result = $validator->uriValidation(\str_repeat('A', 11), "schema:/types.json#/definitions/string/length");
         $this->assertTrue($result->hasErrors());
 
         // pattern
@@ -278,13 +278,13 @@ class TypesTest extends TestCase
         $result = $validator->uriValidation(["a", "b"], "schema:/types.json#/definitions/array/interval");
         $this->assertTrue($result->isValid());
 
-        $result = $validator->uriValidation(range(1, 10), "schema:/types.json#/definitions/array/interval");
+        $result = $validator->uriValidation(\range(1, 10), "schema:/types.json#/definitions/array/interval");
         $this->assertTrue($result->isValid());
 
         $result = $validator->uriValidation(["a"], "schema:/types.json#/definitions/array/interval");
         $this->assertTrue($result->hasErrors());
 
-        $result = $validator->uriValidation(range(1, 11), "schema:/types.json#/definitions/array/interval");
+        $result = $validator->uriValidation(\range(1, 11), "schema:/types.json#/definitions/array/interval");
         $this->assertTrue($result->hasErrors());
 
         // unique

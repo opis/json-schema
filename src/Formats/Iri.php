@@ -29,7 +29,7 @@ class Iri implements IFormat
      */
     public function __construct()
     {
-        $this->hasIntl = function_exists('idn_to_ascii');
+        $this->hasIntl = \function_exists('idn_to_ascii');
     }
 
     /**
@@ -38,7 +38,7 @@ class Iri implements IFormat
     public function validate($data): bool
     {
         if ($this->hasIntl) {
-            $data = parse_url($data);
+            $data = \parse_url($data);
             if (!$data) {
                 return false;
             }

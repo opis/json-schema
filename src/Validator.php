@@ -115,7 +115,7 @@ class Validator implements IValidator
      */
     public function dataValidation($data, $schema, int $max_errors = 1, ISchemaLoader $loader = null): ValidationResult
     {
-        $schema = is_string($schema) ? Schema::fromJsonString($schema) : new Schema($schema);
+        $schema = \is_string($schema) ? Schema::fromJsonString($schema) : new Schema($schema);
         return $this->schemaValidation($data, $schema, $max_errors, $loader);
     }
 
@@ -311,7 +311,7 @@ class Validator implements IValidator
      */
     protected function validateSchema(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
     {
-        if (is_bool($schema)) {
+        if (\is_bool($schema)) {
             if ($schema) {
                 return true;
             }
@@ -321,11 +321,11 @@ class Validator implements IValidator
             return false;
         }
 
-        if (!is_object($schema)) {
+        if (!\is_object($schema)) {
             throw new InvalidSchemaException($schema);
         }
 
-        if (property_exists($schema, '$ref') && is_string($schema->{'$ref'})) {
+        if (\property_exists($schema, '$ref') && \is_string($schema->{'$ref'})) {
             return $this->validateRef($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema, $bag);
         }
 
@@ -352,7 +352,7 @@ class Validator implements IValidator
             $ref = URI::parseTemplate($ref, $this->getVars($document_data, $data_pointer, $schema));
         }
 
-        $map_used = $this->mapSupport && property_exists($schema, Schema::MAP_PROP);
+        $map_used = $this->mapSupport && \property_exists($schema, Schema::MAP_PROP);
 
         // $map
         if ($map_used) {
@@ -364,7 +364,7 @@ class Validator implements IValidator
             $document_data = &$data;
 
             if ($data_pointer) {
-                $parent_data_pointer = array_merge($parent_data_pointer, $data_pointer);
+                $parent_data_pointer = \array_merge($parent_data_pointer, $data_pointer);
                 $data_pointer = [];
             }
         }
@@ -390,7 +390,7 @@ class Validator implements IValidator
 
         // Check if is a json pointer relative to this document
         if (isset($ref[0]) && $ref[0] === '#') {
-            $pointer = substr($ref, 1);
+            $pointer = \substr($ref, 1);
             if (JsonPointer::isPointer($pointer)) {
                 if (!JsonPointer::isEscapedPointer($pointer)) {
                     throw new InvalidJsonPointerException($pointer);
@@ -408,7 +408,7 @@ class Validator implements IValidator
         // Merge uris
         $ref = URI::merge($ref, $schema->{Schema::BASE_ID_PROP} ?? '', true);
 
-        list($base_ref, $fragment) = explode('#', $ref, 2);
+        list($base_ref, $fragment) = \explode('#', $ref, 2);
 
         if (JsonPointer::isPointer($fragment)) {
             if (!JsonPointer::isEscapedPointer($fragment)) {
@@ -441,7 +441,7 @@ class Validator implements IValidator
                     unset($document_data);
                     $document_data = &$data;
                     if ($data_pointer) {
-                        $parent_data_pointer = array_merge($parent_data_pointer, $data_pointer);
+                        $parent_data_pointer = \array_merge($parent_data_pointer, $data_pointer);
                         $data_pointer = [];
                     }
                 }
@@ -478,7 +478,7 @@ class Validator implements IValidator
             unset($document_data);
             $document_data = &$data;
             if ($data_pointer) {
-                $parent_data_pointer = array_merge($parent_data_pointer, $data_pointer);
+                $parent_data_pointer = \array_merge($parent_data_pointer, $data_pointer);
                 $data_pointer = [];
             }
         }
@@ -503,9 +503,9 @@ class Validator implements IValidator
 
         $defaults = null;
         // Set defaults if used
-        if ($this->defaultSupport && is_object($data) && is_object($schema) && property_exists($schema, 'properties')) {
+        if ($this->defaultSupport && \is_object($data) && \is_object($schema) && \property_exists($schema, 'properties')) {
             foreach ($schema->properties as $property => $value) {
-                if (property_exists($data, $property) || !is_object($value) || !property_exists($value, 'default')) {
+                if (\property_exists($data, $property) || !\is_object($value) || !\property_exists($value, 'default')) {
                     continue;
                 }
                 $defaults[$property] = $this->deepClone($value->default);
@@ -549,8 +549,8 @@ class Validator implements IValidator
         $ok = true;
 
         // type
-        if (property_exists($schema, 'type')) {
-            if (is_string($schema->type)) {
+        if (\property_exists($schema, 'type')) {
+            if (\is_string($schema->type)) {
                 if (!$this->helper->typeExists($schema->type)) {
                     throw new SchemaKeywordException(
                         $schema,
@@ -559,9 +559,9 @@ class Validator implements IValidator
                         "'type' keyword contains unknown value: " . $schema->type
                     );
                 }
-            } elseif (is_array($schema->type)) {
+            } elseif (\is_array($schema->type)) {
                 /** @noinspection PhpParamsInspection */
-                if (count($schema->type) === 0) {
+                if (\count($schema->type) === 0) {
                     throw new SchemaKeywordException(
                         $schema,
                         'type',
@@ -570,7 +570,7 @@ class Validator implements IValidator
                     );
                 }
                 /** @noinspection PhpParamsInspection */
-                if ($schema->type != array_unique($schema->type)) {
+                if ($schema->type != \array_unique($schema->type)) {
                     throw new SchemaKeywordException(
                         $schema,
                         'type',
@@ -579,12 +579,12 @@ class Validator implements IValidator
                     );
                 }
                 foreach ($schema->type as $type) {
-                    if (!is_string($type)) {
+                    if (!\is_string($type)) {
                         throw new SchemaKeywordException(
                             $schema,
                             'type',
                             $type,
-                            "'type' keyword must have only strings if array, found " . gettype($type)
+                            "'type' keyword must have only strings if array, found " . \gettype($type)
                         );
                     }
                     if (!$this->helper->typeExists($type)) {
@@ -602,7 +602,7 @@ class Validator implements IValidator
                     $schema,
                     'type',
                     $schema->type,
-                    "'type' keyword must be a string or an array of strings, " . gettype($schema->type) . " given"
+                    "'type' keyword must be a string or an array of strings, " . \gettype($schema->type) . " given"
                 );
             }
 
@@ -619,7 +619,7 @@ class Validator implements IValidator
         }
 
         // const
-        if (property_exists($schema, 'const')) {
+        if (\property_exists($schema, 'const')) {
             if (!$this->helper->equals($data, $schema->const, $defaults)) {
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'const', [
@@ -632,16 +632,16 @@ class Validator implements IValidator
         }
 
         // enum
-        if (property_exists($schema, 'enum')) {
-            if (!is_array($schema->enum)) {
+        if (\property_exists($schema, 'enum')) {
+            if (!\is_array($schema->enum)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'enum',
                     $schema->enum,
-                    "'enum' keyword must be an array, " . gettype($schema->enum) . " given"
+                    "'enum' keyword must be an array, " . \gettype($schema->enum) . " given"
                 );
             }
-            if (count($schema->enum) === 0) {
+            if (\count($schema->enum) === 0) {
                 throw new SchemaKeywordException(
                     $schema,
                     'enum',
@@ -689,13 +689,13 @@ class Validator implements IValidator
         $ok = true;
 
         // not
-        if (property_exists($schema, 'not')) {
-            if (!is_bool($schema->not) && !is_object($schema->not)) {
+        if (\property_exists($schema, 'not')) {
+            if (!\is_bool($schema->not) && !\is_object($schema->not)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'not',
                     $schema->not,
-                    "'not' keyword must be a boolean or an object, " . gettype($schema->not) . " given"
+                    "'not' keyword must be a boolean or an object, " . \gettype($schema->not) . " given"
                 );
             }
 
@@ -712,24 +712,24 @@ class Validator implements IValidator
         }
 
         // if, then, else
-        if (property_exists($schema, 'if') && $document->draft() !== '06') {
-            if (!is_bool($schema->if) && !is_object($schema->if)) {
+        if (\property_exists($schema, 'if') && $document->draft() !== '06') {
+            if (!\is_bool($schema->if) && !\is_object($schema->if)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'if',
                     $schema->if,
-                    "'if' keyword must be a boolean or an object, " . gettype($schema->if) . " given"
+                    "'if' keyword must be a boolean or an object, " . \gettype($schema->if) . " given"
                 );
             }
 
             if ($this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $schema->if, new ValidationResult(1))) {
-                if (property_exists($schema, 'then')) {
-                    if (!is_bool($schema->then) && !is_object($schema->then)) {
+                if (\property_exists($schema, 'then')) {
+                    if (!\is_bool($schema->then) && !\is_object($schema->then)) {
                         throw new SchemaKeywordException(
                             $schema,
                             'then',
                             $schema->then,
-                            "'then' keyword must be a boolean or an object, " . gettype($schema->then) . " given"
+                            "'then' keyword must be a boolean or an object, " . \gettype($schema->then) . " given"
                         );
                     }
                     $newbag = $bag->createByDiff();
@@ -743,13 +743,13 @@ class Validator implements IValidator
                     }
                     unset($newbag);
                 }
-            } elseif (property_exists($schema, 'else')) {
-                if (!is_bool($schema->else) && !is_object($schema->else)) {
+            } elseif (\property_exists($schema, 'else')) {
+                if (!\is_bool($schema->else) && !\is_object($schema->else)) {
                     throw new SchemaKeywordException(
                         $schema,
                         'else',
                         $schema->else,
-                        "'else' keyword must be a boolean or an object, " . gettype($schema->then) . " given"
+                        "'else' keyword must be a boolean or an object, " . \gettype($schema->then) . " given"
                     );
                 }
                 $newbag = $bag->createByDiff();
@@ -766,16 +766,16 @@ class Validator implements IValidator
         }
 
         // anyOf
-        if (property_exists($schema, 'anyOf')) {
-            if (!is_array($schema->anyOf)) {
+        if (\property_exists($schema, 'anyOf')) {
+            if (!\is_array($schema->anyOf)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'anyOf',
                     $schema->anyOf,
-                    "'anyOf' keyword must be an array, " . gettype($schema->anyOf) . " given"
+                    "'anyOf' keyword must be an array, " . \gettype($schema->anyOf) . " given"
                 );
             }
-            if (count($schema->anyOf) === 0) {
+            if (\count($schema->anyOf) === 0) {
                 throw new SchemaKeywordException(
                     $schema,
                     'anyOf',
@@ -788,19 +788,19 @@ class Validator implements IValidator
             $valid = false;
             $errors = [];
             foreach ($schema->anyOf as &$one) {
-                if (!is_bool($one) && !is_object($one)) {
+                if (!\is_bool($one) && !\is_object($one)) {
                     throw new SchemaKeywordException(
                         $schema,
                         'anyOf',
                         $schema->anyOf,
-                        "'anyOf' keyword items must be booleans or objects, found " . gettype($one)
+                        "'anyOf' keyword items must be booleans or objects, found " . \gettype($one)
                     );
                 }
                 if ($this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $one, $newbag)) {
                     $valid = true;
                     break;
                 }
-                $errors = array_merge($errors, $newbag->getErrors());
+                $errors = \array_merge($errors, $newbag->getErrors());
                 $newbag->clear();
             }
             unset($one, $newbag);
@@ -815,16 +815,16 @@ class Validator implements IValidator
         }
 
         // oneOf
-        if (property_exists($schema, 'oneOf')) {
-            if (!is_array($schema->oneOf)) {
+        if (\property_exists($schema, 'oneOf')) {
+            if (!\is_array($schema->oneOf)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'oneOf',
                     $schema->oneOf,
-                    "'oneOf' keyword must be an array, " . gettype($schema->oneOf) . " given"
+                    "'oneOf' keyword must be an array, " . \gettype($schema->oneOf) . " given"
                 );
             }
-            if (count($schema->oneOf) === 0) {
+            if (\count($schema->oneOf) === 0) {
                 throw new SchemaKeywordException(
                     $schema,
                     'oneOf',
@@ -836,12 +836,12 @@ class Validator implements IValidator
             $newbag = new ValidationResult(1);
             $count = 0;
             foreach ($schema->oneOf as &$one) {
-                if (!is_bool($one) && !is_object($one)) {
+                if (!\is_bool($one) && !\is_object($one)) {
                     throw new SchemaKeywordException(
                         $schema,
                         'oneOf',
                         $schema->oneOf,
-                        "'oneOf' keyword items must be booleans or objects, found " . gettype($one)
+                        "'oneOf' keyword items must be booleans or objects, found " . \gettype($one)
                     );
                 }
                 if ($this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $one, $newbag)) {
@@ -849,7 +849,7 @@ class Validator implements IValidator
                         break;
                     }
                 }
-                $errors = array_merge($errors, $newbag->getErrors());
+                $errors = \array_merge($errors, $newbag->getErrors());
                 $newbag->clear();
             }
             unset($one, $newbag);
@@ -866,16 +866,16 @@ class Validator implements IValidator
         }
 
         // allOf
-        if (property_exists($schema, 'allOf')) {
-            if (!is_array($schema->allOf)) {
+        if (\property_exists($schema, 'allOf')) {
+            if (!\is_array($schema->allOf)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'allOf',
                     $schema->allOf,
-                    "'allOf' keyword must be an array, " . gettype($schema->allOf) . " given"
+                    "'allOf' keyword must be an array, " . \gettype($schema->allOf) . " given"
                 );
             }
-            if (count($schema->allOf) === 0) {
+            if (\count($schema->allOf) === 0) {
                 throw new SchemaKeywordException(
                     $schema,
                     'allOf',
@@ -888,12 +888,12 @@ class Validator implements IValidator
             $valid = true;
 
             foreach ($schema->allOf as &$one) {
-                if (!is_bool($one) && !is_object($one)) {
+                if (!\is_bool($one) && !\is_object($one)) {
                     throw new SchemaKeywordException(
                         $schema,
                         'allOf',
                         $schema->allOf,
-                        "'allOf' keyword items must be booleans or objects, found " . gettype($one)
+                        "'allOf' keyword items must be booleans or objects, found " . \gettype($one)
                     );
                 }
                 if (!$this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $document, $one, $newbag)) {
@@ -962,13 +962,13 @@ class Validator implements IValidator
             return false;
         }
 
-        if (property_exists($schema, 'format') && $this->formats) {
-            if (!is_string($schema->format)) {
+        if (\property_exists($schema, 'format') && $this->formats) {
+            if (!\is_string($schema->format)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'format',
                     $schema->format,
-                    "'format' keyword must be a string, " . gettype($schema->format) . ", given"
+                    "'format' keyword must be a string, " . \gettype($schema->format) . ", given"
                 );
             }
             $formatObj = $this->formats->get($type, $schema->format);
@@ -1007,24 +1007,24 @@ class Validator implements IValidator
     protected function validateFilters(/** @noinspection PhpUnusedParameterInspection */
         &$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag): bool
     {
-        if (!property_exists($schema, Schema::FILTERS_PROP) || !$this->filters) {
+        if (!\property_exists($schema, Schema::FILTERS_PROP) || !$this->filters) {
             return true;
         }
 
         /** @var array $filters */
         $filters = null;
-        if (is_string($schema->{Schema::FILTERS_PROP})) {
+        if (\is_string($schema->{Schema::FILTERS_PROP})) {
             $filters = [(object)[Schema::FUNC_NAME => $schema->{Schema::FILTERS_PROP}]];
         }
-        elseif (is_object($schema->{Schema::FILTERS_PROP})) {
+        elseif (\is_object($schema->{Schema::FILTERS_PROP})) {
             $filters = [$schema->{Schema::FILTERS_PROP}];
-        } elseif (is_array($schema->{Schema::FILTERS_PROP})) {
+        } elseif (\is_array($schema->{Schema::FILTERS_PROP})) {
             $filters = $schema->{Schema::FILTERS_PROP};
-            if (count($filters) === 0) {
+            if (\count($filters) === 0) {
                 return true;
             }
             foreach ($filters as &$filter) {
-                if (is_string($filter)) {
+                if (\is_string($filter)) {
                     $filter = (object)[Schema::FUNC_NAME => $filter];
                 }
             }
@@ -1034,7 +1034,7 @@ class Validator implements IValidator
                 $schema,
                 Schema::FILTERS_PROP,
                 $schema->{Schema::FILTERS_PROP},
-                "'" . Schema::FILTERS_PROP . "' keyword must be a string, an object or an array of objects, " . gettype($schema->{Schema::FILTERS_PROP}) . " given"
+                "'" . Schema::FILTERS_PROP . "' keyword must be a string, an object or an array of objects, " . \gettype($schema->{Schema::FILTERS_PROP}) . " given"
             );
         }
 
@@ -1042,15 +1042,15 @@ class Validator implements IValidator
         $filter_name = null;
         $valid = true;
         foreach ($filters as $filter) {
-            if (!is_object($filter)) {
+            if (!\is_object($filter)) {
                 throw new SchemaKeywordException(
                     $schema,
                     Schema::FILTERS_PROP,
                     $schema->{Schema::FILTERS_PROP},
-                    "'" . Schema::FILTERS_PROP . "' keyword must be a string, an object or an array of objects, found " . gettype($filter)
+                    "'" . Schema::FILTERS_PROP . "' keyword must be a string, an object or an array of objects, found " . \gettype($filter)
                 );
             }
-            if (!property_exists($filter, Schema::FUNC_NAME)) {
+            if (!\property_exists($filter, Schema::FUNC_NAME)) {
                 throw new SchemaKeywordException(
                     $filter,
                     Schema::FUNC_NAME,
@@ -1058,12 +1058,12 @@ class Validator implements IValidator
                     "'" . Schema::FUNC_NAME . "' keyword is required"
                 );
             }
-            if (!is_string($filter->{Schema::FUNC_NAME})) {
+            if (!\is_string($filter->{Schema::FUNC_NAME})) {
                 throw new SchemaKeywordException(
                     $filter,
                     Schema::FUNC_NAME,
                     $filter->{Schema::FUNC_NAME},
-                    "'" . Schema::FUNC_NAME . "' keyword must be a string, " . gettype($filter->{Schema::FUNC_NAME}) . " given"
+                    "'" . Schema::FUNC_NAME . "' keyword must be a string, " . \gettype($filter->{Schema::FUNC_NAME}) . " given"
                 );
             }
 
@@ -1079,13 +1079,13 @@ class Validator implements IValidator
                 }
             }
 
-            if (property_exists($filter, Schema::VARS_PROP)) {
-                if (!is_object($filter->{Schema::VARS_PROP})) {
+            if (\property_exists($filter, Schema::VARS_PROP)) {
+                if (!\is_object($filter->{Schema::VARS_PROP})) {
                     throw new SchemaKeywordException(
                         $filter,
                         Schema::VARS_PROP,
                         $filter->{Schema::VARS_PROP},
-                        "'" . Schema::VARS_PROP . "' keyword must be an object, " . gettype($filter->{Schema::VARS_PROP}) . " given"
+                        "'" . Schema::VARS_PROP . "' keyword must be an object, " . \gettype($filter->{Schema::VARS_PROP}) . " given"
                     );
                 }
                 $vars = $this->deepClone($filter->{Schema::VARS_PROP});
@@ -1135,13 +1135,13 @@ class Validator implements IValidator
         $ok = true;
 
         // minLength
-        if (property_exists($schema, 'minLength')) {
-            if (!is_int($schema->minLength)) {
+        if (\property_exists($schema, 'minLength')) {
+            if (!\is_int($schema->minLength)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'minLength',
                     $schema->minLength,
-                    "'minLength' keyword must be an integer, " . gettype($schema->minLength) . " given"
+                    "'minLength' keyword must be an integer, " . \gettype($schema->minLength) . " given"
                 );
             }
             if ($schema->minLength < 0) {
@@ -1167,13 +1167,13 @@ class Validator implements IValidator
         }
 
         // maxLength
-        if (property_exists($schema, 'maxLength')) {
-            if (!is_int($schema->maxLength)) {
+        if (\property_exists($schema, 'maxLength')) {
+            if (!\is_int($schema->maxLength)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'maxLength',
                     $schema->maxLength,
-                    "'maxLength' keyword must be an integer, " . gettype($schema->maxLength) . " given"
+                    "'maxLength' keyword must be an integer, " . \gettype($schema->maxLength) . " given"
                 );
             }
             if ($schema->maxLength < 0) {
@@ -1199,13 +1199,13 @@ class Validator implements IValidator
         }
 
         // pattern
-        if (property_exists($schema, 'pattern')) {
-            if (!is_string($schema->pattern)) {
+        if (\property_exists($schema, 'pattern')) {
+            if (!\is_string($schema->pattern)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'pattern',
                     $schema->pattern,
-                    "'pattern' keyword must be a string, " . gettype($schema->pattern) . " given"
+                    "'pattern' keyword must be a string, " . \gettype($schema->pattern) . " given"
                 );
             }
             if ($schema->pattern === '') {
@@ -1216,7 +1216,7 @@ class Validator implements IValidator
                     "'pattern' keyword must not be empty"
                 );
             }
-            $match = @preg_match(self::BELL . $schema->pattern . self::BELL . 'u', $data);
+            $match = @\preg_match(self::BELL . $schema->pattern . self::BELL . 'u', $data);
             if ($match === false) {
                 throw new SchemaKeywordException(
                     $schema,
@@ -1237,13 +1237,13 @@ class Validator implements IValidator
         }
 
         // content encoding
-        if (property_exists($schema, 'contentEncoding')) {
-            if (!is_string($schema->contentEncoding)) {
+        if (\property_exists($schema, 'contentEncoding')) {
+            if (!\is_string($schema->contentEncoding)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'contentEncoding',
                     $schema->contentEncoding,
-                    "'contentEncoding' keyword must be a string, " . gettype($schema->contentEncoding) . " given"
+                    "'contentEncoding' keyword must be a string, " . \gettype($schema->contentEncoding) . " given"
                 );
             }
 
@@ -1252,7 +1252,7 @@ class Validator implements IValidator
                     $decoded = $data;
                     break;
                 case "base64":
-                    $decoded = base64_decode($data, true);
+                    $decoded = \base64_decode($data, true);
                     break;
                 default:
                     $decoded = false;
@@ -1271,13 +1271,13 @@ class Validator implements IValidator
         }
 
         // media type
-        if (property_exists($schema, 'contentMediaType')) {
-            if (!is_string($schema->contentMediaType)) {
+        if (\property_exists($schema, 'contentMediaType')) {
+            if (!\is_string($schema->contentMediaType)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'contentMediaType',
                     $schema->contentMediaType,
-                    "'contentMediaType' keyword must be a string, " . gettype($schema->contentMediaType) . " given"
+                    "'contentMediaType' keyword must be a string, " . \gettype($schema->contentMediaType) . " given"
                 );
             }
 
@@ -1332,24 +1332,24 @@ class Validator implements IValidator
         $ok = true;
 
         // minimum, exclusiveMinimum
-        if (property_exists($schema, 'minimum')) {
-            if (!is_int($schema->minimum) && !is_float($schema->minimum)) {
+        if (\property_exists($schema, 'minimum')) {
+            if (!\is_int($schema->minimum) && !\is_float($schema->minimum)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'minimum',
                     $schema->minimum,
-                    "'minimum' keyword must be an integer or a float, " . gettype($schema->minimum) . " given"
+                    "'minimum' keyword must be an integer or a float, " . \gettype($schema->minimum) . " given"
                 );
             }
 
             $exclusive = false;
-            if (property_exists($schema, 'exclusiveMinimum')) {
-                if (!is_bool($schema->exclusiveMinimum)) {
+            if (\property_exists($schema, 'exclusiveMinimum')) {
+                if (!\is_bool($schema->exclusiveMinimum)) {
                     throw new SchemaKeywordException(
                         $schema,
                         'exclusiveMinimum',
                         $schema->exclusiveMinimum,
-                        "'exclusiveMinimum' keyword must be a boolean if 'minimum' keyword is present, " . gettype($schema->exclusiveMinimum) . " given"
+                        "'exclusiveMinimum' keyword must be a boolean if 'minimum' keyword is present, " . \gettype($schema->exclusiveMinimum) . " given"
                     );
                 }
                 $exclusive = $schema->exclusiveMinimum;
@@ -1372,13 +1372,13 @@ class Validator implements IValidator
                     return false;
                 }
             }
-        } elseif (property_exists($schema, 'exclusiveMinimum')) {
-            if (!is_int($schema->exclusiveMinimum) && !is_float($schema->exclusiveMinimum)) {
+        } elseif (\property_exists($schema, 'exclusiveMinimum')) {
+            if (!\is_int($schema->exclusiveMinimum) && !\is_float($schema->exclusiveMinimum)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'exclusiveMinimum',
                     $schema->exclusiveMinimum,
-                    "'exclusiveMinimum' keyword must be an integer or a float if 'minimum' keyword is not present, " . gettype($schema->exclusiveMinimum) . " given"
+                    "'exclusiveMinimum' keyword must be an integer or a float if 'minimum' keyword is not present, " . \gettype($schema->exclusiveMinimum) . " given"
                 );
             }
             if ($data <= $schema->exclusiveMinimum) {
@@ -1393,24 +1393,24 @@ class Validator implements IValidator
         }
 
         // maximum, exclusiveMaximum
-        if (property_exists($schema, 'maximum')) {
-            if (!is_int($schema->maximum) && !is_float($schema->maximum)) {
+        if (\property_exists($schema, 'maximum')) {
+            if (!\is_int($schema->maximum) && !\is_float($schema->maximum)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'maximum',
                     $schema->maximum,
-                    "'maximum' keyword must be an integer or a float, " . gettype($schema->maximum) . " given"
+                    "'maximum' keyword must be an integer or a float, " . \gettype($schema->maximum) . " given"
                 );
             }
 
             $exclusive = false;
-            if (property_exists($schema, 'exclusiveMaximum')) {
-                if (!is_bool($schema->exclusiveMaximum)) {
+            if (\property_exists($schema, 'exclusiveMaximum')) {
+                if (!\is_bool($schema->exclusiveMaximum)) {
                     throw new SchemaKeywordException(
                         $schema,
                         'exclusiveMaximum',
                         $schema->exclusiveMaximum,
-                        "'exclusiveMaximum' keyword must be a boolean is 'maximum' keyword is present, " . gettype($schema->exclusiveMaximum) . " given"
+                        "'exclusiveMaximum' keyword must be a boolean is 'maximum' keyword is present, " . \gettype($schema->exclusiveMaximum) . " given"
                     );
                 }
                 $exclusive = $schema->exclusiveMaximum;
@@ -1433,13 +1433,13 @@ class Validator implements IValidator
                     return false;
                 }
             }
-        } elseif (property_exists($schema, 'exclusiveMaximum')) {
-            if (!is_int($schema->exclusiveMaximum) && !is_float($schema->exclusiveMaximum)) {
+        } elseif (\property_exists($schema, 'exclusiveMaximum')) {
+            if (!\is_int($schema->exclusiveMaximum) && !\is_float($schema->exclusiveMaximum)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'exclusiveMaximum',
                     $schema->exclusiveMaximum,
-                    "'exclusiveMaximum' keyword must be an integer or a float if 'maximum' keyword is not present, " . gettype($schema->exclusiveMaximum) . " given"
+                    "'exclusiveMaximum' keyword must be an integer or a float if 'maximum' keyword is not present, " . \gettype($schema->exclusiveMaximum) . " given"
                 );
             }
             if ($data >= $schema->exclusiveMaximum) {
@@ -1454,13 +1454,13 @@ class Validator implements IValidator
         }
 
         // multipleOf
-        if (property_exists($schema, 'multipleOf')) {
-            if (!is_int($schema->multipleOf) && !is_float($schema->multipleOf)) {
+        if (\property_exists($schema, 'multipleOf')) {
+            if (!\is_int($schema->multipleOf) && !\is_float($schema->multipleOf)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'multipleOf',
                     $schema->multipleOf,
-                    "'multipleOf' keyword must be an integer or a float, " . gettype($schema->multipleOf) . " given"
+                    "'multipleOf' keyword must be an integer or a float, " . \gettype($schema->multipleOf) . " given"
                 );
             }
             if ($schema->multipleOf <= 0) {
@@ -1501,13 +1501,13 @@ class Validator implements IValidator
         $ok = true;
 
         // minItems
-        if (property_exists($schema, 'minItems')) {
-            if (!is_int($schema->minItems)) {
+        if (\property_exists($schema, 'minItems')) {
+            if (!\is_int($schema->minItems)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'minItems',
                     $schema->minItems,
-                    "'minItems' keyword must be an integer, " . gettype($schema->minItems) . " given"
+                    "'minItems' keyword must be an integer, " . \gettype($schema->minItems) . " given"
                 );
             }
             if ($schema->minItems < 0) {
@@ -1518,7 +1518,7 @@ class Validator implements IValidator
                     "'minItems' keyword must be positive, " . $schema->minItems . " given"
                 );
             }
-            if (($count = count($data)) < $schema->minItems) {
+            if (($count = \count($data)) < $schema->minItems) {
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'minItems', [
                     'min' => $schema->minItems,
@@ -1532,13 +1532,13 @@ class Validator implements IValidator
         }
 
         // maxItems
-        if (property_exists($schema, 'maxItems')) {
-            if (!is_int($schema->maxItems)) {
+        if (\property_exists($schema, 'maxItems')) {
+            if (!\is_int($schema->maxItems)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'maxItems',
                     $schema->maxItems,
-                    "'maxItems' keyword must be an integer, " . gettype($schema->maxItems) . " given"
+                    "'maxItems' keyword must be an integer, " . \gettype($schema->maxItems) . " given"
                 );
             }
             if ($schema->maxItems < 0) {
@@ -1549,7 +1549,7 @@ class Validator implements IValidator
                     "'maxItems' keyword must be positive, " . $schema->maxItems . " given"
                 );
             }
-            if (($count = count($data)) > $schema->maxItems) {
+            if (($count = \count($data)) > $schema->maxItems) {
                 $ok = false;
                 $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'maxItems', [
                     'max' => $schema->maxItems,
@@ -1563,18 +1563,18 @@ class Validator implements IValidator
         }
 
         // uniqueItems
-        if (property_exists($schema, 'uniqueItems')) {
-            if (!is_bool($schema->uniqueItems)) {
+        if (\property_exists($schema, 'uniqueItems')) {
+            if (!\is_bool($schema->uniqueItems)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'uniqueItems',
                     $schema->uniqueItems,
-                    "'uniqueItems' keyword must be a boolean, " . gettype($schema->uniqueItems) . " given"
+                    "'uniqueItems' keyword must be a boolean, " . \gettype($schema->uniqueItems) . " given"
                 );
             }
             if ($schema->uniqueItems) {
                 $valid = true;
-                $count = count($data);
+                $count = \count($data);
                 $dup = null;
                 for ($i = 0; $i < $count - 1; $i++) {
                     for ($j = $i + 1; $j < $count; $j++) {
@@ -1599,18 +1599,18 @@ class Validator implements IValidator
         }
 
         // contains
-        if (property_exists($schema, 'contains')) {
+        if (\property_exists($schema, 'contains')) {
             $valid = false;
             $newbag = new ValidationResult(1);
             $errors = [];
             foreach ($data as $i => &$value) {
                 $data_pointer[] = $i;
                 $valid = $this->validateSchema($document_data, $value, $data_pointer, $parent_data_pointer, $document, $schema->contains, $newbag);
-                array_pop($data_pointer);
+                \array_pop($data_pointer);
                 if ($valid) {
                     break;
                 }
-                $errors = array_merge($errors, $newbag->getErrors());
+                $errors = \array_merge($errors, $newbag->getErrors());
                 $newbag->clear();
             }
             unset($value, $newbag);
@@ -1625,15 +1625,15 @@ class Validator implements IValidator
         }
 
         // items, additionalItems
-        if (property_exists($schema, 'items')) {
-            if (is_array($schema->items)) {
-                $count = count($schema->items);
-                $data_count = count($data);
-                $max = min($count, $data_count);
+        if (\property_exists($schema, 'items')) {
+            if (\is_array($schema->items)) {
+                $count = \count($schema->items);
+                $data_count = \count($data);
+                $max = \min($count, $data_count);
                 for ($i = 0; $i < $max; $i++) {
                     $data_pointer[] = $i;
                     $valid = $this->validateSchema($document_data, $data[$i], $data_pointer, $parent_data_pointer, $document, $schema->items[$i], $bag);
-                    array_pop($data_pointer);
+                    \array_pop($data_pointer);
                     if (!$valid) {
                         $ok = false;
                         if ($bag->isFull()) {
@@ -1641,19 +1641,19 @@ class Validator implements IValidator
                         }
                     }
                 }
-                if ($max < $data_count && property_exists($schema, 'additionalItems')) {
-                    if (!is_bool($schema->additionalItems) && !is_object($schema->additionalItems)) {
+                if ($max < $data_count && \property_exists($schema, 'additionalItems')) {
+                    if (!\is_bool($schema->additionalItems) && !\is_object($schema->additionalItems)) {
                         throw new SchemaKeywordException(
                             $schema,
                             'additionalItems',
                             $schema->additionalItems,
-                            "'additionalItems' keyword must be a boolean or an object, " . gettype($schema->additionalItems) . " given"
+                            "'additionalItems' keyword must be a boolean or an object, " . \gettype($schema->additionalItems) . " given"
                         );
                     }
                     for ($i = $max; $i < $data_count; $i++) {
                         $data_pointer[] = $i;
                         $valid = $this->validateSchema($document_data, $data[$i], $data_pointer, $parent_data_pointer, $document, $schema->additionalItems, $bag);
-                        array_pop($data_pointer);
+                        \array_pop($data_pointer);
                         if (!$valid) {
                             $ok = false;
                             if ($bag->isFull()) {
@@ -1664,11 +1664,11 @@ class Validator implements IValidator
                 }
                 unset($max, $count, $data_count);
             } else {
-                $count = count($data);
+                $count = \count($data);
                 for ($i = 0; $i < $count; $i++) {
                     $data_pointer[] = $i;
                     $valid = $this->validateSchema($document_data, $data[$i], $data_pointer, $parent_data_pointer, $document, $schema->items, $bag);
-                    array_pop($data_pointer);
+                    \array_pop($data_pointer);
                     if (!$valid) {
                         $ok = false;
                         if ($bag->isFull()) {
@@ -1699,25 +1699,25 @@ class Validator implements IValidator
         $ok = true;
 
         // required
-        if (property_exists($schema, 'required')) {
-            if (!is_array($schema->required)) {
+        if (\property_exists($schema, 'required')) {
+            if (!\is_array($schema->required)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'required',
                     $schema->required,
-                    "'required' keyword must be an array, " . gettype($schema->required) . " given"
+                    "'required' keyword must be an array, " . \gettype($schema->required) . " given"
                 );
             }
             foreach ($schema->required as $prop) {
-                if (!is_string($prop)) {
+                if (!\is_string($prop)) {
                     throw new SchemaKeywordException(
                         $schema,
                         'required',
                         $schema->required,
-                        "'required' keyword items must be strings, found " . gettype($prop)
+                        "'required' keyword items must be strings, found " . \gettype($prop)
                     );
                 }
-                if (!property_exists($data, $prop) && !($defaults && array_key_exists($prop, $defaults))) {
+                if (!\property_exists($data, $prop) && !($defaults && \array_key_exists($prop, $defaults))) {
                     $ok = false;
                     $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'required', [
                         'missing' => $prop,
@@ -1730,31 +1730,31 @@ class Validator implements IValidator
         }
 
         // dependencies
-        if (property_exists($schema, 'dependencies')) {
-            if (!is_object($schema->dependencies)) {
+        if (\property_exists($schema, 'dependencies')) {
+            if (!\is_object($schema->dependencies)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'dependencies',
                     $schema->dependencies,
-                    "'dependencies' keyword must be an object, " . gettype($schema->dependencies) . " given"
+                    "'dependencies' keyword must be an object, " . \gettype($schema->dependencies) . " given"
                 );
             }
             foreach ($schema->dependencies as $name => &$value) {
-                if (!property_exists($data, $name)) {
+                if (!\property_exists($data, $name)) {
                     unset($value);
                     continue;
                 }
-                if (is_array($value)) {
+                if (\is_array($value)) {
                     foreach ($value as $prop) {
-                        if (!is_string($prop)) {
+                        if (!\is_string($prop)) {
                             throw new SchemaKeywordException(
                                 $schema,
                                 'dependencies',
                                 $schema->dependencies,
-                                "'dependencies' keyword items can only be array of strings, objects or booleans, found array with " . gettype($prop)
+                                "'dependencies' keyword items can only be array of strings, objects or booleans, found array with " . \gettype($prop)
                             );
                         }
-                        if (!property_exists($data, $prop) && !($defaults && array_key_exists($prop, $defaults))) {
+                        if (!\property_exists($data, $prop) && !($defaults && \array_key_exists($prop, $defaults))) {
                             $ok = false;
                             $bag->addError(new ValidationError($data, $data_pointer, $parent_data_pointer, $schema, 'dependencies', [
                                 'missing' => $prop,
@@ -1768,12 +1768,12 @@ class Validator implements IValidator
                     continue;
                 }
 
-                if (!is_bool($value) && !is_object($value)) {
+                if (!\is_bool($value) && !\is_object($value)) {
                     throw new SchemaKeywordException(
                         $schema,
                         'dependencies',
                         $schema->dependencies,
-                        "'dependencies' keyword items can only be array of strings, objects or booleans, found " . gettype($value)
+                        "'dependencies' keyword items can only be array of strings, objects or booleans, found " . \gettype($value)
                     );
                 }
 
@@ -1789,16 +1789,16 @@ class Validator implements IValidator
             }
         }
 
-        $properties = array_map('strval', array_keys(get_object_vars($data)));
+        $properties = \array_map('strval', \array_keys(\get_object_vars($data)));
 
         // minProperties
-        if (property_exists($schema, 'minProperties')) {
-            if (!is_int($schema->minProperties)) {
+        if (\property_exists($schema, 'minProperties')) {
+            if (!\is_int($schema->minProperties)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'minProperties',
                     $schema->minProperties,
-                    "'minProperties' keyword must be an integer, " . gettype($schema->minProperties) . " given"
+                    "'minProperties' keyword must be an integer, " . \gettype($schema->minProperties) . " given"
                 );
             }
             if ($schema->minProperties < 0) {
@@ -1809,9 +1809,9 @@ class Validator implements IValidator
                     "'minProperties' keyword must be positive, " . $schema->minProperties . " given"
                 );
             }
-            $count = count($properties);
+            $count = \count($properties);
             if ($defaults) {
-                $count += count($defaults);
+                $count += \count($defaults);
             }
             if ($count < $schema->minProperties) {
                 $ok = false;
@@ -1827,13 +1827,13 @@ class Validator implements IValidator
         }
 
         // maxProperties
-        if (property_exists($schema, 'maxProperties')) {
-            if (!is_int($schema->maxProperties)) {
+        if (\property_exists($schema, 'maxProperties')) {
+            if (!\is_int($schema->maxProperties)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'maxProperties',
                     $schema->maxProperties,
-                    "'maxProperties' keyword must be an integer, " . gettype($schema->maxProperties) . " given"
+                    "'maxProperties' keyword must be an integer, " . \gettype($schema->maxProperties) . " given"
                 );
             }
             if ($schema->maxProperties < 0) {
@@ -1845,9 +1845,9 @@ class Validator implements IValidator
                 );
             }
 
-            $count = count($properties);
+            $count = \count($properties);
             if ($defaults) {
-                $count += count($defaults);
+                $count += \count($defaults);
             }
             if ($count > $schema->maxProperties) {
                 $ok = false;
@@ -1863,13 +1863,13 @@ class Validator implements IValidator
         }
 
         // propertyNames
-        if (property_exists($schema, 'propertyNames')) {
-            if (!is_bool($schema->propertyNames) && !is_object($schema->propertyNames)) {
+        if (\property_exists($schema, 'propertyNames')) {
+            if (!\is_bool($schema->propertyNames) && !\is_object($schema->propertyNames)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'propertyNames',
                     $schema->propertyNames,
-                    "'propertyNames' keyword must be a boolean or an object, " . gettype($schema->propertyNames) . " given"
+                    "'propertyNames' keyword must be a boolean or an object, " . \gettype($schema->propertyNames) . " given"
                 );
             }
             $newbag = $bag->createByDiff();
@@ -1891,29 +1891,29 @@ class Validator implements IValidator
         $checked_properties = [];
 
         // properties
-        if (property_exists($schema, 'properties')) {
-            if (!is_object($schema->properties)) {
+        if (\property_exists($schema, 'properties')) {
+            if (!\is_object($schema->properties)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'properties',
                     $schema->properties,
-                    "'properties' keyword must be an object, " . gettype($schema->properties) . " given"
+                    "'properties' keyword must be an object, " . \gettype($schema->properties) . " given"
                 );
             }
             foreach ($schema->properties as $name => &$property) {
-                if (!is_bool($property) && !is_object($property)) {
+                if (!\is_bool($property) && !\is_object($property)) {
                     throw new SchemaKeywordException(
                         $schema,
                         'properties',
                         $schema->properties,
-                        "'properties' keyword items must be booleans or objects, found " . gettype($property)
+                        "'properties' keyword items must be booleans or objects, found " . \gettype($property)
                     );
                 }
                 $checked_properties[] = $name;
-                if (property_exists($data, $name)) {
+                if (\property_exists($data, $name)) {
                     $data_pointer[] = $name;
                     $valid = $this->validateSchema($document_data, $data->{$name}, $data_pointer, $parent_data_pointer, $document, $property, $bag);
-                    array_pop($data_pointer);
+                    \array_pop($data_pointer);
                     if (!$valid) {
                         $ok = false;
                         if ($bag->isFull()) {
@@ -1926,13 +1926,13 @@ class Validator implements IValidator
         }
 
         // patternProperties
-        if (property_exists($schema, 'patternProperties')) {
-            if (!is_object($schema->patternProperties)) {
+        if (\property_exists($schema, 'patternProperties')) {
+            if (!\is_object($schema->patternProperties)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'patternProperties',
                     $schema->patternProperties,
-                    "'patternProperties' keyword must be an object, " . gettype($schema->patternProperties) . " given"
+                    "'patternProperties' keyword must be an object, " . \gettype($schema->patternProperties) . " given"
                 );
             }
 
@@ -1940,7 +1940,7 @@ class Validator implements IValidator
             foreach ($schema->patternProperties as $pattern => &$property_schema) {
                 $regex = self::BELL . $pattern . self::BELL . 'u';
                 foreach ($properties as $name) {
-                    $match = @preg_match($regex, $name);
+                    $match = @\preg_match($regex, $name);
                     if ($match === false) {
                         throw new SchemaKeywordException(
                             $schema,
@@ -1952,12 +1952,12 @@ class Validator implements IValidator
                     if (!$match) {
                         continue;
                     }
-                    if (!in_array($name, $checked_properties)) {
+                    if (!\in_array($name, $checked_properties)) {
                         $checked_properties[] = $name;
                     }
                     $data_pointer[] = $name;
                     $valid = $this->validateSchema($document_data, $data->{$name}, $data_pointer, $parent_data_pointer, $document, $property_schema, $newbag);
-                    array_pop($data_pointer);
+                    \array_pop($data_pointer);
                     if (!$valid && $newbag->isFull()) {
                         break 2;
                     }
@@ -1975,20 +1975,20 @@ class Validator implements IValidator
         }
 
         // additionalProperties
-        if (property_exists($schema, 'additionalProperties')) {
-            if (!is_bool($schema->additionalProperties) && !is_object($schema->additionalProperties)) {
+        if (\property_exists($schema, 'additionalProperties')) {
+            if (!\is_bool($schema->additionalProperties) && !\is_object($schema->additionalProperties)) {
                 throw new SchemaKeywordException(
                     $schema,
                     'additionalProperties',
                     $schema->additionalProperties,
-                    "'additionalProperties' keyword must be a boolean or an object, " . gettype($schema->additionalProperties) . " given"
+                    "'additionalProperties' keyword must be a boolean or an object, " . \gettype($schema->additionalProperties) . " given"
                 );
             }
             $newbag = $bag->createByDiff();
-            foreach (array_diff($properties, $checked_properties) as $property) {
+            foreach (\array_diff($properties, $checked_properties) as $property) {
                 $data_pointer[] = $property;
                 $valid = $this->validateSchema($document_data, $data->{$property}, $data_pointer, $parent_data_pointer, $document, $schema->additionalProperties, $newbag);
-                array_pop($data_pointer);
+                \array_pop($data_pointer);
                 unset($property);
                 if (!$valid && $newbag->isFull()) {
                     break;
@@ -2016,9 +2016,9 @@ class Validator implements IValidator
      */
     protected function setObjectDefaults($data, array &$defaults = null)
     {
-        if (is_object($data) && $defaults) {
+        if (\is_object($data) && $defaults) {
             foreach ($defaults as $property => $value) {
-                if (!property_exists($data, $property)) {
+                if (!\property_exists($data, $property)) {
                     $data->{$property} = $value;
                 }
             }
@@ -2034,16 +2034,16 @@ class Validator implements IValidator
      */
     protected function getVars(&$document_data, &$data_pointer, stdClass $schema): array
     {
-        if (!property_exists($schema, Schema::VARS_PROP)) {
+        if (!\property_exists($schema, Schema::VARS_PROP)) {
             return $this->globalVars;
         }
 
-        if (!is_object($schema->{Schema::VARS_PROP})) {
+        if (!\is_object($schema->{Schema::VARS_PROP})) {
             throw new SchemaKeywordException(
                 $schema,
                 Schema::VARS_PROP,
                 $schema->{Schema::VARS_PROP},
-                "'" . Schema::VARS_PROP . "' keyword must be an object, " . gettype($schema->{Schema::VARS_PROP}) . " given"
+                "'" . Schema::VARS_PROP . "' keyword must be an object, " . \gettype($schema->{Schema::VARS_PROP}) . " given"
             );
         }
 
@@ -2066,21 +2066,21 @@ class Validator implements IValidator
      */
     protected function deepClone($vars)
     {
-        if (is_object($vars)) {
-            $vars = get_object_vars($vars);
+        if (\is_object($vars)) {
+            $vars = \get_object_vars($vars);
             foreach ($vars as $key => $value) {
-                if (is_array($value) || is_object($value)) {
+                if (\is_array($value) || \is_object($value)) {
                     $vars[$key] = $this->deepClone($value);
                 }
                 unset($value);
             }
             return (object)$vars;
         }
-        if (!is_array($vars)) {
+        if (!\is_array($vars)) {
             return $vars;
         }
         foreach ($vars as &$value) {
-            if (is_array($value) || is_object($value)) {
+            if (\is_array($value) || \is_object($value)) {
                 $value = $this->deepClone($value);
             }
             unset($value);
@@ -2096,8 +2096,8 @@ class Validator implements IValidator
      */
     protected function resolveVars(&$vars, &$data, array &$data_pointer = [])
     {
-        if (is_object($vars)) {
-            if (property_exists($vars, '$ref') && is_string($vars->{'$ref'})) {
+        if (\is_object($vars)) {
+            if (\property_exists($vars, '$ref') && \is_string($vars->{'$ref'})) {
                 $ref = $vars->{'$ref'};
                 $relative = JsonPointer::parseRelativePointer($ref, true);
                 if ($relative === null) {
@@ -2111,13 +2111,13 @@ class Validator implements IValidator
                 if ($resolved === $this) {
                     throw new InvalidJsonPointerException($ref);
                 }
-                if (is_array($resolved) && property_exists($vars, '$each') && is_object($vars->{'$each'})) {
+                if (\is_array($resolved) && \property_exists($vars, '$each') && \is_object($vars->{'$each'})) {
                     $pointer = $relative['pointer'] ?? [];
                     foreach ($resolved as $index => &$item) {
                         $copy = $this->deepClone($vars->{'$each'});
                         $pointer[] = $index;
                         $this->resolveVars($copy,$data,$pointer);
-                        array_pop($pointer);
+                        \array_pop($pointer);
                         $item = $copy;
                         unset($copy, $item, $index);
                     }
@@ -2126,12 +2126,12 @@ class Validator implements IValidator
                 $vars = $resolved;
                 return;
             }
-        } elseif (!is_array($vars)) {
+        } elseif (!\is_array($vars)) {
             return;
         }
 
         foreach ($vars as $name => &$var) {
-            if (is_array($var) || is_object($var)) {
+            if (\is_array($var) || \is_object($var)) {
                 $this->resolveVars($var, $data, $data_pointer);
             }
             unset($var);

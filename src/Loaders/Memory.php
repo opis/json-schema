@@ -40,7 +40,7 @@ class Memory implements ISchemaLoader
      */
     public function register(ISchema $schema): self
     {
-        $this->schemas[rtrim($schema->id(), '#')] = $schema;
+        $this->schemas[\rtrim($schema->id(), '#')] = $schema;
         return $this;
     }
 
@@ -50,7 +50,7 @@ class Memory implements ISchemaLoader
      */
     public function unregister(ISchema $schema): self
     {
-        unset($this->schemas[rtrim($schema->id(), '#')]);
+        unset($this->schemas[\rtrim($schema->id(), '#')]);
         return $this;
     }
 
@@ -61,8 +61,8 @@ class Memory implements ISchemaLoader
      */
     public function add($data, string $id = null): self
     {
-        if (is_string($data)) {
-            $data = json_decode($data, false);
+        if (\is_string($data)) {
+            $data = \json_decode($data, false);
         }
         return $this->register(new Schema($data, $id));
     }

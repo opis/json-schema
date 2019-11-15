@@ -55,42 +55,42 @@ class Schema implements ISchema
      */
     public function __construct($data, string $id = null)
     {
-        if (is_object($data)) {
-            if (property_exists($data, static::ID_PROP)) {
+        if (\is_object($data)) {
+            if (\property_exists($data, static::ID_PROP)) {
                 $id = $data->{static::ID_PROP};
             }
-        } elseif (!is_bool($data)) {
+        } elseif (!\is_bool($data)) {
             throw new InvalidSchemaException($data);
         }
 
         if ($id === null) {
-            $id = uniqid("json-schema-id:/");
+            $id = \uniqid("json-schema-id:/");
         }
         $id = URI::merge($id, $id);
-        if (substr($id, -1) !== '#') {
+        if (\substr($id, -1) !== '#') {
             throw new InvalidSchemaIdException($id);
         }
 
         $this->id = $id;
 
-        if (is_object($data)) {
-            if (!property_exists($data, '$schema')) {
+        if (\is_object($data)) {
+            if (!\property_exists($data, '$schema')) {
                 $data->{'$schema'} = 'http://json-schema.org/draft-07/schema#';
             }
-            elseif (!is_string($data->{'$schema'})) {
+            elseif (!\is_string($data->{'$schema'})) {
                 throw new InvalidSchemaDraftException($data);
             }
-            if (!preg_match(static::SCHEMA_REGEX, $data->{'$schema'}, $m)) {
+            if (!\preg_match(static::SCHEMA_REGEX, $data->{'$schema'}, $m)) {
                 throw new InvalidSchemaDraftException($data);
             }
             $this->draft = $m['draft'];
             unset($m);
-            if (!in_array($this->draft, static::SUPPORTED_DRAFTS)) {
+            if (!\in_array($this->draft, static::SUPPORTED_DRAFTS)) {
                 throw new SchemaDraftNotSupportedException($data, $this->draft);
             }
             $data->{static::ID_PROP} = $id;
             static::walk($this->internal, $data, $id);
-            if (isset($data->{'$ref'}) && is_string($data->{'$ref'})) {
+            if (isset($data->{'$ref'}) && \is_string($data->{'$ref'})) {
                 $this->internal[$id] = $data;
             }
         } else {
@@ -134,30 +134,30 @@ class Schema implements ISchema
      */
     public static function walk(array &$container, &$schema, string $id, array $path = [])
     {
-        if (is_array($schema)) {
+        if (\is_array($schema)) {
             foreach ($schema as $name => &$value) {
                 $path[] = $name;
                 static::walk($container, $value, $id, $path);
-                array_pop($path);
+                \array_pop($path);
                 unset($value);
             }
             return;
         }
 
-        if (!is_object($schema)) {
+        if (!\is_object($schema)) {
             return;
         }
 
-        $has_ref = isset($schema->{'$ref'}) && is_string($schema->{'$ref'});
+        $has_ref = isset($schema->{'$ref'}) && \is_string($schema->{'$ref'});
 
-        if (isset($schema->{static::ID_PROP}) && is_string($schema->{static::ID_PROP})) {
+        if (isset($schema->{static::ID_PROP}) && \is_string($schema->{static::ID_PROP})) {
             // Set the base id
             $schema->{static::BASE_ID_PROP} = $id;
             // Add current path
             $schema->{static::PATH_PROP} = $path;
 
             $id = URI::merge($schema->{static::ID_PROP}, $id);
-            if (array_key_exists($id, $container)) {
+            if (\array_key_exists($id, $container)) {
                 throw new DuplicateSchemaException($id, $schema, $container);
             }
             $container[$id] = $schema;
@@ -179,15 +179,15 @@ class Schema implements ISchema
         unset($has_ref);
 
         foreach ($schema as $name => &$value) {
-            if (is_null($value) || is_scalar($value)) {
+            if (\is_null($value) || \is_scalar($value)) {
                 continue;
             }
-            if (in_array($name, static::WALK_IGNORE_PROPERTIES)) {
+            if (\in_array($name, static::WALK_IGNORE_PROPERTIES)) {
                 continue;
             }
             $path[] = $name;
             static::walk($container, $value, $id, $path);
-            array_pop($path);
+            \array_pop($path);
         }
     }
 
@@ -198,6 +198,6 @@ class Schema implements ISchema
      */
     public static function fromJsonString(string $json, string $id = null): self
     {
-        return new self(json_decode($json, false), $id);
+        return new self(\json_decode($json, false), $id);
     }
 }

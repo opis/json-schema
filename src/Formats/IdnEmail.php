@@ -28,7 +28,7 @@ class IdnEmail extends AbstractFormat
      */
     public function __construct()
     {
-        $this->hasIntl = function_exists('idn_to_ascii');
+        $this->hasIntl = \function_exists('idn_to_ascii');
     }
 
     /**
@@ -37,7 +37,7 @@ class IdnEmail extends AbstractFormat
     public function validate($data): bool
     {
         if ($this->hasIntl) {
-            if (!preg_match('/^(?<name>.+)@(?<domain>.+)$/u', $data, $m)) {
+            if (!\preg_match('/^(?<name>.+)@(?<domain>.+)$/u', $data, $m)) {
                 return false;
             }
             $m['name'] = idn_to_ascii($m['name'], 0, INTL_IDNA_VARIANT_UTS46);

@@ -30,7 +30,7 @@ class IdnHostname implements IFormat
      */
     public function __construct()
     {
-        $this->hasIntl = function_exists('idn_to_ascii');
+        $this->hasIntl = \function_exists('idn_to_ascii');
     }
 
     /**

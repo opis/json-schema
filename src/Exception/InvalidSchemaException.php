@@ -33,7 +33,7 @@ class InvalidSchemaException extends AbstractSchemaException
     public function __construct($schema, Throwable $previous = null)
     {
         $this->schema = $schema;
-        $type = is_object($schema) ? get_class($schema) : gettype($schema);
+        $type = \is_object($schema) ? \get_class($schema) : \gettype($schema);
         parent::__construct("Schema must be an object or a boolean, {$type} given", 0, $previous);
     }
 

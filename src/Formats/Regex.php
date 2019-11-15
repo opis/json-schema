@@ -26,11 +26,11 @@ class Regex implements IFormat
      */
     public function validate($data): bool
     {
-        if (strpos($data, '\Z') !== false) {
+        if (\strpos($data, '\Z') !== false) {
             return false;
         }
 
         $data = '/' . $data . '/';
-        return false !== @preg_match($data, '');
+        return false !== @\preg_match($data, '');
     }
 }

@@ -36,7 +36,7 @@ class JsonPointer
         if ($pointer === '') {
             return true;
         }
-        return (bool) preg_match(static::POINTER_REGEX, $pointer);
+        return (bool) \preg_match(static::POINTER_REGEX, $pointer);
     }
 
     /**
@@ -45,7 +45,7 @@ class JsonPointer
      */
     public static function isRelativePointer(string $pointer): bool
     {
-        return (bool) preg_match(static::RELATIVE_POINTER_REGEX, $pointer);
+        return (bool) \preg_match(static::RELATIVE_POINTER_REGEX, $pointer);
     }
 
     /**
@@ -54,7 +54,7 @@ class JsonPointer
      */
     public static function isEscapedPointer(string $pointer): bool
     {
-        return !preg_match(static::POINTER_NOT_ESCAPED_REGEX, $pointer);
+        return !\preg_match(static::POINTER_NOT_ESCAPED_REGEX, $pointer);
     }
 
     /**
@@ -64,7 +64,7 @@ class JsonPointer
      */
     public static function parseRelativePointer(string $pointer, bool $parts = false)
     {
-        if (!preg_match(static::RELATIVE_POINTER_REGEX, $pointer, $m)) {
+        if (!\preg_match(static::RELATIVE_POINTER_REGEX, $pointer, $m)) {
             return null;
         }
 
@@ -81,17 +81,17 @@ class JsonPointer
      */
     public static function parsePointer(string $pointer): array
     {
-        $pointer = trim($pointer, '/');
+        $pointer = \trim($pointer, '/');
         if ($pointer === '') {
             return [];
         }
-        $must_replace = strpos($pointer, '~') !== false;
-        $pointer = explode('/', $pointer);
+        $must_replace = \strpos($pointer, '~') !== false;
+        $pointer = \explode('/', $pointer);
         if ($must_replace) {
-            $pointer = str_replace('~1', '/', $pointer);
-            $pointer = str_replace('~0', '~', $pointer);
+            $pointer = \str_replace('~1', '/', $pointer);
+            $pointer = \str_replace('~0', '~', $pointer);
         }
-        $pointer = array_map('rawurldecode', $pointer);
+        $pointer = \array_map('rawurldecode', $pointer);
         return $pointer;
     }
 
@@ -104,9 +104,9 @@ class JsonPointer
         if (empty($path)) {
             return '/';
         }
-        $path = str_replace('~', '~0', $path);
-        $path = str_replace('/', '~1', $path);
-        $path = implode('/', $path);
+        $path = \str_replace('~', '~0', $path);
+        $path = \str_replace('/', '~1', $path);
+        $path = \implode('/', $path);
         if ($path !== '' && $path[0] !== '/') {
             $path = '/' . $path;
         }
@@ -124,13 +124,13 @@ class JsonPointer
         if ($level < 0) {
             $level = 0;
         }
-        if (is_string($path)) {
+        if (\is_string($path)) {
             if ($path === '') {
                 $path = '/';
             } elseif ($path[0] !== '/') {
                 $path = '/' . $path;
             }
-        } elseif (is_array($path)) {
+        } elseif (\is_array($path)) {
             $path = static::buildPointer($path);
         } else {
             $path = '/';
@@ -152,8 +152,8 @@ class JsonPointer
      */
     public static function getDataByPointer($container, $pointer, $default = null, bool $fragment = false)
     {
-        if (!is_array($pointer)) {
-            if (!is_string($pointer)) {
+        if (!\is_array($pointer)) {
+            if (!\is_string($pointer)) {
                 return $default;
             }
             $pointer = static::parsePointer($pointer);
@@ -161,13 +161,13 @@ class JsonPointer
 
         $path = $default;
         foreach ($pointer as $path) {
-            if (is_array($container)) {
-                if (array_key_exists($path, $container)) {
+            if (\is_array($container)) {
+                if (\array_key_exists($path, $container)) {
                     $container = $container[$path];
                     continue;
                 }
-            } elseif (is_object($container)) {
-                if (property_exists($container, $path)) {
+            } elseif (\is_object($container)) {
+                if (\property_exists($container, $path)) {
                     $container = $container->{$path};
                     continue;
                 }
@@ -187,8 +187,8 @@ class JsonPointer
      */
     public static function getDataByRelativePointer($container, $relative, $base, $default = null)
     {
-        if (!is_array($relative)) {
-            if (!is_string($relative)) {
+        if (!\is_array($relative)) {
+            if (!\is_string($relative)) {
                 return $default;
             }
             $relative = static::parseRelativePointer($relative, true);
@@ -201,23 +201,23 @@ class JsonPointer
             return $default;
         }
 
-        if (!is_array($relative['pointer'])) {
+        if (!\is_array($relative['pointer'])) {
             $relative['pointer'] = static::parsePointer($relative['pointer']);
         }
 
-        if (!is_array($base)) {
+        if (!\is_array($base)) {
             $base = static::parsePointer($base);
         }
 
-        if ($relative['level'] > count($base)) {
+        if ($relative['level'] > \count($base)) {
             return $default;
         }
 
         if ($relative['level'] > 0) {
-            array_splice($base, -$relative['level']);
+            \array_splice($base, -$relative['level']);
         }
         if (!empty($relative['pointer'])) {
-            $base = array_merge($base, $relative['pointer']);
+            $base = \array_merge($base, $relative['pointer']);
         }
         $fragment = $relative['fragment'] ?? false;
         unset($relative);

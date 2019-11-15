@@ -52,7 +52,7 @@ class FormatContainer implements IFormatContainer
         if (!isset($this->formats[$type][$name])) {
             return null;
         }
-        if (is_string($this->formats[$type][$name])) {
+        if (\is_string($this->formats[$type][$name])) {
             $class = $this->formats[$type][$name];
             $this->formats[$type][$name] = new $class();
             if (!($this->formats[$type][$name] instanceof IFormat)) {

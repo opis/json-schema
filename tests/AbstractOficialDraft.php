@@ -42,7 +42,7 @@ abstract class AbstractOficialDraft extends TestCase
 
     public function testSelf()
     {
-        $data = json_decode($this->getDraftSource(), false);
+        $data = \json_decode($this->getDraftSource(), false);
 
         $validator = $this->getValidator();
 
@@ -64,20 +64,20 @@ abstract class AbstractOficialDraft extends TestCase
 
     protected function getDraftSource(): string
     {
-        return file_get_contents(__DIR__ . '/official/drafts/draft' . $this->getDraft() . '.json');
+        return \file_get_contents(__DIR__ . '/official/drafts/draft' . $this->getDraft() . '.json');
     }
 
     protected function getValidator(): IValidator
     {
         $loader = new File( self::URL, [__DIR__ . "/official/remotes"]);
-        $loader->add(json_decode($this->getDraftSource(), false));
+        $loader->add(\json_decode($this->getDraftSource(), false));
         return new Validator(null, $loader);
     }
 
     protected function doTests(string $folder)
     {
 
-        if (!is_dir($folder)) {
+        if (!\is_dir($folder)) {
             return;
         }
 
@@ -85,7 +85,7 @@ abstract class AbstractOficialDraft extends TestCase
 
         //return $this->doFileTest($folder . '/definitions.json', $validator);
 
-        foreach (glob($folder . "/*.json") as $file) {
+        foreach (\glob($folder . "/*.json") as $file) {
             // echo $file, PHP_EOL;
             $this->doFileTest($file, $validator);
         }
@@ -93,9 +93,9 @@ abstract class AbstractOficialDraft extends TestCase
 
     protected function doFileTest(string $file, IValidator $validator)
     {
-        $data = json_decode(file_get_contents($file), false);
-        $id = explode(DIRECTORY_SEPARATOR, $file);
-        $id = end($id);
+        $data = \json_decode(\file_get_contents($file), false);
+        $id = \explode(DIRECTORY_SEPARATOR, $file);
+        $id = \end($id);
         foreach ($data as $testgroup) {
             if (isset($testgroup->skip) && $testgroup->skip) {
                 continue;

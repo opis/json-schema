@@ -40,7 +40,7 @@ class File extends Memory
     {
         $this->dirs = $dirs;
         $this->prefix = $prefix;
-        $this->prefixLength = strlen($prefix);
+        $this->prefixLength = \strlen($prefix);
     }
 
     /**
@@ -51,15 +51,15 @@ class File extends Memory
         if (isset($this->schemas[$uri])) {
             return $this->schemas[$uri];
         }
-        if ($this->prefixLength !== 0 && strpos($uri, $this->prefix) !== 0) {
+        if ($this->prefixLength !== 0 && \strpos($uri, $this->prefix) !== 0) {
             return null;
         }
-        $path = substr($uri, $this->prefixLength);
+        $path = \substr($uri, $this->prefixLength);
 
         $schema = null;
         foreach ($this->dirs as $dir) {
-            if (file_exists($dir . $path)) {
-                $schema = json_decode(file_get_contents($dir . $path), false);
+            if (\file_exists($dir . $path)) {
+                $schema = \json_decode(\file_get_contents($dir . $path), false);
                 $schema = new Schema($schema, $uri);
                 break;
             }

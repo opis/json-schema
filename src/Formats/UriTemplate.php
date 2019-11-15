@@ -26,8 +26,8 @@ class UriTemplate implements IFormat
      */
     public function validate($data): bool
     {
-        $open = substr_count($data, '{');
-        $closed = substr_count($data, '}');
+        $open = \substr_count($data, '{');
+        $closed = \substr_count($data, '}');
         if ($open != $closed) {
             return false;
         }

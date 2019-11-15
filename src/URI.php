@@ -121,7 +121,7 @@ REGEX;
         if ($uri === '#') {
             return !$require_scheme;
         }
-        $uri = parse_url($uri);
+        $uri = \parse_url($uri);
         if (!$uri) {
             return false;
         }
@@ -146,13 +146,13 @@ REGEX;
      */
     public static function isValidHostname(string $host): bool
     {
-        if (preg_match( static::HOSTNAME_REGEX, $host)) {
+        if (\preg_match( static::HOSTNAME_REGEX, $host)) {
             return true;
         }
-        if (preg_match('/^\[(?<ip>[^\]]+)\]$/', $host, $m)) {
+        if (\preg_match('/^\[(?<ip>[^\]]+)\]$/', $host, $m)) {
             $host = $m['ip'];
         }
-        return (bool) filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
+        return (bool) \filter_var($host, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6);
     }
 
     /**
@@ -161,7 +161,7 @@ REGEX;
      */
     public static function isValidPath(string $path): bool
     {
-        return (bool) preg_match(static::PATH_REGEX, $path);
+        return (bool) \preg_match(static::PATH_REGEX, $path);
     }
 
     /**
@@ -170,7 +170,7 @@ REGEX;
      */
     public static function isValidFragment(string $fragment): bool
     {
-        return (bool) preg_match(static::FRAGMENT_REGEX, $fragment);
+        return (bool) \preg_match(static::FRAGMENT_REGEX, $fragment);
     }
 
     /**
@@ -182,15 +182,15 @@ REGEX;
         if ($uri === '') {
             return static::EMPTY_COMPONENTS;
         } elseif ($uri[0] === '#') {
-            return ['fragment' => substr($uri, 1)] + static::EMPTY_COMPONENTS;
+            return ['fragment' => \substr($uri, 1)] + static::EMPTY_COMPONENTS;
         } elseif ($uri[0] === '?') {
-            $uri = substr($uri, 1);
-            if (($pos = strpos($uri, '#')) !== false) {
-                return ['query' => substr($uri, 0, $pos), 'fragment' => substr($uri, $pos + 1)] + static::EMPTY_COMPONENTS;
+            $uri = \substr($uri, 1);
+            if (($pos = \strpos($uri, '#')) !== false) {
+                return ['query' => \substr($uri, 0, $pos), 'fragment' => \substr($uri, $pos + 1)] + static::EMPTY_COMPONENTS;
             }
             return ['query' => $uri] + static::EMPTY_COMPONENTS;
         }
-        return parse_url($uri) + static::EMPTY_COMPONENTS;
+        return \parse_url($uri) + static::EMPTY_COMPONENTS;
     }
 
     /**
@@ -252,22 +252,22 @@ REGEX;
     public static function merge(string $uri, string $base, bool $force_fragment = true): string
     {
         if ($uri === '') {
-            if ($force_fragment && strpos($base, '#') === false) {
+            if ($force_fragment && \strpos($base, '#') === false) {
                 $base .= '#';
             }
             return $base;
         }
         if ($uri[0] === '#') {
-            if (($pos = strpos($base, '#')) !== false) {
-                return substr($base, 0, $pos) . $uri;
+            if (($pos = \strpos($base, '#')) !== false) {
+                return \substr($base, 0, $pos) . $uri;
             }
 
             return $base . $uri;
         } elseif ($uri[0] === '?') {
-            if (($pos = strpos($base, '?')) !== false) {
-                return substr($base, 0, $pos) . $uri;
+            if (($pos = \strpos($base, '?')) !== false) {
+                return \substr($base, 0, $pos) . $uri;
             }
-            if ($force_fragment && strpos($uri, '#') === false) {
+            if ($force_fragment && \strpos($uri, '#') === false) {
                 $uri .= '#';
             }
             return $base . $uri;
@@ -294,9 +294,9 @@ REGEX;
             }
         } elseif (isset($base['path'])) {
             if (isset($uri['path'][0]) && $uri['path'][0] !== '/') {
-                $path = explode('/', $base['path']);
-                array_pop($path);
-                $path = implode('/', $path);
+                $path = \explode('/', $base['path']);
+                \array_pop($path);
+                $path = \implode('/', $path);
                 $uri['path'] = $path . '/' . $uri['path'];
                 unset($path);
             }
@@ -324,7 +324,7 @@ REGEX;
      */
     public static function isTemplate(string $uri): bool
     {
-        return (bool)preg_match(static::TEMPLATE_REGEX, $uri);
+        return (bool)\preg_match(static::TEMPLATE_REGEX, $uri);
     }
 
     /**
@@ -334,31 +334,31 @@ REGEX;
      */
     public static function parseTemplate(string $uri, $vars): string
     {
-        if (!is_object($vars)) {
+        if (!\is_object($vars)) {
             $vars = (object)$vars;
         }
-        return preg_replace_callback(static::TEMPLATE_REGEX, function (array $m) use ($vars) {
+        return \preg_replace_callback(static::TEMPLATE_REGEX, function (array $m) use ($vars) {
             $operator = $m['operator'] ?? '';
             if (!isset(static::TEMPLATE_TABLE[$operator])) {
                 return $m[0];
             }
-            $varlist = explode(',', $m['varlist']);
+            $varlist = \explode(',', $m['varlist']);
             unset($m);
 
             $data = [];
             // Check if operator is ok
             foreach ($varlist as $var) {
-                if (!preg_match(static::TEMPLATE_VARSPEC_REGEX, $var, $spec)) {
+                if (!\preg_match(static::TEMPLATE_VARSPEC_REGEX, $var, $spec)) {
                     continue;
                 }
 
-                $varname = rawurldecode($spec['varname']);
+                $varname = \rawurldecode($spec['varname']);
                 if (!isset($vars->{$varname})) {
                     continue;
                 }
                 $data[$varname] = [
                     'name' => $spec['varname'],
-                    'value' => is_scalar($vars->{$varname}) ? (string) $vars->{$varname} : $vars->{$varname},
+                    'value' => \is_scalar($vars->{$varname}) ? (string) $vars->{$varname} : $vars->{$varname},
                     'explode' => isset($spec['explode']) && $spec['explode'] === '*',
                     'prefix' => isset($spec['prefix']) ? (int) $spec['prefix'] : 0,
                 ];
@@ -384,11 +384,11 @@ REGEX;
         $result = [];
 
         /** @var callable $substr */
-        $substr = function_exists('mb_substr') ? 'mb_substr' : 'substr';
+        $substr = \function_exists('mb_substr') ? 'mb_substr' : 'substr';
 
         foreach ($data as $var) {
             $str = "";
-            if (is_string($var['value'])) {
+            if (\is_string($var['value'])) {
                 if ($table['named']) {
                     $str .= $var['name'];
                     if ($var['value'] === '') {
@@ -408,9 +408,9 @@ REGEX;
             elseif ($var['explode']) {
                 $list = [];
                 if ($table['named']) {
-                    if (is_array($var['value'])) {
+                    if (\is_array($var['value'])) {
                         foreach ($var['value'] as $v) {
-                            if (is_null($v)) {
+                            if (\is_null($v)) {
                                 continue;
                             }
                             $v = static::encodeTemplateString((string) $v, $table['allow']);
@@ -422,9 +422,9 @@ REGEX;
                             }
                         }
                     }
-                    elseif (is_object($var['value'])) {
+                    elseif (\is_object($var['value'])) {
                         foreach ($var['value'] as $prop => $v) {
-                            if (is_null($v)) {
+                            if (\is_null($v)) {
                                 continue;
                             }
                             $v = static::encodeTemplateString((string) $v, $table['allow']);
@@ -439,17 +439,17 @@ REGEX;
                     }
                 }
                 else {
-                    if (is_array($var['value'])) {
+                    if (\is_array($var['value'])) {
                         foreach ($var['value'] as $v) {
-                            if (is_null($v)) {
+                            if (\is_null($v)) {
                                 continue;
                             }
                             $list[] = static::encodeTemplateString($v, $table['allow']);
                         }
                     }
-                    elseif (is_object($var['value'])) {
+                    elseif (\is_object($var['value'])) {
                         foreach ($var['value'] as $prop => $v) {
-                            if (is_null($v)) {
+                            if (\is_null($v)) {
                                 continue;
                             }
                             $v = static::encodeTemplateString((string) $v, $table['allow']);
@@ -460,7 +460,7 @@ REGEX;
                 }
 
                 if ($list) {
-                    $str .= implode($table['sep'], $list);
+                    $str .= \implode($table['sep'], $list);
                 }
                 unset($list);
             }
@@ -475,12 +475,12 @@ REGEX;
                     }
                 }
                 $list = [];
-                if (is_array($var['value'])) {
+                if (\is_array($var['value'])) {
                     foreach ($var['value'] as $v) {
                         $list[] = static::encodeTemplateString($v, $table['allow']);
                     }
                 }
-                elseif (is_object($var['value'])) {
+                elseif (\is_object($var['value'])) {
                     /** @noinspection PhpWrongForeachArgumentTypeInspection */
                     foreach ($var['value'] as $prop => $v) {
                         $list[] = static::encodeTemplateString((string) $prop, $table['allow']);
@@ -488,7 +488,7 @@ REGEX;
                     }
                 }
                 if ($list) {
-                    $str .= implode(',', $list);
+                    $str .= \implode(',', $list);
                 }
                 unset($list);
             }
@@ -502,7 +502,7 @@ REGEX;
             return '';
         }
 
-        $result = implode($table['sep'], $result);
+        $result = \implode($table['sep'], $result);
 
         if ($result !== '') {
             $result = $table['first'] . $result;
@@ -526,10 +526,10 @@ REGEX;
 
         $result = '';
         $temp = '';
-        for ($i = 0, $len = strlen($data); $i < $len; $i++) {
-            if (strpos($skip, $data[$i]) !== false) {
+        for ($i = 0, $len = \strlen($data); $i < $len; $i++) {
+            if (\strpos($skip, $data[$i]) !== false) {
                 if ($temp !== '') {
-                    $result .= rawurlencode($temp);
+                    $result .= \rawurlencode($temp);
                     $temp = '';
                 }
                 $result .= $data[$i];
@@ -537,10 +537,10 @@ REGEX;
             }
             if ($reserved && $data[$i] === '%') {
                 if (isset($data[$i + 1]) && isset($data[$i + 2])
-                    && strpos('ABCDEF0123456789', $data[$i + 1]) !== false
-                    && strpos('ABCDEF0123456789', $data[$i + 2]) !== false) {
+                    && \strpos('ABCDEF0123456789', $data[$i + 1]) !== false
+                    && \strpos('ABCDEF0123456789', $data[$i + 2]) !== false) {
                     if ($temp !== '') {
-                        $result .= rawurlencode($temp);
+                        $result .= \rawurlencode($temp);
                     }
                     $result .= '%' . $data[$i + 1] . $data[$i + 2];
                     $i += 3;
@@ -551,7 +551,7 @@ REGEX;
         }
 
         if ($temp !== '') {
-            $result .= rawurlencode($temp);
+            $result .= \rawurlencode($temp);
         }
 
         return $result;

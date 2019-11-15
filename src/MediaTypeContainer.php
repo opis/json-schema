@@ -34,7 +34,7 @@ class MediaTypeContainer implements IMediaTypeContainer
         if (!isset($this->types[$type])) {
             return null;
         }
-        if (is_string($this->types[$type])) {
+        if (\is_string($this->types[$type])) {
             $class = $this->types[$type];
             $this->types[$type] = new $class();
         }

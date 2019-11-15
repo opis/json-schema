@@ -26,10 +26,10 @@ class Date extends AbstractFormat
      */
     public function validate($data): bool
     {
-        if (!preg_match('/^' . self::REGEX . '$/i', $data, $m)) {
+        if (!\preg_match('/^' . self::REGEX . '$/i', $data, $m)) {
             return false;
         }
 
-        return checkdate($m['month'], $m['mday'], $m['fullyear']);
+        return \checkdate($m['month'], $m['mday'], $m['fullyear']);
     }
 }
