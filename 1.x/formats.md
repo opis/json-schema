@@ -42,7 +42,7 @@ Please note that formats starting with `idn-` or `iri` require [PHP intl extensi
 to work correctly.
 {:.alert.alert-info}
 
-1. [data](#date)
+1. [date](#date)
 2. [time](#time)
 3. [date-time](#date-time)
 4. [regex](#regex)

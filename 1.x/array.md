@@ -41,7 +41,7 @@ in the presented order. All keywords are optional.
 
 1. [minItems](#minitems)
 2. [maxItems](#maxitems)
-3. [unniqueItems](#uniqueitems)
+3. [uniqueItems](#uniqueitems)
 4. [contains](#contains)
 5. [items](#items)
 6. [additionalItems](#additionalitems)
