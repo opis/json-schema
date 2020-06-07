@@ -1,0 +1,80 @@
+{
+    "$id": "file:///pragma.json#",
+
+    "definitions": {
+        "int": {
+            "type": "integer"
+        },
+        "str": {
+            "type": "string"
+        },
+        "testGlobals1": {
+            "$pragma": {
+                "globals": {
+                    "GLOBAL_TYPE": "int"
+                }
+            },
+            "$ref": "#/definitions{/GLOBAL_TYPE}"
+        },
+        "testGlobals2": {
+            "$pragma": {
+                "globals": {
+                    "GLOBAL_TYPE": {"$ref": "/varType"}
+                }
+            },
+            "$ref": "#/definitions{/GLOBAL_TYPE}"
+        },
+        "testSlots": {
+            "$pragma": {
+                "slots": {
+                    "mySlot": {"type": "integer"}
+                }
+            },
+            "$slots": {
+                "mySlot": false
+            }
+        },
+        "testCastInteger": {
+            "$pragma": {
+                "cast": "integer"
+            },
+            "type": "integer"
+        },
+        "testCastNumber": {
+            "$pragma": {
+                "cast": "number"
+            },
+            "type": "number"
+        },
+        "testCastString": {
+            "$pragma": {
+                "cast": "string"
+            },
+            "type": "string"
+        },
+        "testCastArray": {
+            "$pragma": {
+                "cast": "array"
+            },
+            "type": "array",
+            "items": {
+                "$pragma": {
+                    "cast": "integer"
+                },
+                "type": "integer"
+            }
+        },
+        "testCastObject": {
+            "$pragma": {
+                "cast": "object"
+            },
+            "type": "object",
+            "properties": {
+                "a": {"type": "integer"},
+                "b": {"type": "integer"}
+            },
+            "required": ["a", "b"],
+            "additionalProperties": false
+        }
+    }
+}

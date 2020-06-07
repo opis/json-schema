@@ -40,7 +40,7 @@ the library's own API.
 
 ### Requirements
 
-* PHP ^7.0
+* PHP ^7.4
 
 ## Installation
 
@@ -56,7 +56,7 @@ Or you could directly reference it into your `composer.json` file as a dependenc
 ```json
 {
     "require": {
-        "opis/json-schema": "^1.0"
+        "opis/json-schema": "2020.x-dev"
     }
 }
 ```

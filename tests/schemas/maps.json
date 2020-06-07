@@ -1,5 +1,5 @@
 {
-    "$id": "schema:/maps.json#",
+    "$id": "file:///maps.json#",
     "definitions": {
         "user": {
             "type": "object",

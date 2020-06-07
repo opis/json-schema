@@ -1,0 +1,40 @@
+{
+  "$id": "file:///slots.json#",
+  "definitions": {
+    "user": {
+      "$id": "#user",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "format": "email",
+          "$slots": {
+            "extraEmailValidation": true
+          }
+        },
+        "friend": {
+          "$slots": {
+            "self": false
+          }
+        }
+      },
+      "required": ["email"]
+    },
+    "example-user": {
+      "$id": "#example-user",
+      "$ref": "#user",
+      "$pass": {
+        "extraEmailValidation": {
+          "pattern": "@example\\.com$"
+        },
+        "self": {"$ref": "#example-user"}
+      }
+    },
+    "default-slots": {
+      "$id": "#defaults",
+      "$slots": {
+        "number": {"type": "number"}
+      }
+    }
+  }
+}

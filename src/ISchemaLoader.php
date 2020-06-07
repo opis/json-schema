@@ -1,6 +1,6 @@
 <?php
-/* ===========================================================================
- * Copyright 2018 Zindex Software
+/* ============================================================================
+ * Copyright 2020 Zindex Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,11 +17,52 @@
 
 namespace Opis\JsonSchema;
 
+use Opis\JsonSchema\Parsers\ISchemaParser;
+use Opis\JsonSchema\Resolvers\ISchemaResolver;
+
 interface ISchemaLoader
 {
     /**
-     * @param string $uri
-     * @return ISchema|null
+     * @param object $data
+     * @param null $id
+     * @param string|null $draft
+     * @return ISchema
      */
-    public function loadSchema(string $uri);
+    public function loadObjectSchema(object $data, $id = null, ?string $draft = null): ISchema;
+
+    /**
+     * @param bool $data
+     * @param null $id
+     * @param string|null $draft
+     * @return ISchema
+     */
+    public function loadBooleanSchema(bool $data, $id = null, ?string $draft = null): ISchema;
+
+    /**
+     * @param Uri $uri
+     * @return null|ISchema
+     */
+    public function loadSchemaById(Uri $uri): ?ISchema;
+
+    /**
+     * @return ISchemaParser
+     */
+    public function parser(): ISchemaParser;
+
+    /**
+     * @param ISchemaParser $parser
+     * @return ISchemaLoader
+     */
+    public function setParser(ISchemaParser $parser): self;
+
+    /**
+     * @return ISchemaResolver|null
+     */
+    public function resolver(): ?ISchemaResolver;
+
+    /**
+     * @param ISchemaResolver|null $resolver
+     * @return ISchemaLoader
+     */
+    public function setResolver(?ISchemaResolver $resolver): self;
 }

@@ -1,5 +1,5 @@
 {
-    "$id": "schema:/simple-ref.json#",
+    "$id": "file:///simple-ref.json#",
     "type": "object",
     "properties": {
         "name": {"$ref": "/my-name.json"},

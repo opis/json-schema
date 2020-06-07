@@ -2,14 +2,27 @@
     <testsuites>
         <testsuite name="Schema">
             <file>./tests/BasicTest.php</file>
+            <file>./tests/BooleanTypeTest.php</file>
+            <file>./tests/NullTypeTest.php</file>
+            <file>./tests/IntegerTypeTest.php</file>
+            <file>./tests/NumberTypeTest.php</file>
+            <file>./tests/StringTypeTest.php</file>
+            <file>./tests/ArrayTypeTest.php</file>
+            <file>./tests/ObjectTypeTest.php</file>
+            <file>./tests/MultipleTypesTest.php</file>
             <file>./tests/RefTest.php</file>
-            <file>./tests/TypesTest.php</file>
-            <file>./tests/FilterTest.php</file>
-            <file>./tests/MapTest.php</file>
+            <file>./tests/MapperTest.php</file>
+            <file>./tests/SlotTest.php</file>
+            <file>./tests/FiltersTest.php</file>
+            <file>./tests/DataTest.php</file>
+            <file>./tests/PragmaTest.php</file>
         </testsuite>
         <testsuite name="Official">
-            <file>./tests/OfficialDraft7.php</file>
-            <file>./tests/OfficialDraft6.php</file>
+            <file>./tests/OfficialDraft7Test.php</file>
+            <file>./tests/OfficialDraft6Test.php</file>
+        </testsuite>
+        <testsuite name="Errors">
+            <file>./tests/ErrorFormatterTest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

@@ -1,0 +1,153 @@
+[
+    {
+        "schema": true,
+        "tests": [
+            {
+                "data": "some string",
+                "errors": null
+            },
+            {
+                "data": null,
+                "errors": null
+            }
+        ]
+    },
+    {
+        "schema": {},
+        "tests": [
+            {
+                "data": "some string",
+                "errors": null
+            },
+            {
+                "data": null,
+                "errors": null
+            }
+        ]
+    },
+    {
+        "schema": false,
+        "tests": [
+            {
+                "data": "some string",
+                "errors": {
+                    "nested": {
+                        "kwd": "",
+                        "msg": "Data not allowed",
+                        "path": [],
+                        "args": {},
+                        "sub": []
+                    },
+                    "flat": [
+                        {
+                            "kwd": "",
+                            "msg": "Data not allowed",
+                            "path": [],
+                            "args": {}
+                        }
+                    ],
+                    "keyed": {
+                        "/": [
+                            {
+                                "kwd": "",
+                                "msg": "Data not allowed",
+                                "path": [],
+                                "args": {}
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "schema": {
+            "type": "string",
+            "format": "email"
+        },
+        "tests": [
+            {
+                "data": "correct@example.com",
+                "errors": null
+            },
+            {
+                "data": 1234,
+                "errors": {
+                    "nested": {
+                        "kwd": "type",
+                        "msg": "The data must match the type",
+                        "path": [],
+                        "args": {
+                            "expected": "string",
+                            "type": "integer"
+                        },
+                        "sub": []
+                    },
+                    "flat": [
+                        {
+                            "kwd": "type",
+                            "msg": "The data must match the type",
+                            "path": [],
+                            "args": {
+                                "expected": "string",
+                                "type": "integer"
+                            }
+                        }
+                    ],
+                    "keyed": {
+                        "/": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data must match the type",
+                                "path": [],
+                                "args": {
+                                    "expected": "string",
+                                    "type": "integer"
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "data": "ab",
+                "errors": {
+                    "nested": {
+                        "kwd": "format",
+                        "msg": "The data must match the 'email' format",
+                        "path": [],
+                        "args": {
+                            "type": "string",
+                            "format": "email"
+                        },
+                        "sub": []
+                    },
+                    "flat": [
+                        {
+                            "kwd": "format",
+                            "msg": "The data must match the 'email' format",
+                            "path": [],
+                            "args": {
+                                "type": "string",
+                                "format": "email"
+                            }
+                        }
+                    ],
+                    "keyed": {
+                        "/": [
+                            {
+                                "kwd": "format",
+                                "msg": "The data must match the 'email' format",
+                                "path": [],
+                                "args": {
+                                    "type": "string",
+                                    "format": "email"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+]

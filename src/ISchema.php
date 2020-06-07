@@ -1,6 +1,6 @@
 <?php
-/* ===========================================================================
- * Copyright 2018 Zindex Software
+/* ============================================================================
+ * Copyright 2020 Zindex Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,25 +17,12 @@
 
 namespace Opis\JsonSchema;
 
-interface ISchema
+use Opis\JsonSchema\Info\ISchemaInfo;
+
+interface ISchema extends ISchemaValidator
 {
-
     /**
-     * Document id
-     * @return string
+     * @return ISchemaInfo
      */
-    public function id(): string;
-
-    /**
-     * @return string
-     */
-    public function draft(): string;
-
-    /**
-     * Resolve schema data, if id is null the document is returned
-     * @param string|null $id
-     * @return mixed
-     */
-    public function resolve(string $id = null);
-
+    public function info(): ISchemaInfo;
 }

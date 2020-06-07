@@ -1,6 +1,6 @@
 <?php
-/* ===========================================================================
- * Copyright 2018 Zindex Software
+/* ============================================================================
+ * Copyright 2020 Zindex Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,26 +17,307 @@
 
 namespace Opis\JsonSchema;
 
-class JsonPointer
+final class JsonPointer
 {
+    /** @var string */
+    protected const PATTERN = '~^(?<level>0|[1-9][0-9]*)?(?<pointer>(?:/[^/#]*)*)(?<fragment>#)?$~';
 
-    const POINTER_REGEX = '~^(?:/|(?:/[^/#]*)*)$~';
+    /** @var string */
+    protected const UNESCAPED = '/~([^01]|$)/';
 
-    const RELATIVE_POINTER_REGEX = '~^(?<level>0|[1-9][0-9]*)(?<pointer>(?:/[^/#]+)*)(?<fragment>#?)$~';
+    protected int $level = -1;
 
-    const POINTER_NOT_ESCAPED_REGEX = '/~([^01]|$)/';
+    protected bool $fragment = false;
 
+    /** @var string[]|int[] */
+    protected array $path;
+
+    protected ?string $str = null;
+
+    /**
+     * @param array $path
+     * @param int $level
+     * @param bool $fragment
+     */
+    public function __construct(array $path, int $level = -1, bool $fragment = false)
+    {
+        $this->path = $path;
+        $this->level = $level < 0 ? -1 : $level;
+        $this->fragment = $level >= 0 && $fragment;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isRelative(): bool
+    {
+        return $this->level >= 0;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAbsolute(): bool
+    {
+        return $this->level < 0;
+    }
+
+    /**
+     * @return int
+     */
+    public function level(): int
+    {
+        return $this->level;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function path(): array
+    {
+        return $this->path;
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasFragment(): bool
+    {
+        return $this->fragment;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString(): string
+    {
+        if ($this->str === null) {
+            if ($this->level >= 0) {
+                $this->str = (string)$this->level;
+                if ($this->path) {
+                    $this->str .= '/';
+                    $this->str .= implode('/', self::encodePath($this->path));
+                }
+
+                if ($this->fragment) {
+                    $this->str .= '#';
+                }
+            } else {
+                $this->str = '/';
+                $this->str .= implode('/', self::encodePath($this->path));
+            }
+        }
+
+        return $this->str;
+    }
+
+    /**
+     * @param $data
+     * @param array|null $path
+     * @param null $default
+     * @return mixed
+     */
+    public function data($data, array $path = null, $default = null)
+    {
+        if ($this->level < 0 || !$path) {
+            $path = $this->path;
+        } else {
+            $path = $this->absolutePath($path);
+        }
+
+        return self::getData($data, $path, $this->fragment, $default);
+    }
+
+    /**
+     * @param array $path
+     * @return array|null
+     */
+    public function absolutePath(array $path = []): ?array
+    {
+        if ($this->level < 0) {
+            // Absolute pointer
+            return $this->path;
+        }
+
+        if ($this->level === 0) {
+            if ($this->path) {
+                return array_merge($path, $this->path);
+            }
+
+            return $path;
+        }
+
+        $count = count($path);
+        if ($count === $this->level) {
+            return $this->path;
+        }
+
+        if ($count > $this->level) {
+            $path = array_slice($path, 0, $count - $this->level);
+
+            return array_merge($path, $this->path);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $pointer
+     * @param bool $decode
+     * @return null|JsonPointer
+     */
+    public static function parse(string $pointer, bool $decode = true): ?self
+    {
+        if ($pointer === '' || !preg_match(self::PATTERN, $pointer, $m)) {
+            // Not a pointer
+            return null;
+        }
+
+        $pointer = $m['pointer'] ?? null;
+
+        // Check if the pointer is escaped
+        if ($decode && $pointer && preg_match(self::UNESCAPED, $pointer)) {
+            // Invalid pointer
+            return null;
+        }
+
+        $level = isset($m['level']) && $m['level'] !== ''
+            ? (int)$m['level']
+            : -1;
+
+        $fragment = isset($m['fragment']) && $m['fragment'] === '#';
+        unset($m);
+
+        if ($fragment && $level < 0) {
+            return null;
+        }
+
+        if ($pointer === '') {
+            $pointer = null;
+        } elseif ($pointer !== null) {
+            // Remove leading slash
+            $pointer = substr($pointer, 1);
+
+            if ($pointer !== '') {
+                $pointer = self::decodePath(explode('/', $pointer));
+            } else {
+                $pointer = null;
+            }
+        }
+
+        return new self($pointer ?? [], $level, $fragment);
+    }
+
+    /**
+     * @param $data
+     * @param array|null $path
+     * @param bool $fragment
+     * @param null $default
+     * @return mixed
+     */
+    public static function getData($data, array $path = null, bool $fragment = false, $default = null)
+    {
+        if ($path === null) {
+            return $default;
+        }
+
+        if (!$path) {
+            return $fragment ? $default : $data;
+        }
+
+        if ($fragment) {
+            return end($path);
+        }
+
+        foreach ($path as $key) {
+            if (is_array($data)) {
+                if (!array_key_exists($key, $data)) {
+                    return $default;
+                }
+                $data = $data[$key];
+            } elseif (is_object($data)) {
+                if (!property_exists($data, $key)) {
+                    return $default;
+                }
+                $data = $data->{$key};
+            } else {
+                return $default;
+            }
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param string|string[] $path
+     * @return string|string[]
+     */
+    public static function encodePath($path)
+    {
+        $path = str_replace('~', '~0', $path);
+        $path = str_replace('/', '~1', $path);
+
+        if (is_array($path)) {
+            return array_map('rawurlencode', $path);
+        }
+
+        return rawurlencode($path);
+    }
+
+    /**
+     * @param string|string[] $path
+     * @return string|string[]
+     */
+    public static function decodePath($path)
+    {
+        if (is_array($path)) {
+            $path = array_map('rawurldecode', $path);
+        } else {
+            $path = rawurldecode($path);
+        }
+
+        $path = str_replace('~1', '/', $path);
+        $path = str_replace('~0', '~', $path);
+
+        return $path;
+    }
+
+    /**
+     * @param array $path
+     * @return string
+     */
+    public static function pathToString(array $path): string
+    {
+        if (!$path) {
+            return '/';
+        }
+
+        return '/' . implode('/', self::encodePath($path));
+    }
 
     /**
      * @param string $pointer
      * @return bool
      */
-    public static function isPointer(string $pointer): bool
+    public static function isAbsolutePointer(string $pointer): bool
     {
-        if ($pointer === '') {
+        if ($pointer === '/') {
             return true;
         }
-        return (bool) preg_match(static::POINTER_REGEX, $pointer);
+
+        if (!preg_match(self::PATTERN, $pointer, $m)) {
+            return false;
+        }
+
+        if (isset($m['fragment']) || isset($m['level']) && $m['level'] !== '') {
+            return false;
+        }
+
+        if (!isset($m['pointer']) || $m['pointer'] === '') {
+            return true;
+        }
+
+        return !preg_match(self::UNESCAPED, $m['pointer']);
     }
 
     /**
@@ -45,182 +326,22 @@ class JsonPointer
      */
     public static function isRelativePointer(string $pointer): bool
     {
-        return (bool) preg_match(static::RELATIVE_POINTER_REGEX, $pointer);
-    }
-
-    /**
-     * @param string $pointer
-     * @return bool
-     */
-    public static function isEscapedPointer(string $pointer): bool
-    {
-        return !preg_match(static::POINTER_NOT_ESCAPED_REGEX, $pointer);
-    }
-
-    /**
-     * @param string $pointer
-     * @param bool $parts
-     * @return array|null
-     */
-    public static function parseRelativePointer(string $pointer, bool $parts = false)
-    {
-        if (!preg_match(static::RELATIVE_POINTER_REGEX, $pointer, $m)) {
-            return null;
-        }
-
-        return [
-            'level' => (int)$m['level'],
-            'pointer' => $parts ? static::parsePointer($m['pointer'] ?? '') : $m['pointer'] ?? '',
-            'fragment' => isset($m['fragment']) && $m['fragment'] === '#',
-        ];
-    }
-
-    /**
-     * @param string $pointer
-     * @return array
-     */
-    public static function parsePointer(string $pointer): array
-    {
-        $pointer = trim($pointer, '/');
         if ($pointer === '') {
-            return [];
-        }
-        $must_replace = strpos($pointer, '~') !== false;
-        $pointer = explode('/', $pointer);
-        if ($must_replace) {
-            $pointer = str_replace('~1', '/', $pointer);
-            $pointer = str_replace('~0', '~', $pointer);
-        }
-        $pointer = array_map('rawurldecode', $pointer);
-        return $pointer;
-    }
-
-    /**
-     * @param array $path
-     * @return string
-     */
-    public static function buildPointer(array $path): string
-    {
-        if (empty($path)) {
-            return '/';
-        }
-        $path = str_replace('~', '~0', $path);
-        $path = str_replace('/', '~1', $path);
-        $path = implode('/', $path);
-        if ($path !== '' && $path[0] !== '/') {
-            $path = '/' . $path;
-        }
-        return $path;
-    }
-
-    /**
-     * @param int $level
-     * @param string|array $path
-     * @param bool $fragment
-     * @return string
-     */
-    public static function buildRelativePointer(int $level, $path, bool $fragment = false): string
-    {
-        if ($level < 0) {
-            $level = 0;
-        }
-        if (is_string($path)) {
-            if ($path === '') {
-                $path = '/';
-            } elseif ($path[0] !== '/') {
-                $path = '/' . $path;
-            }
-        } elseif (is_array($path)) {
-            $path = static::buildPointer($path);
-        } else {
-            $path = '/';
+            return false;
         }
 
-        if ($fragment) {
-            $path .= '#';
+        if (!preg_match(self::PATTERN, $pointer, $m)) {
+            return false;
         }
 
-        return $level . $path;
-    }
-
-    /**
-     * @param $container
-     * @param array|string $pointer
-     * @param null $default
-     * @param bool $fragment
-     * @return mixed|null
-     */
-    public static function getDataByPointer($container, $pointer, $default = null, bool $fragment = false)
-    {
-        if (!is_array($pointer)) {
-            if (!is_string($pointer)) {
-                return $default;
-            }
-            $pointer = static::parsePointer($pointer);
+        if (!isset($m['level']) || $m['level'] === '' || (int)$m['level'] < 0) {
+            return false;
         }
 
-        $path = $default;
-        foreach ($pointer as $path) {
-            if (is_array($container)) {
-                if (array_key_exists($path, $container)) {
-                    $container = $container[$path];
-                    continue;
-                }
-            } elseif (is_object($container)) {
-                if (property_exists($container, $path)) {
-                    $container = $container->{$path};
-                    continue;
-                }
-            }
-            return $default;
+        if (!isset($m['pointer']) || $m['pointer'] === '') {
+            return true;
         }
 
-        return $fragment ? $path : $container;
-    }
-
-    /**
-     * @param $container
-     * @param array|string $relative
-     * @param array|string $base
-     * @param mixed|null $default
-     * @return mixed|null
-     */
-    public static function getDataByRelativePointer($container, $relative, $base, $default = null)
-    {
-        if (!is_array($relative)) {
-            if (!is_string($relative)) {
-                return $default;
-            }
-            $relative = static::parseRelativePointer($relative, true);
-            if (!$relative) {
-                return $default;
-            }
-        }
-
-        if (!isset($relative['level']) || !isset($relative['pointer'])) {
-            return $default;
-        }
-
-        if (!is_array($relative['pointer'])) {
-            $relative['pointer'] = static::parsePointer($relative['pointer']);
-        }
-
-        if (!is_array($base)) {
-            $base = static::parsePointer($base);
-        }
-
-        if ($relative['level'] > count($base)) {
-            return $default;
-        }
-
-        if ($relative['level'] > 0) {
-            array_splice($base, -$relative['level']);
-        }
-        if (!empty($relative['pointer'])) {
-            $base = array_merge($base, $relative['pointer']);
-        }
-        $fragment = $relative['fragment'] ?? false;
-        unset($relative);
-        return static::getDataByPointer($container, $base, $default, $fragment);
+        return !preg_match(self::UNESCAPED, $m['pointer']);
     }
 }
