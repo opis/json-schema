@@ -126,6 +126,10 @@ class ValidatorHelper implements IValidatorHelper
         if (!$this->useBCMath) {
             return 0 == $number - $divisor * (int)($number / $divisor);
         }
+
+        $number = number_format($number, $this->scale, '.', '');
+        $divisor = number_format($divisor, $this->scale, '.', '');
+
         $x = bcdiv($number, $divisor, 0);
         $x = bcmul($divisor, $x, $this->scale);
         $x = bcsub($number, $x, $this->scale);
