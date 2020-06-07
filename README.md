@@ -1,6 +1,6 @@
 Opis JSON Schema
 ====================
-[![Build Status](https://travis-ci.org/opis/json-schema.png)](https://travis-ci.org/opis/json-schema)
+[![Tests](https://github.com/opis/json-schema/workflows/Tests/badge.svg)](https://github.com/opis/json-schema/actions)
 [![Latest Stable Version](https://poser.pugx.org/opis/json-schema/v/stable.png)](https://packagist.org/packages/opis/json-schema)
 [![Latest Unstable Version](https://poser.pugx.org/opis/json-schema/v/unstable.png)](https://packagist.org/packages/opis/json-schema)
 [![License](https://poser.pugx.org/opis/json-schema/license.png)](https://packagist.org/packages/opis/json-schema)
