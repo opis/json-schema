@@ -127,4 +127,14 @@ class FormatResolver implements IFormatResolver
 
         return false;
     }
+
+    public function __serialize(): array
+    {
+        return ['formats' => $this->formats];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->formats = $data['formats'];
+    }
 }

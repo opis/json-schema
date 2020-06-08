@@ -205,6 +205,24 @@ class FilterResolver implements IFilterResolver
         return false;
     }
 
+    public function __serialize(): array
+    {
+        return [
+            'separator' => $this->separator,
+            'defaultNS' => $this->defaultNS,
+            'ns' => $this->ns,
+            'filters' => $this->filters,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->separator = $data['separator'];
+        $this->defaultNS = $data['defaultNS'];
+        $this->ns = $data['ns'];
+        $this->filters = $data['filters'];
+    }
+
     /**
      * @param string $name
      * @return array

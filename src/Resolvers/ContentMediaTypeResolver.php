@@ -35,29 +35,11 @@ class ContentMediaTypeResolver implements IContentMediaTypeResolver
     public function __construct(array $media = [], $defaultMedia = null)
     {
         $media += [
-            'application/json' => static function (
-                string $value,
-                /** @noinspection PhpUnusedParameterInspection */
-                string $type
-            ): bool {
-                json_decode($value);
-
-                return json_last_error() === JSON_ERROR_NONE;
-            },
+            'application/json' => self::class . '::IsJsonEncoded',
         ];
 
         $this->media = $media;
-
-        /** @noinspection PhpComposerExtensionStubsInspection */
-        if (!$defaultMedia && class_exists(finfo::class)) {
-            /** @noinspection PhpComposerExtensionStubsInspection */
-            $fInfo = new finfo(FILEINFO_MIME_TYPE);
-            $this->defaultMedia = static function (string $value, string $type) use ($fInfo): bool {
-                $r = $fInfo->buffer($value);
-
-                return $r == $type || $r == 'application/x-empty';
-            };
-        }
+        $this->defaultMedia = $defaultMedia ?? self::class . '::IsEncodedAsType';
     }
 
     /**
@@ -116,5 +98,47 @@ class ContentMediaTypeResolver implements IContentMediaTypeResolver
         $this->defaultMedia = $handler;
 
         return $this;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'media' => $this->media,
+            'defaultMedia' => $this->defaultMedia,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->media = $data['media'];
+        $this->defaultMedia = $data['defaultMedia'];
+    }
+
+    public static function IsJsonEncoded(string $value,
+        /** @noinspection PhpUnusedParameterInspection */ string $type): bool
+    {
+        json_decode($value);
+
+        return json_last_error() === JSON_ERROR_NONE;
+    }
+
+    public static function IsEncodedAsType(string $value, string $type): bool
+    {
+        /** @var finfo|null|bool $finfo */
+        static $finfo = false;
+
+        if ($finfo === false) {
+            if (!class_exists(finfo::class)) {
+                $finfo = null;
+                return false;
+            }
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+        } elseif (!$finfo) {
+            return false;
+        }
+
+        $r = $finfo->buffer($value);
+
+        return $r == $type || $r == 'application/x-empty';
     }
 }

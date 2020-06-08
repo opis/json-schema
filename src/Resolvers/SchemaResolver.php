@@ -71,7 +71,7 @@ class SchemaResolver implements ISchemaResolver
      * @param string|null $id
      * @return bool
      */
-    public function registerRaw($schema, string $id = null): bool
+    public function registerRaw($schema, ?string $id = null): bool
     {
         if (is_string($schema)) {
             $schema = json_decode($schema, false);
@@ -116,6 +116,10 @@ class SchemaResolver implements ISchemaResolver
      */
     public function unregisterRaw(string $id): bool
     {
+        if (strpos($id, '#') === false) {
+            $id .= '#';
+        }
+
         if (isset($this->raw[$id])) {
             unset($this->raw[$id]);
             return true;
@@ -246,6 +250,25 @@ class SchemaResolver implements ISchemaResolver
         }
 
         return $this;
+    }
+
+
+    public function __serialize(): array
+    {
+        return [
+            'raw' => $this->raw,
+            'protocols' => $this->protocols,
+            'prefixes' => $this->prefixes,
+            'dirs' => $this->dirs,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->raw = $data['raw'];
+        $this->protocols = $data['protocols'];
+        $this->prefixes = $data['prefixes'];
+        $this->dirs = $data['dirs'];
     }
 
     /**

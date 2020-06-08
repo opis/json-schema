@@ -22,28 +22,20 @@ use Opis\JsonSchema\IContentEncoding;
 class ContentEncodingResolver implements IContentEncodingResolver
 {
     /** @var callable[]|IContentEncoding[] */
-    protected array $encodings;
+    protected array $list;
 
     /**
-     * @param callable[]|IContentEncoding[] $encodings
+     * @param callable[]|IContentEncoding[] $list
      */
-    public function __construct(array $encodings = [])
+    public function __construct(array $list = [])
     {
-        $encodings += [
-            'binary' => static function (string $value): ?string {
-                return $value;
-            },
-            'base64' => static function (string $value): ?string {
-                $value = base64_decode($value, true);
-
-                return is_string($value) ? $value : null;
-            },
-            'quoted-printable' => static function (string $value): ?string {
-                return quoted_printable_encode($value);
-            },
+        $list += [
+            'binary' => self::class . '::DecodeBinary',
+            'base64' => self::class . '::DecodeBase64',
+            'quoted-printable' => self::class . '::DecodeQuotedPrintable',
         ];
 
-        $this->encodings = $encodings;
+        $this->list = $list;
     }
 
     /**
@@ -51,7 +43,7 @@ class ContentEncodingResolver implements IContentEncodingResolver
      */
     public function resolve(string $name)
     {
-        return $this->encodings[$name] ?? null;
+        return $this->list[$name] ?? null;
     }
 
     /**
@@ -61,7 +53,7 @@ class ContentEncodingResolver implements IContentEncodingResolver
      */
     public function register(string $name, IContentEncoding $encoding): self
     {
-        $this->encodings[$name] = $encoding;
+        $this->list[$name] = $encoding;
 
         return $this;
     }
@@ -73,7 +65,7 @@ class ContentEncodingResolver implements IContentEncodingResolver
      */
     public function registerCallable(string $name, callable $encoding): self
     {
-        $this->encodings[$name] = $encoding;
+        $this->list[$name] = $encoding;
 
         return $this;
     }
@@ -84,12 +76,41 @@ class ContentEncodingResolver implements IContentEncodingResolver
      */
     public function unregister(string $name): bool
     {
-        if (isset($this->encodings[$name])) {
-            unset($this->encodings[$name]);
+        if (isset($this->list[$name])) {
+            unset($this->list[$name]);
 
             return true;
         }
 
         return false;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'list' => $this->list,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->list = $data['list'];
+    }
+
+    public static function DecodeBinary(string $value): ?string
+    {
+        return $value;
+    }
+
+    public static function DecodeBase64(string $value): ?string
+    {
+        $value = base64_decode($value, true);
+
+        return is_string($value) ? $value : null;
+    }
+
+    public static function DecodeQuotedPrintable(string $value): ?string
+    {
+        return quoted_printable_decode($value);
     }
 }
