@@ -37,6 +37,8 @@ class SchemaLoader implements ISchemaLoader
 
     protected bool $decodeJsonString = false;
 
+    protected ?Uri $base = null;
+
     /**
      * @param ISchemaParser $parser
      * @param null|ISchemaResolver $resolver
@@ -48,6 +50,22 @@ class SchemaLoader implements ISchemaLoader
         $this->parser = $parser;
         $this->resolver = $resolver;
         $this->decodeJsonString = $decodeJsonString;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function baseUri(): ?Uri
+    {
+        return $this->base;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setBaseUri(?Uri $uri): ISchemaLoader
+    {
+        $this->base = $uri;
     }
 
     /**
@@ -129,7 +147,10 @@ class SchemaLoader implements ISchemaLoader
     public function loadSchemaById(Uri $uri): ?ISchema
     {
         if (!$uri->isAbsolute()) {
-            return null;
+            if ($this->base === null || !$this->base->isAbsolute()) {
+                return null;
+            }
+            $uri = $this->base->resolveRef($uri);
         }
 
         $fragment = $uri->fragment();

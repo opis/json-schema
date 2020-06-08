@@ -45,13 +45,24 @@ interface ISchemaLoader
     public function loadSchemaById(Uri $uri): ?ISchema;
 
     /**
+     * @return Uri|null
+     */
+    public function baseUri(): ?Uri;
+
+    /**
+     * @param Uri|null $uri
+     * @return $this
+     */
+    public function setBaseUri(?Uri $uri): self;
+
+    /**
      * @return ISchemaParser
      */
     public function parser(): ISchemaParser;
 
     /**
      * @param ISchemaParser $parser
-     * @return ISchemaLoader
+     * @return $this
      */
     public function setParser(ISchemaParser $parser): self;
 
@@ -62,7 +73,7 @@ interface ISchemaLoader
 
     /**
      * @param ISchemaResolver|null $resolver
-     * @return ISchemaLoader
+     * @return $this
      */
     public function setResolver(?ISchemaResolver $resolver): self;
 }

@@ -27,9 +27,6 @@ class SchemaResolver implements ISchemaResolver
     /** @var string[] */
     protected array $files = [];
 
-    /** @var null|string */
-    protected ?string $fileDir = null;
-
     /** @var callable[] */
     protected array $protocols = [];
 

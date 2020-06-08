@@ -17,6 +17,7 @@
 
 namespace Opis\JsonSchema\Resolvers;
 
+use finfo;
 use Opis\JsonSchema\IContentMediaType;
 
 class ContentMediaTypeResolver implements IContentMediaTypeResolver
@@ -47,10 +48,10 @@ class ContentMediaTypeResolver implements IContentMediaTypeResolver
 
         $this->media = $media;
 
-        if (!$defaultMedia && class_exists('\\finfo')) {
+        /** @noinspection PhpComposerExtensionStubsInspection */
+        if (!$defaultMedia && class_exists(finfo::class)) {
             /** @noinspection PhpComposerExtensionStubsInspection */
-            /** @noinspection PhpFullyQualifiedNameUsageInspection */
-            $fInfo = new \finfo(FILEINFO_MIME_TYPE);
+            $fInfo = new finfo(FILEINFO_MIME_TYPE);
             $this->defaultMedia = static function (string $value, string $type) use ($fInfo): bool {
                 $r = $fInfo->buffer($value);
 
