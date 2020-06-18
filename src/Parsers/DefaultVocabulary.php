@@ -24,16 +24,16 @@ use Opis\JsonSchema\Parsers\Keywords\{
 };
 use Opis\JsonSchema\Parsers\Pragmas\{CastPragmaParser, GlobalsPragmaParser,
     MaxErrorsPragmaParser, SlotsPragmaParser};
-use Opis\JsonSchema\Parsers\WrapperKeywords\PragmaWrapperKeywordParser;
+use Opis\JsonSchema\Parsers\KeywordValidators\PragmaKeywordValidatorParser;
 
 class DefaultVocabulary extends BaseVocabulary
 {
     /**
      * @param KeywordParser[] $keywords
-     * @param WrapperKeywordParser[] $wrappers
+     * @param KeywordValidatorParser[] $keywordValidators
      * @param PragmaParser[] $pragmas
      */
-    public function __construct(array $keywords = [], array $wrappers = [], array $pragmas = [])
+    public function __construct(array $keywords = [], array $keywordValidators = [], array $pragmas = [])
     {
         $keywords = array_merge($keywords, [
             new ContentSchemaKeywordParser('contentSchema'),
@@ -41,10 +41,10 @@ class DefaultVocabulary extends BaseVocabulary
             new SlotsKeywordParser('$slots'),
         ]);
 
-        $wrappers = array_merge([
+        $keywordValidators = array_merge([
             // $pragma has priority
-            new PragmaWrapperKeywordParser('$pragma'),
-        ], $wrappers);
+            new PragmaKeywordValidatorParser('$pragma'),
+        ], $keywordValidators);
 
         $pragmas = array_merge($pragmas, [
             new MaxErrorsPragmaParser('maxErrors'),
@@ -53,6 +53,6 @@ class DefaultVocabulary extends BaseVocabulary
             new CastPragmaParser('cast'),
         ]);
 
-        parent::__construct($keywords, $wrappers, $pragmas);
+        parent::__construct($keywords, $keywordValidators, $pragmas);
     }
 }

@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema\Parsers\Drafts;
 
 use Opis\JsonSchema\Parsers\{
-    Draft, PragmaParser, Vocabulary, KeywordParser, WrapperKeywordParser
+    Draft, PragmaParser, Vocabulary, KeywordParser, KeywordValidatorParser
 };
 
 abstract class AbstractDraft implements Draft
@@ -26,8 +26,8 @@ abstract class AbstractDraft implements Draft
     /** @var KeywordParser[] */
     protected array $keywords;
 
-    /** @var WrapperKeywordParser[] */
-    protected array $wrappers;
+    /** @var KeywordValidatorParser[] */
+    protected array $keywordValidators;
 
     /** @var PragmaParser[] */
     protected array $pragmas;
@@ -38,19 +38,19 @@ abstract class AbstractDraft implements Draft
     public function __construct(?Vocabulary $extraVocabulary = null)
     {
         $keywords = $this->getKeywordParsers();
-        $wrappers = $this->getWrapperKeywordParsers();
+        $keywordValidators = $this->getKeywordValidatorParsers();
         $pragmas = $this->getPragmaParsers();
 
         if ($extraVocabulary) {
             $keywords = array_merge($keywords, $extraVocabulary->keywords());
-            $wrappers = array_merge($wrappers, $extraVocabulary->wrappers());
+            $keywordValidators = array_merge($keywordValidators, $extraVocabulary->keywordValidators());
             $pragmas = array_merge($pragmas, $extraVocabulary->pragmas());
         }
 
         $keywords[] = $this->getRefKeywordParser();
 
         $this->keywords = $keywords;
-        $this->wrappers = $wrappers;
+        $this->keywordValidators = $keywordValidators;
         $this->pragmas = $pragmas;
     }
 
@@ -73,9 +73,9 @@ abstract class AbstractDraft implements Draft
     /**
      * @inheritDoc
      */
-    public function wrappers(): array
+    public function keywordValidators(): array
     {
-        return $this->wrappers;
+        return $this->keywordValidators;
     }
 
     /**
@@ -97,9 +97,9 @@ abstract class AbstractDraft implements Draft
     abstract protected function getKeywordParsers(): array;
 
     /**
-     * @return WrapperKeywordParser[]
+     * @return KeywordValidatorParser[]
      */
-    protected function getWrapperKeywordParsers(): array
+    protected function getKeywordValidatorParsers(): array
     {
         return [];
     }

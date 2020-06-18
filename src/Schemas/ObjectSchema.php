@@ -17,15 +17,14 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\{Helper, Keyword, ValidationContext, WrapperKeyword};
+use Opis\JsonSchema\{Helper, Keyword, ValidationContext, KeywordValidator};
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Errors\ValidationError;
-use Opis\JsonSchema\WrapperKeywords\CallbackWrapperKeyword;
+use Opis\JsonSchema\KeywordValidators\CallbackKeywordValidator;
 
 class ObjectSchema extends AbstractSchema
 {
-
-    protected ?WrapperKeyword $wrapper = null;
+    protected ?KeywordValidator $keywordValidator = null;
 
     /** @var Keyword[]|null */
     protected ?array $before = null;
@@ -38,24 +37,24 @@ class ObjectSchema extends AbstractSchema
 
     /**
      * @param SchemaInfo $info
-     * @param WrapperKeyword|null $wrapper
+     * @param KeywordValidator|null $keywordValidator
      * @param Keyword[][]|null $types
      * @param Keyword[]|null $before
      * @param Keyword[]|null $after
      */
-    public function __construct(SchemaInfo $info, ?WrapperKeyword $wrapper, ?array $types, ?array $before, ?array $after)
+    public function __construct(SchemaInfo $info, ?KeywordValidator $keywordValidator, ?array $types, ?array $before, ?array $after)
     {
         parent::__construct($info);
         $this->types = $types;
         $this->before = $before;
         $this->after = $after;
-        $this->wrapper = $wrapper;
+        $this->keywordValidator = $keywordValidator;
 
-        if ($wrapper) {
-            while ($next = $wrapper->next()) {
-                $wrapper = $next;
+        if ($keywordValidator) {
+            while ($next = $keywordValidator->next()) {
+                $keywordValidator = $next;
             }
-            $wrapper->setNext(new CallbackWrapperKeyword([$this, 'doValidate']));
+            $keywordValidator->setNext(new CallbackKeywordValidator([$this, 'doValidate']));
         }
     }
 
@@ -65,7 +64,7 @@ class ObjectSchema extends AbstractSchema
     public function validate(ValidationContext $context): ?ValidationError
     {
         $context->pushSharedObject();
-        $error = $this->wrapper ? $this->wrapper->validate($context) : $this->doValidate($context);
+        $error = $this->keywordValidator ? $this->keywordValidator->validate($context) : $this->doValidate($context);
         $context->popSharedObject();
 
         return $error;

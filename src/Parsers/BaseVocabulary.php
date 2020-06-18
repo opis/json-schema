@@ -22,21 +22,21 @@ class BaseVocabulary implements Vocabulary
     /** @var KeywordParser[] */
     protected array $keywords;
 
-    /** @var WrapperKeywordParser[] */
-    protected array $wrappers;
+    /** @var KeywordValidatorParser[] */
+    protected array $keywordValidators;
 
     /** @var PragmaParser[] */
     protected array $pragmas;
 
     /**
      * @param KeywordParser[] $keywords
-     * @param WrapperKeywordParser[] $wrappers
+     * @param KeywordValidatorParser[] $keywordValidators
      * @param PragmaParser[] $pragmas
      */
-    public function __construct(array $keywords = [], array $wrappers = [], array $pragmas = [])
+    public function __construct(array $keywords = [], array $keywordValidators = [], array $pragmas = [])
     {
         $this->keywords = $keywords;
-        $this->wrappers = $wrappers;
+        $this->keywordValidators = $keywordValidators;
         $this->pragmas = $pragmas;
     }
 
@@ -51,9 +51,9 @@ class BaseVocabulary implements Vocabulary
     /**
      * @inheritDoc
      */
-    public function wrappers(): array
+    public function keywordValidators(): array
     {
-        return $this->wrappers;
+        return $this->keywordValidators;
     }
 
     /**
@@ -85,22 +85,22 @@ class BaseVocabulary implements Vocabulary
     }
 
     /**
-     * @param WrapperKeywordParser $wrapper
+     * @param KeywordValidatorParser $keywordValidatorParser
      * @return BaseVocabulary
      */
-    public function appendWrapper(WrapperKeywordParser $wrapper): self
+    public function appendKeywordValidator(KeywordValidatorParser $keywordValidatorParser): self
     {
-        $this->wrappers[] = $wrapper;
+        $this->keywordValidators[] = $keywordValidatorParser;
         return $this;
     }
 
     /**
-     * @param WrapperKeywordParser $wrapper
+     * @param KeywordValidatorParser $keywordValidator
      * @return BaseVocabulary
      */
-    public function prependWrapper(WrapperKeywordParser $wrapper): self
+    public function prependKeywordValidator(KeywordValidatorParser $keywordValidator): self
     {
-        array_unshift($this->wrappers, $wrapper);
+        array_unshift($this->keywordValidators, $keywordValidator);
         return $this;
     }
 

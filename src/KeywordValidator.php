@@ -17,16 +17,16 @@
 
 namespace Opis\JsonSchema;
 
-interface WrapperKeyword extends SchemaValidator
+interface KeywordValidator extends SchemaValidator
 {
     /**
-     * @return WrapperKeyword|null
+     * @return KeywordValidator|null
      */
-    public function next(): ?WrapperKeyword;
+    public function next(): ?KeywordValidator;
 
     /**
-     * @param WrapperKeyword|null $next
-     * @return WrapperKeyword
+     * @param KeywordValidator|null $next
+     * @return KeywordValidator
      */
-    public function setNext(?WrapperKeyword $next): WrapperKeyword;
+    public function setNext(?KeywordValidator $next): KeywordValidator;
 }

@@ -25,9 +25,9 @@ interface Vocabulary
     public function keywords(): array;
 
     /**
-     * @return WrapperKeywordParser[]
+     * @return KeywordValidatorParser[]
      */
-    public function wrappers(): array;
+    public function keywordValidators(): array;
 
     /**
      * @return PragmaParser[]

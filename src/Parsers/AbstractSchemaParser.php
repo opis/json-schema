@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-use Opis\JsonSchema\{Keyword, Schema, WrapperKeyword, Uri};
+use Opis\JsonSchema\{Keyword, Schema, KeywordValidator, Uri};
 use Opis\JsonSchema\Info\{SchemaInfo, DefaultSchemaInfo};
 use Opis\JsonSchema\Exceptions\{SchemaException, ParseException};
 use Opis\JsonSchema\Schemas\{
@@ -47,7 +47,7 @@ abstract class AbstractSchemaParser implements SchemaParser
         'allowDefaults' => true,
         'allowSlots' => true,
         'allowContentSchema' => true,
-        'allowWrappers' => true,
+        'allowKeywordValidators' => true,
         'allowPragmas' => true,
 
         'allowDataKeyword' => false,
@@ -381,34 +381,34 @@ abstract class AbstractSchemaParser implements SchemaParser
 
         $shared = (object) [];
 
-        if ($this->option('allowWrappers')) {
-            $wrapper = $this->parseWrapperKeywords($info, $draftObject->wrappers(), $shared);
+        if ($this->option('allowKeywordValidators')) {
+            $keywordValidator = $this->parseKeywordValidators($info, $draftObject->keywordValidators(), $shared);
         } else {
-            $wrapper = null;
+            $keywordValidator = null;
         }
 
-        return $this->parseSchemaKeywords($info, $wrapper, $draftObject->keywords(), $shared, $hasRef);
+        return $this->parseSchemaKeywords($info, $keywordValidator, $draftObject->keywords(), $shared, $hasRef);
     }
 
     /**
      * @param SchemaInfo $info
-     * @param WrapperKeywordParser[] $wrappers
+     * @param KeywordValidatorParser[] $keywordValidators
      * @param object $shared
-     * @return WrapperKeyword|null
+     * @return KeywordValidator|null
      */
-    protected function parseWrapperKeywords(SchemaInfo $info, array $wrappers, object $shared): ?WrapperKeyword
+    protected function parseKeywordValidators(SchemaInfo $info, array $keywordValidators, object $shared): ?KeywordValidator
     {
         $last = null;
 
-        while ($wrappers) {
-            /** @var WrapperKeywordParser $wrapper */
-            $wrapper = array_pop($wrappers);
-            if ($wrapper && ($keyword = $wrapper->parse($info, $this, $shared))) {
+        while ($keywordValidators) {
+            /** @var KeywordValidatorParser $keywordValidator */
+            $keywordValidator = array_pop($keywordValidators);
+            if ($keywordValidator && ($keyword = $keywordValidator->parse($info, $this, $shared))) {
                 $keyword->setNext($last);
                 $last = $keyword;
                 unset($keyword);
             }
-            unset($wrapper);
+            unset($keywordValidator);
         }
 
         return $last;
@@ -416,13 +416,13 @@ abstract class AbstractSchemaParser implements SchemaParser
 
     /**
      * @param SchemaInfo $info
-     * @param WrapperKeyword $wrapper
+     * @param KeywordValidator $keywordValidator
      * @param KeywordParser[] $parsers
      * @param object $shared
      * @param bool $hasRef
      * @return Schema
      */
-    protected function parseSchemaKeywords(SchemaInfo $info, ?WrapperKeyword $wrapper, array $parsers, object $shared, bool $hasRef = false): Schema
+    protected function parseSchemaKeywords(SchemaInfo $info, ?KeywordValidator $keywordValidator, array $parsers, object $shared, bool $hasRef = false): Schema
     {
         /** @var Keyword[] $prepend */
         $prepend = [];
@@ -509,10 +509,10 @@ abstract class AbstractSchemaParser implements SchemaParser
         }
 
         if (empty($types) && empty($before) && empty($after)) {
-            return new EmptySchema($info, $wrapper);
+            return new EmptySchema($info, $keywordValidator);
         }
 
-        return new ObjectSchema($info, $wrapper, $types, $before, $after);
+        return new ObjectSchema($info, $keywordValidator, $types, $before, $after);
     }
 
     /**

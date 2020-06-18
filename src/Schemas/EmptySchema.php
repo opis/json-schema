@@ -20,20 +20,19 @@ namespace Opis\JsonSchema\Schemas;
 use Opis\JsonSchema\ValidationContext;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\WrapperKeyword;
+use Opis\JsonSchema\KeywordValidator;
 
 final class EmptySchema extends AbstractSchema
 {
-
-    protected ?WrapperKeyword $wrapper;
+    protected ?KeywordValidator $keywordValidator;
 
     /**
      * @inheritDoc
      */
-    public function __construct(SchemaInfo $info, ?WrapperKeyword $wrapper = null)
+    public function __construct(SchemaInfo $info, ?KeywordValidator $keywordValidator = null)
     {
         parent::__construct($info);
-        $this->wrapper = $wrapper;
+        $this->keywordValidator = $keywordValidator;
     }
 
     /**
@@ -41,12 +40,12 @@ final class EmptySchema extends AbstractSchema
      */
     public function validate(ValidationContext $context): ?ValidationError
     {
-        if (!$this->wrapper) {
+        if (!$this->keywordValidator) {
             return null;
         }
 
         $context->pushSharedObject();
-        $error = $this->wrapper->validate($context);
+        $error = $this->keywordValidator->validate($context);
         $context->popSharedObject();
 
         return $error;

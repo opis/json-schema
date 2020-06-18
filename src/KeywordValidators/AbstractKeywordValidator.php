@@ -15,9 +15,30 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Parsers;
+namespace Opis\JsonSchema\KeywordValidators;
 
-abstract class AbstractWrapperKeywordParser implements WrapperKeywordParser
+use Opis\JsonSchema\KeywordValidator;
+
+abstract class AbstractKeywordValidator implements KeywordValidator
 {
-    use KeywordParserTrait;
+
+    protected ?KeywordValidator $next = null;
+
+    /**
+     * @inheritDoc
+     */
+    public function next(): ?KeywordValidator
+    {
+        return $this->next;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setNext(?KeywordValidator $next): KeywordValidator
+    {
+        $this->next = $next;
+
+        return $this;
+    }
 }

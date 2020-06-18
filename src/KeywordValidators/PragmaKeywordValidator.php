@@ -15,12 +15,12 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\WrapperKeywords;
+namespace Opis\JsonSchema\KeywordValidators;
 
 use Opis\JsonSchema\{ValidationContext, Pragma};
 use Opis\JsonSchema\Errors\ValidationError;
 
-final class PragmaWrapperKeyword extends AbstractWrapperKeyword
+final class PragmaKeywordValidator extends AbstractKeywordValidator
 {
     /** @var Pragma[] */
     protected array $pragmas = [];

@@ -17,16 +17,7 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-use Opis\JsonSchema\WrapperKeyword;
-use Opis\JsonSchema\Info\SchemaInfo;
-
-interface WrapperKeywordParser
+abstract class AbstractKeywordValidatorParser implements KeywordValidatorParser
 {
-    /**
-     * @param SchemaInfo $info
-     * @param SchemaParser $parser
-     * @param object $shared
-     * @return WrapperKeyword|null
-     */
-    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?WrapperKeyword;
+    use KeywordParserTrait;
 }

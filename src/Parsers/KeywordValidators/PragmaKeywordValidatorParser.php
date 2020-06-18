@@ -15,19 +15,19 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Parsers\WrapperKeywords;
+namespace Opis\JsonSchema\Parsers\KeywordValidators;
 
-use Opis\JsonSchema\WrapperKeyword;
+use Opis\JsonSchema\KeywordValidator;
 use Opis\JsonSchema\Info\{DefaultSchemaInfo, SchemaInfo};
-use Opis\JsonSchema\WrapperKeywords\PragmaWrapperKeyword;
-use Opis\JsonSchema\Parsers\{AbstractWrapperKeywordParser, SchemaParser};
+use Opis\JsonSchema\KeywordValidators\PragmaKeywordValidator;
+use Opis\JsonSchema\Parsers\{AbstractKeywordValidatorParser, SchemaParser};
 
-class PragmaWrapperKeywordParser extends AbstractWrapperKeywordParser
+class PragmaKeywordValidatorParser extends AbstractKeywordValidatorParser
 {
     /**
      * @inheritDoc
      */
-    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?WrapperKeyword
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?KeywordValidator
     {
         if (!$parser->option('allowPragmas') || !$this->keywordExists($info)) {
             return null;
@@ -52,6 +52,6 @@ class PragmaWrapperKeywordParser extends AbstractWrapperKeywordParser
             }
         }
 
-        return $list ? new PragmaWrapperKeyword($list) : null;
+        return $list ? new PragmaKeywordValidator($list) : null;
     }
 }

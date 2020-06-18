@@ -15,12 +15,12 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\WrapperKeywords;
+namespace Opis\JsonSchema\KeywordValidators;
 
-use Opis\JsonSchema\{ValidationContext, WrapperKeyword};
+use Opis\JsonSchema\{ValidationContext, KeywordValidator};
 use Opis\JsonSchema\Errors\ValidationError;
 
-final class CallbackWrapperKeyword implements WrapperKeyword
+final class CallbackKeywordValidator implements KeywordValidator
 {
     /** @var callable */
     private $callback;
@@ -44,7 +44,7 @@ final class CallbackWrapperKeyword implements WrapperKeyword
     /**
      * @inheritDoc
      */
-    public function next(): ?WrapperKeyword
+    public function next(): ?KeywordValidator
     {
         return null;
     }
@@ -52,7 +52,7 @@ final class CallbackWrapperKeyword implements WrapperKeyword
     /**
      * @inheritDoc
      */
-    public function setNext(?WrapperKeyword $next): WrapperKeyword
+    public function setNext(?KeywordValidator $next): KeywordValidator
     {
         return $this;
     }
