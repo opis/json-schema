@@ -1,5 +1,5 @@
 <?php
-/* ===========================================================================
+/* ============================================================================
  * Copyright 2020 Zindex Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,110 +17,20 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-class Vocabulary implements IVocabulary
+interface Vocabulary
 {
-    /** @var IKeywordParser[] */
-    protected array $keywords;
-
-    /** @var IWrapperKeywordParser[] */
-    protected array $wrappers;
-
-    /** @var IPragmaParser[] */
-    protected array $pragmas;
+    /**
+     * @return KeywordParser[]
+     */
+    public function keywords(): array;
 
     /**
-     * @param IKeywordParser[] $keywords
-     * @param IWrapperKeywordParser[] $wrappers
-     * @param IPragmaParser[] $pragmas
+     * @return WrapperKeywordParser[]
      */
-    public function __construct(array $keywords = [], array $wrappers = [], array $pragmas = [])
-    {
-        $this->keywords = $keywords;
-        $this->wrappers = $wrappers;
-        $this->pragmas = $pragmas;
-    }
+    public function wrappers(): array;
 
     /**
-     * @inheritDoc
+     * @return PragmaParser[]
      */
-    public function keywords(): array
-    {
-        return $this->keywords;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function wrappers(): array
-    {
-        return $this->wrappers;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function pragmas(): array
-    {
-        return $this->pragmas;
-    }
-
-    /**
-     * @param IKeywordParser $keyword
-     * @return Vocabulary
-     */
-    public function appendKeyword(IKeywordParser $keyword): self
-    {
-        $this->keywords[] = $keyword;
-        return $this;
-    }
-
-    /**
-     * @param IKeywordParser $keyword
-     * @return Vocabulary
-     */
-    public function prependKeyword(IKeywordParser $keyword): self
-    {
-        array_unshift($this->keywords, $keyword);
-        return $this;
-    }
-
-    /**
-     * @param IWrapperKeywordParser $wrapper
-     * @return Vocabulary
-     */
-    public function appendWrapper(IWrapperKeywordParser $wrapper): self
-    {
-        $this->wrappers[] = $wrapper;
-        return $this;
-    }
-
-    /**
-     * @param IWrapperKeywordParser $wrapper
-     * @return Vocabulary
-     */
-    public function prependWrapper(IWrapperKeywordParser $wrapper): self
-    {
-        array_unshift($this->wrappers, $wrapper);
-        return $this;
-    }
-
-    /**
-     * @param IPragmaParser $pragma
-     * @return Vocabulary
-     */
-    public function appendPragma(IPragmaParser $pragma): self
-    {
-        $this->pragmas[] = $pragma;
-        return $this;
-    }
-
-    /**
-     * @param IPragmaParser $pragma
-     * @return Vocabulary
-     */
-    public function prependPragma(IPragmaParser $pragma): self
-    {
-        array_unshift($this->pragmas, $pragma);
-        return $this;
-    }
+    public function pragmas(): array;
 }

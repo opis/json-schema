@@ -21,7 +21,7 @@ use stdClass;
 use Opis\JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
 use Opis\JsonSchema\Errors\ErrorFormatter;
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 
 class ErrorFormatterTest extends TestCase
 {
@@ -70,11 +70,11 @@ class ErrorFormatterTest extends TestCase
     }
 
     /**
-     * @param IValidationError $error
+     * @param ValidationError $error
      * @param array $subErrors
      * @return stdClass
      */
-    public function nestedCallback(IValidationError $error, array $subErrors = []): stdClass
+    public function nestedCallback(ValidationError $error, array $subErrors = []): stdClass
     {
         return (object)[
             'kwd' => $error->keyword(),
@@ -86,10 +86,10 @@ class ErrorFormatterTest extends TestCase
     }
 
     /**
-     * @param IValidationError $error
+     * @param ValidationError $error
      * @return stdClass
      */
-    public function flatCallback(IValidationError $error): stdClass
+    public function flatCallback(ValidationError $error): stdClass
     {
         return (object)[
             'kwd' => $error->keyword(),
@@ -100,10 +100,10 @@ class ErrorFormatterTest extends TestCase
     }
 
     /**
-     * @param IValidationError $error
+     * @param ValidationError $error
      * @return stdClass
      */
-    public function keyedCallback(IValidationError $error): stdClass
+    public function keyedCallback(ValidationError $error): stdClass
     {
         return (object)[
             'kwd' => $error->keyword(),

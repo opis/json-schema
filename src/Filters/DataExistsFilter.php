@@ -17,14 +17,14 @@
 
 namespace Opis\JsonSchema\Filters;
 
-use Opis\JsonSchema\{IContext, IFilter, ISchema, JsonPointer};
+use Opis\JsonSchema\{ValidationContext, Filter, Schema, JsonPointer};
 
-class DataExistsFilter implements IFilter
+class DataExistsFilter implements Filter
 {
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema, array $args = []): bool
+    public function validate(ValidationContext $context, Schema $schema, array $args = []): bool
     {
         $ref = $args['ref'] ?? $context->currentData();
         if (!is_string($ref)) {

@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{Helper, IContext, IKeyword, ISchema};
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{Helper, ValidationContext, Keyword, Schema};
+use Opis\JsonSchema\Errors\ValidationError;
 
-class PatternKeyword implements IKeyword
+class PatternKeyword implements Keyword
 {
     use ErrorTrait;
 
@@ -40,7 +40,7 @@ class PatternKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if (preg_match($this->regex, $context->currentData())) {
             return null;

@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\Parsers\Keywords;
 
-use Opis\JsonSchema\IKeyword;
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Keyword;
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Parsers\{AbstractKeywordParser, DataKeywordTrait,
-    ISchemaParser};
+    SchemaParser};
 use Opis\JsonSchema\Keywords\{MaxLengthDataKeyword, MaxLengthKeyword};
 
 class MaxLengthKeywordParser extends AbstractKeywordParser
@@ -38,7 +38,7 @@ class MaxLengthKeywordParser extends AbstractKeywordParser
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IKeyword
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
         $schema = $info->data();
 

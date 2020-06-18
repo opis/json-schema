@@ -17,17 +17,17 @@
 
 namespace Opis\JsonSchema\Parsers\Pragmas;
 
-use Opis\JsonSchema\IPragma;
+use Opis\JsonSchema\Pragma;
 use Opis\JsonSchema\Pragmas\SlotsPragma;
-use Opis\JsonSchema\Info\{SchemaInfo, ISchemaInfo};
-use Opis\JsonSchema\Parsers\{AbstractPragmaParser, ISchemaParser};
+use Opis\JsonSchema\Info\{DefaultSchemaInfo, SchemaInfo};
+use Opis\JsonSchema\Parsers\{AbstractPragmaParser, SchemaParser};
 
 class SlotsPragmaParser extends AbstractPragmaParser
 {
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IPragma
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Pragma
     {
         if (!$parser->option('allowSlots') || !$this->pragmaExists($info)) {
             return null;
@@ -48,7 +48,7 @@ class SlotsPragmaParser extends AbstractPragmaParser
 
             if (is_bool($slot)) {
 
-                $list[$name] = $parser->parseSchema(new SchemaInfo(
+                $list[$name] = $parser->parseSchema(new DefaultSchemaInfo(
                     $slot, null, $info->base(), $info->root(),
                     array_merge($info->path(), [$this->pragma, $name]),
                     $info->draft() ?? $parser->defaultDraftVersion()

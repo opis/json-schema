@@ -17,39 +17,39 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\Info\DataInfo;
-use Opis\JsonSchema\{IContext, ISchema};
-use Opis\JsonSchema\Errors\{ErrorContainer, IValidationError, ValidationError};
+use Opis\JsonSchema\Info\DefaultDataInfo;
+use Opis\JsonSchema\{ValidationContext, Schema};
+use Opis\JsonSchema\Errors\{ErrorContainer, ValidationError, DefaultValidationError};
 
 trait ErrorTrait
 {
     /**
-     * @param ISchema $schema
-     * @param IContext $context
+     * @param Schema $schema
+     * @param ValidationContext $context
      * @param string $keyword
      * @param string $message
      * @param array $args
-     * @param ErrorContainer|IValidationError|IValidationError[]|null $errors
-     * @return IValidationError
+     * @param ErrorContainer|ValidationError|ValidationError[]|null $errors
+     * @return ValidationError
      */
     protected function error(
-        ISchema $schema,
-        IContext $context,
+        Schema $schema,
+        ValidationContext $context,
         string $keyword,
         string $message,
         array $args = [],
         $errors = null
-    ): IValidationError
+    ): ValidationError
     {
         if ($errors) {
-            if ($errors instanceof IValidationError) {
+            if ($errors instanceof ValidationError) {
                 $errors = [$errors];
             } elseif ($errors instanceof ErrorContainer) {
                 $errors = $errors->all();
             }
         }
 
-        return new ValidationError($keyword, $schema, DataInfo::fromContext($context), $message, $args,
+        return new DefaultValidationError($keyword, $schema, DefaultDataInfo::fromContext($context), $message, $args,
             is_array($errors) ? $errors : []);
     }
 }

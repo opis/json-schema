@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Parsers\Drafts;
 
-use Opis\JsonSchema\Parsers\IKeywordParser;
+use Opis\JsonSchema\Parsers\KeywordParser;
 use Opis\JsonSchema\Parsers\Keywords\{
     AdditionalItemsKeywordParser,
     AdditionalPropertiesKeywordParser,
@@ -68,7 +68,7 @@ class Draft06 extends AbstractDraft
     /**
      * @inheritDoc
      */
-    protected function getRefKeywordParser(): IKeywordParser
+    protected function getRefKeywordParser(): KeywordParser
     {
         return new RefKeywordParser('$ref');
     }

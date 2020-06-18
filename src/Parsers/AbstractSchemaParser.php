@@ -17,9 +17,9 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-use Opis\JsonSchema\{IKeyword, ISchema, IWrapperKeyword, Uri};
-use Opis\JsonSchema\Info\{ISchemaInfo, SchemaInfo};
-use Opis\JsonSchema\Exceptions\{ISchemaException, ParseException};
+use Opis\JsonSchema\{Keyword, Schema, WrapperKeyword, Uri};
+use Opis\JsonSchema\Info\{SchemaInfo, DefaultSchemaInfo};
+use Opis\JsonSchema\Exceptions\{SchemaException, ParseException};
 use Opis\JsonSchema\Schemas\{
     BooleanSchema,
     EmptySchema,
@@ -27,13 +27,13 @@ use Opis\JsonSchema\Schemas\{
     ObjectSchema
 };
 use Opis\JsonSchema\Resolvers\{
-    IContentEncodingResolver,
-    IFilterResolver,
-    IFormatResolver,
-    IContentMediaTypeResolver
+    ContentEncodingResolver,
+    FilterResolver,
+    FormatResolver,
+    ContentMediaTypeResolver
 };
 
-abstract class AbstractSchemaParser implements ISchemaParser
+abstract class AbstractSchemaParser implements SchemaParser
 {
     /** @var string */
     protected const DRAFT_REGEX = '~^https?://json-schema\.org/draft-(\d[0-9-]*\d)/schema#?$~i';
@@ -62,13 +62,13 @@ abstract class AbstractSchemaParser implements ISchemaParser
 
     protected array $options;
 
-    /** @var IDraft[] */
+    /** @var Draft[] */
     protected array $drafts;
 
     protected array $resolvers;
 
     /**
-     * @param IDraft[] $drafts ;
+     * @param Draft[] $drafts ;
      * @param array|null $resolvers
      * @param array|null $options
      */
@@ -153,69 +153,69 @@ abstract class AbstractSchemaParser implements ISchemaParser
     }
 
     /**
-     * @return null|IFilterResolver
+     * @return null|FilterResolver
      */
-    public function getFilterResolver(): ?IFilterResolver
+    public function getFilterResolver(): ?FilterResolver
     {
-        return $this->resolver('$filters', IFilterResolver::class);
+        return $this->resolver('$filters', FilterResolver::class);
     }
 
     /**
-     * @param null|IFilterResolver $resolver
+     * @param null|FilterResolver $resolver
      * @return AbstractSchemaParser
      */
-    public function setFilterResolver(?IFilterResolver $resolver): self
+    public function setFilterResolver(?FilterResolver $resolver): self
     {
         return $this->setResolver('$filters', $resolver);
     }
 
     /**
-     * @return null|IFormatResolver
+     * @return null|FormatResolver
      */
-    public function getFormatResolver(): ?IFormatResolver
+    public function getFormatResolver(): ?FormatResolver
     {
-        return $this->resolver('format', IFormatResolver::class);
+        return $this->resolver('format', FormatResolver::class);
     }
 
     /**
-     * @param IFormatResolver|null $resolver
+     * @param FormatResolver|null $resolver
      * @return AbstractSchemaParser
      */
-    public function setFormatResolver(?IFormatResolver $resolver): self
+    public function setFormatResolver(?FormatResolver $resolver): self
     {
         return $this->setResolver('format', $resolver);
     }
 
     /**
-     * @return null|IContentEncodingResolver
+     * @return null|ContentEncodingResolver
      */
-    public function getContentEncodingResolver(): ?IContentEncodingResolver
+    public function getContentEncodingResolver(): ?ContentEncodingResolver
     {
-        return $this->resolver('contentEncoding', IContentEncodingResolver::class);
+        return $this->resolver('contentEncoding', ContentEncodingResolver::class);
     }
 
     /**
-     * @param IContentEncodingResolver|null $resolver
+     * @param ContentEncodingResolver|null $resolver
      * @return AbstractSchemaParser
      */
-    public function setContentEncodingResolver(?IContentEncodingResolver $resolver): self
+    public function setContentEncodingResolver(?ContentEncodingResolver $resolver): self
     {
         return $this->setResolver('contentEncoding', $resolver);
     }
 
     /**
-     * @return null|IContentMediaTypeResolver
+     * @return null|ContentMediaTypeResolver
      */
-    public function getMediaTypeResolver(): ?IContentMediaTypeResolver
+    public function getMediaTypeResolver(): ?ContentMediaTypeResolver
     {
-        return $this->resolver('contentMediaType', IContentMediaTypeResolver::class);
+        return $this->resolver('contentMediaType', ContentMediaTypeResolver::class);
     }
 
     /**
-     * @param IContentMediaTypeResolver|null $resolver
+     * @param ContentMediaTypeResolver|null $resolver
      * @return AbstractSchemaParser
      */
-    public function setMediaTypeResolver(?IContentMediaTypeResolver $resolver): self
+    public function setMediaTypeResolver(?ContentMediaTypeResolver $resolver): self
     {
         return $this->setResolver('contentMediaType', $resolver);
     }
@@ -281,7 +281,7 @@ abstract class AbstractSchemaParser implements ISchemaParser
         callable $handle_id,
         callable $handle_object,
         ?string $draft = null
-    ): ?ISchema
+    ): ?Schema
     {
         $existent = false;
         if (property_exists($schema, '$id')) {
@@ -294,15 +294,15 @@ abstract class AbstractSchemaParser implements ISchemaParser
                 $id = Uri::merge($id, null, true);
             }
         } else {
-            throw new ParseException('Root schema id must be an URI', new SchemaInfo($schema, $id));
+            throw new ParseException('Root schema id must be an URI', new DefaultSchemaInfo($schema, $id));
         }
 
         if (!$id->isAbsolute()) {
-            throw new ParseException('Root schema id must be an absolute URI', new SchemaInfo($schema, $id));
+            throw new ParseException('Root schema id must be an absolute URI', new DefaultSchemaInfo($schema, $id));
         }
 
         if ($id->fragment() !== '') {
-            throw new ParseException('Root schema id must have an empty fragment or none', new SchemaInfo($schema, $id));
+            throw new ParseException('Root schema id must have an empty fragment or none', new DefaultSchemaInfo($schema, $id));
         }
 
         // Check if id exists
@@ -312,7 +312,7 @@ abstract class AbstractSchemaParser implements ISchemaParser
 
         if (property_exists($schema, '$schema')) {
             if (!is_string($schema->{'$schema'})) {
-                throw new ParseException('Schema draft must be a string', new SchemaInfo($schema, $id));
+                throw new ParseException('Schema draft must be a string', new DefaultSchemaInfo($schema, $id));
             }
             $draft = $this->parseDraftVersion($schema->{'$schema'});
         }
@@ -337,7 +337,7 @@ abstract class AbstractSchemaParser implements ISchemaParser
     /**
      * @inheritDoc
      */
-    public function parseSchema(ISchemaInfo $info): ISchema
+    public function parseSchema(SchemaInfo $info): Schema
     {
         if (is_bool($info->data())) {
             return new BooleanSchema($info);
@@ -345,16 +345,16 @@ abstract class AbstractSchemaParser implements ISchemaParser
 
         try {
             return $this->parseSchemaObject($info);
-        } catch (ISchemaException $exception) {
+        } catch (SchemaException $exception) {
             return new ExceptionSchema($info, $exception);
         }
     }
 
     /**
-     * @param ISchemaInfo $info
-     * @return ISchema
+     * @param SchemaInfo $info
+     * @return Schema
      */
-    protected function parseSchemaObject(ISchemaInfo $info): ISchema
+    protected function parseSchemaObject(SchemaInfo $info): Schema
     {
         $draftObject = $this->draft($info->draft());
 
@@ -391,17 +391,17 @@ abstract class AbstractSchemaParser implements ISchemaParser
     }
 
     /**
-     * @param ISchemaInfo $info
-     * @param IWrapperKeywordParser[] $wrappers
+     * @param SchemaInfo $info
+     * @param WrapperKeywordParser[] $wrappers
      * @param object $shared
-     * @return IWrapperKeyword|null
+     * @return WrapperKeyword|null
      */
-    protected function parseWrapperKeywords(ISchemaInfo $info, array $wrappers, object $shared): ?IWrapperKeyword
+    protected function parseWrapperKeywords(SchemaInfo $info, array $wrappers, object $shared): ?WrapperKeyword
     {
         $last = null;
 
         while ($wrappers) {
-            /** @var IWrapperKeywordParser $wrapper */
+            /** @var WrapperKeywordParser $wrapper */
             $wrapper = array_pop($wrappers);
             if ($wrapper && ($keyword = $wrapper->parse($info, $this, $shared))) {
                 $keyword->setNext($last);
@@ -415,33 +415,33 @@ abstract class AbstractSchemaParser implements ISchemaParser
     }
 
     /**
-     * @param ISchemaInfo $info
-     * @param IWrapperKeyword $wrapper
-     * @param IKeywordParser[] $parsers
+     * @param SchemaInfo $info
+     * @param WrapperKeyword $wrapper
+     * @param KeywordParser[] $parsers
      * @param object $shared
      * @param bool $hasRef
-     * @return ISchema
+     * @return Schema
      */
-    protected function parseSchemaKeywords(ISchemaInfo $info, ?IWrapperKeyword $wrapper, array $parsers, object $shared, bool $hasRef = false): ISchema
+    protected function parseSchemaKeywords(SchemaInfo $info, ?WrapperKeyword $wrapper, array $parsers, object $shared, bool $hasRef = false): Schema
     {
-        /** @var IKeyword[] $prepend */
+        /** @var Keyword[] $prepend */
         $prepend = [];
-        /** @var IKeyword[] $append */
+        /** @var Keyword[] $append */
         $append = [];
-        /** @var IKeyword[] $before */
+        /** @var Keyword[] $before */
         $before = [];
-        /** @var IKeyword[] $after */
+        /** @var Keyword[] $after */
         $after = [];
-        /** @var IKeyword[][] $types */
+        /** @var Keyword[][] $types */
         $types = [];
 
         if ($hasRef) {
             foreach ($parsers as $parser) {
                 $kType = $parser->type();
 
-                if ($kType === IKeywordParser::TYPE_APPEND) {
+                if ($kType === KeywordParser::TYPE_APPEND) {
                     $container = &$append;
-                } elseif ($kType === IKeywordParser::TYPE_PREPEND) {
+                } elseif ($kType === KeywordParser::TYPE_PREPEND) {
                     $container = &$prepend;
                 } else {
                     continue;
@@ -463,16 +463,16 @@ abstract class AbstractSchemaParser implements ISchemaParser
                 $kType = $parser->type();
 
                 switch ($kType) {
-                    case IKeywordParser::TYPE_PREPEND:
+                    case KeywordParser::TYPE_PREPEND:
                         $prepend[] = $keyword;
                         break;
-                    case IKeywordParser::TYPE_APPEND:
+                    case KeywordParser::TYPE_APPEND:
                         $append[] = $keyword;
                         break;
-                    case IKeywordParser::TYPE_BEFORE:
+                    case KeywordParser::TYPE_BEFORE:
                         $before[] = $keyword;
                         break;
-                    case IKeywordParser::TYPE_AFTER:
+                    case KeywordParser::TYPE_AFTER:
                         $after[] = $keyword;
                         break;
                     default:
@@ -518,7 +518,7 @@ abstract class AbstractSchemaParser implements ISchemaParser
     /**
      * @inheritDoc
      */
-    public function draft(string $version): ?IDraft
+    public function draft(string $version): ?Draft
     {
         return $this->drafts[$version] ?? null;
     }
@@ -526,7 +526,7 @@ abstract class AbstractSchemaParser implements ISchemaParser
     /**
      * @inheritDoc
      */
-    public function addDraft(IDraft $draft): ISchemaParser
+    public function addDraft(Draft $draft): SchemaParser
     {
         $this->drafts[$draft->version()] = $draft;
 

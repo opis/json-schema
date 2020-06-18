@@ -19,11 +19,11 @@ namespace Opis\JsonSchema\Variables;
 
 use Opis\JsonSchema\JsonPointer;
 
-final class VariablesContainer implements IVariables
+final class VariablesContainer implements Variables
 {
 
     /**
-     * @var array|object|IVariables|null
+     * @var array|object|Variables|null
      */
     private $vars;
 
@@ -85,7 +85,7 @@ final class VariablesContainer implements IVariables
     {
         $toObject = false;
         if (is_object($vars)) {
-            if ($vars instanceof IVariables) {
+            if ($vars instanceof Variables) {
                 return $vars->resolve($data, $path);
             }
             $vars = get_object_vars($vars);
@@ -129,9 +129,9 @@ final class VariablesContainer implements IVariables
 
     /**
      * @param object $data
-     * @return null|IVariables
+     * @return null|Variables
      */
-    private function parseRef($data): ?IVariables
+    private function parseRef($data): ?Variables
     {
         if (!property_exists($data, $this->keys['ref'])) {
             return null;

@@ -17,15 +17,15 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\IContext;
+use Opis\JsonSchema\ValidationContext;
 
 trait PropertiesTrait
 {
     /**
-     * @param IContext $context
+     * @param ValidationContext $context
      * @return array
      */
-    protected function getObjectProperties(IContext $context): array
+    protected function getObjectProperties(ValidationContext $context): array
     {
         $shared = $context->sharedObject();
         if (isset($shared->objectProperties)) {

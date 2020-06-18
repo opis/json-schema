@@ -17,17 +17,17 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-use Opis\JsonSchema\Variables\{IVariables, VariablesContainer};
+use Opis\JsonSchema\Variables\{Variables, VariablesContainer};
 
 trait VariablesTrait
 {
     /**
-     * @param ISchemaParser $parser
+     * @param SchemaParser $parser
      * @param array|object $vars
      * @param bool $lazy
-     * @return IVariables
+     * @return Variables
      */
-    protected function createVariables(ISchemaParser $parser, $vars, bool $lazy = true): IVariables
+    protected function createVariables(SchemaParser $parser, $vars, bool $lazy = true): Variables
     {
         return new VariablesContainer(
             $vars,

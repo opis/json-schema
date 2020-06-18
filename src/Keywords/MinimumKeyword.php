@@ -18,13 +18,13 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IContext,
-    IKeyword,
-    ISchema
+    ValidationContext,
+    Keyword,
+    Schema
 };
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 
-class MinimumKeyword implements IKeyword
+class MinimumKeyword implements Keyword
 {
     use ErrorTrait;
 
@@ -41,7 +41,7 @@ class MinimumKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if ($context->currentData() >= $this->number) {
             return null;

@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema;
 
-interface IContentMediaType
+interface ContentMediaType
 {
     /**
      * @param string $content

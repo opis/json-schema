@@ -17,17 +17,17 @@
 
 namespace Opis\JsonSchema\WrapperKeywords;
 
-use Opis\JsonSchema\IWrapperKeyword;
+use Opis\JsonSchema\WrapperKeyword;
 
-abstract class AbstractWrapperKeyword implements IWrapperKeyword
+abstract class AbstractWrapperKeyword implements WrapperKeyword
 {
 
-    protected ?IWrapperKeyword $next = null;
+    protected ?WrapperKeyword $next = null;
 
     /**
      * @inheritDoc
      */
-    public function next(): ?IWrapperKeyword
+    public function next(): ?WrapperKeyword
     {
         return $this->next;
     }
@@ -35,7 +35,7 @@ abstract class AbstractWrapperKeyword implements IWrapperKeyword
     /**
      * @inheritDoc
      */
-    public function setNext(?IWrapperKeyword $next): IWrapperKeyword
+    public function setNext(?WrapperKeyword $next): WrapperKeyword
     {
         $this->next = $next;
 

@@ -17,14 +17,14 @@
 
 namespace Opis\JsonSchema\Filters;
 
-use Opis\JsonSchema\{IContext, IFilter, ISchema};
+use Opis\JsonSchema\{ValidationContext, Filter, Schema};
 
-class SlotExistsFilter implements IFilter
+class SlotExistsFilter implements Filter
 {
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema, array $args = []): bool
+    public function validate(ValidationContext $context, Schema $schema, array $args = []): bool
     {
         $slot = $args['slot'] ?? $context->currentData();
         if (!is_string($slot)) {

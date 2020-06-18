@@ -19,93 +19,35 @@ namespace Opis\JsonSchema\Info;
 
 use Opis\JsonSchema\Uri;
 
-class SchemaInfo implements ISchemaInfo
+interface SchemaInfo
 {
-    /** @var bool|object */
-    protected $data;
-
-    protected ?Uri $id;
-
-    protected ?Uri $root;
-
-    protected ?Uri $base;
-
-    /** @var string[]|int[] */
-    protected array $path;
-
-    protected ?string $draft;
+    /**
+     * @return null|Uri
+     */
+    public function id(): ?Uri;
 
     /**
-     * @param object|bool $data
-     * @param Uri|null $id
-     * @param Uri|null $base
-     * @param Uri|null $root
-     * @param string[]|int[] $path
-     * @param string|null $draft
+     * @return null|Uri
      */
-    public function __construct($data, ?Uri $id, ?Uri $base = null, ?Uri $root = null, array $path = [], ?string $draft = null)
-    {
-        if ($root === $id || ((string)$root === (string)$id)) {
-            $root = null;
-        }
-
-        if ($root === null) {
-            $base = null;
-        }
-
-        $this->data = $data;
-        $this->id = $id;
-        $this->root = $root;
-        $this->base = $base;
-        $this->path = $path;
-        $this->draft = $draft;
-    }
+    public function root(): ?Uri;
 
     /**
-     * @inheritDoc
+     * @return null|Uri
      */
-    public function id(): ?Uri
-    {
-        return $this->id;
-    }
+    public function base(): ?Uri;
 
     /**
-     * @inheritDoc
+     * @return string|null
      */
-    public function root(): ?Uri
-    {
-       return $this->root;
-    }
+    public function draft(): ?string;
 
     /**
-     * @inheritDoc
+     * @return object|bool
      */
-    public function base(): ?Uri
-    {
-        return $this->base;
-    }
+    public function data();
 
     /**
-     * @inheritDoc
+     * @return string[]|int[]
      */
-    public function draft(): ?string
-    {
-        return $this->draft;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function data()
-    {
-        return $this->data;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function path(): array
-    {
-        return $this->path;
-    }
+    public function path(): array;
 }

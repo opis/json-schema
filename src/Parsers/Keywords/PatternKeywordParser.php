@@ -17,11 +17,11 @@
 
 namespace Opis\JsonSchema\Parsers\Keywords;
 
-use Opis\JsonSchema\{Helper, IKeyword};
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\{Helper, Keyword};
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Keywords\{PatternKeyword, PatternDataKeyword};
 use Opis\JsonSchema\Parsers\{AbstractKeywordParser, DataKeywordTrait,
-    ISchemaParser};
+    SchemaParser};
 
 class PatternKeywordParser extends AbstractKeywordParser
 {
@@ -38,7 +38,7 @@ class PatternKeywordParser extends AbstractKeywordParser
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IKeyword
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
         $schema = $info->data();
 

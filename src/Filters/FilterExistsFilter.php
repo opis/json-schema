@@ -17,15 +17,15 @@
 
 namespace Opis\JsonSchema\Filters;
 
-use Opis\JsonSchema\{IContext, IFilter, ISchema};
-use Opis\JsonSchema\Resolvers\IFilterResolver;
+use Opis\JsonSchema\{ValidationContext, Filter, Schema};
+use Opis\JsonSchema\Resolvers\FilterResolver;
 
-class FilterExistsFilter implements IFilter
+class FilterExistsFilter implements Filter
 {
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema, array $args = []): bool
+    public function validate(ValidationContext $context, Schema $schema, array $args = []): bool
     {
         $filter = $args['filter'] ?? $context->currentData();
         if (!is_string($filter)) {
@@ -40,8 +40,8 @@ class FilterExistsFilter implements IFilter
             $type = $args['type'];
         }
 
-        /** @var IFilterResolver $resolver */
-        $resolver = $context->loader()->parser()->resolver('$filters', IFilterResolver::class);
+        /** @var FilterResolver $resolver */
+        $resolver = $context->loader()->parser()->resolver('$filters', FilterResolver::class);
         if (!$resolver) {
             return false;
         }

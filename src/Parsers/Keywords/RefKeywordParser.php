@@ -18,11 +18,11 @@
 namespace Opis\JsonSchema\Parsers\Keywords;
 
 use Opis\JsonSchema\Keywords\RefKeyword;
-use Opis\JsonSchema\Variables\IVariables;
-use Opis\JsonSchema\Info\{ISchemaInfo, SchemaInfo};
-use Opis\JsonSchema\{IKeyword, ISchema, JsonPointer, Uri, UriTemplate};
+use Opis\JsonSchema\Variables\Variables;
+use Opis\JsonSchema\Info\{SchemaInfo, DefaultSchemaInfo};
+use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri, UriTemplate};
 use Opis\JsonSchema\Schemas\{PointerRefSchema, TemplateRefSchema, UriRefSchema};
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, ISchemaParser, VariablesTrait};
+use Opis\JsonSchema\Parsers\{AbstractKeywordParser, SchemaParser, VariablesTrait};
 
 class RefKeywordParser extends AbstractKeywordParser
 {
@@ -39,7 +39,7 @@ class RefKeywordParser extends AbstractKeywordParser
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IKeyword
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
         $schema = $info->data();
 
@@ -86,22 +86,22 @@ class RefKeywordParser extends AbstractKeywordParser
     }
 
     /**
-     * @param ISchemaInfo $info
-     * @param ISchemaParser $parser
+     * @param SchemaInfo $info
+     * @param SchemaParser $parser
      * @param string $ref
-     * @param IVariables|null $mapper
-     * @param IVariables|null $globals
+     * @param Variables|null $mapper
+     * @param Variables|null $globals
      * @param array|null $slots
-     * @return ISchema|null
+     * @return Schema|null
      */
     protected function parseRef(
-        ISchemaInfo $info,
-        ISchemaParser $parser,
+        SchemaInfo $info,
+        SchemaParser $parser,
         string $ref,
-        ?IVariables $mapper = null,
-        ?IVariables $globals = null,
+        ?Variables $mapper = null,
+        ?Variables $globals = null,
         ?array $slots = null
-    ): ?ISchema
+    ): ?Schema
     {
         if ($ref === '#') {
             return new UriRefSchema($info, $info->id() ?? $info->base() ?? $info->root(), $mapper, $globals, $slots);
@@ -150,11 +150,11 @@ class RefKeywordParser extends AbstractKeywordParser
     }
 
     /**
-     * @param ISchemaInfo $info
-     * @param ISchemaParser $parser
-     * @return string[]|object[]|ISchema[]
+     * @param SchemaInfo $info
+     * @param SchemaParser $parser
+     * @return string[]|object[]|Schema[]
      */
-    protected function parsePassSlots(ISchemaInfo $info, ISchemaParser $parser): ?array
+    protected function parsePassSlots(SchemaInfo $info, SchemaParser $parser): ?array
     {
         $schema = $info->data();
 
@@ -166,13 +166,13 @@ class RefKeywordParser extends AbstractKeywordParser
     }
 
     /**
-     * @param ISchemaInfo $info
-     * @param ISchemaParser $parser
+     * @param SchemaInfo $info
+     * @param SchemaParser $parser
      * @param object $slots
      * @param array $path
      * @return null
      */
-    protected function getSlotSchemas(ISchemaInfo $info, ISchemaParser $parser, object $slots, array $path)
+    protected function getSlotSchemas(SchemaInfo $info, SchemaParser $parser, object $slots, array $path)
     {
         $keyword = null;
         if ($path) {
@@ -191,7 +191,7 @@ class RefKeywordParser extends AbstractKeywordParser
             if (is_string($value) || is_object($value)) {
                 $list[$name] = $value;
             } elseif (is_bool($value)) {
-                $list[$name] = $parser->parseSchema(new SchemaInfo(
+                $list[$name] = $parser->parseSchema(new DefaultSchemaInfo(
                     $value, null, $info->id() ?? $info->base(), $info->root(),
                     array_merge($path, [$name]),
                     $info->draft() ?? $parser->defaultDraftVersion()

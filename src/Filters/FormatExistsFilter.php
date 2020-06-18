@@ -17,15 +17,15 @@
 
 namespace Opis\JsonSchema\Filters;
 
-use Opis\JsonSchema\{IContext, IFilter, ISchema};
-use Opis\JsonSchema\Resolvers\IFormatResolver;
+use Opis\JsonSchema\{ValidationContext, Filter, Schema};
+use Opis\JsonSchema\Resolvers\FormatResolver;
 
-class FormatExistsFilter implements IFilter
+class FormatExistsFilter implements Filter
 {
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema, array $args = []): bool
+    public function validate(ValidationContext $context, Schema $schema, array $args = []): bool
     {
         $format = $args['format'] ?? $context->currentData();
         if (!is_string($format)) {
@@ -40,8 +40,8 @@ class FormatExistsFilter implements IFilter
             $type = $args['type'];
         }
 
-        /** @var IFormatResolver $resolver */
-        $resolver = $context->loader()->parser()->resolver('format', IFormatResolver::class);
+        /** @var FormatResolver $resolver */
+        $resolver = $context->loader()->parser()->resolver('format', FormatResolver::class);
         if (!$resolver) {
             return false;
         }

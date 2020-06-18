@@ -17,100 +17,13 @@
 
 namespace Opis\JsonSchema\Resolvers;
 
-use Opis\JsonSchema\IContentEncoding;
+use Opis\JsonSchema\ContentEncoding;
 
-class ContentEncodingResolver implements IContentEncodingResolver
+interface ContentEncodingResolver
 {
-    /** @var callable[]|IContentEncoding[] */
-    protected array $list;
-
-    /**
-     * @param callable[]|IContentEncoding[] $list
-     */
-    public function __construct(array $list = [])
-    {
-        $list += [
-            'binary' => self::class . '::DecodeBinary',
-            'base64' => self::class . '::DecodeBase64',
-            'quoted-printable' => self::class . '::DecodeQuotedPrintable',
-        ];
-
-        $this->list = $list;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function resolve(string $name)
-    {
-        return $this->list[$name] ?? null;
-    }
-
     /**
      * @param string $name
-     * @param IContentEncoding $encoding
-     * @return ContentEncodingResolver
+     * @return null|callable|ContentEncoding
      */
-    public function register(string $name, IContentEncoding $encoding): self
-    {
-        $this->list[$name] = $encoding;
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @param callable $encoding
-     * @return ContentEncodingResolver
-     */
-    public function registerCallable(string $name, callable $encoding): self
-    {
-        $this->list[$name] = $encoding;
-
-        return $this;
-    }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function unregister(string $name): bool
-    {
-        if (isset($this->list[$name])) {
-            unset($this->list[$name]);
-
-            return true;
-        }
-
-        return false;
-    }
-
-    public function __serialize(): array
-    {
-        return [
-            'list' => $this->list,
-        ];
-    }
-
-    public function __unserialize(array $data): void
-    {
-        $this->list = $data['list'];
-    }
-
-    public static function DecodeBinary(string $value): ?string
-    {
-        return $value;
-    }
-
-    public static function DecodeBase64(string $value): ?string
-    {
-        $value = base64_decode($value, true);
-
-        return is_string($value) ? $value : null;
-    }
-
-    public static function DecodeQuotedPrintable(string $value): ?string
-    {
-        return quoted_printable_decode($value);
-    }
+    public function resolve(string $name);
 }

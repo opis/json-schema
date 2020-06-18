@@ -18,15 +18,15 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IFilter,
-    IContext,
-    IKeyword,
-    ISchema
+    Filter,
+    ValidationContext,
+    Keyword,
+    Schema
 };
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\UnresolvedFilterException;
 
-class FiltersKeyword implements IKeyword
+class FiltersKeyword implements Keyword
 {
     use ErrorTrait;
 
@@ -44,7 +44,7 @@ class FiltersKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $type = $context->currentDataType();
 
@@ -62,7 +62,7 @@ class FiltersKeyword implements IKeyword
                 $args = $context->globals();
             }
 
-            if ($func instanceof IFilter) {
+            if ($func instanceof Filter) {
                 $ok = $func->validate($context, $schema, $args);
             } else {
                 $ok = $func($context->currentData(), $args);

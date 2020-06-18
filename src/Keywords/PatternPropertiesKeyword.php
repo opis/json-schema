@@ -18,10 +18,10 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Traversable;
-use Opis\JsonSchema\{Helper, IContext, IKeyword, ISchema};
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{Helper, ValidationContext, Keyword, Schema};
+use Opis\JsonSchema\Errors\ValidationError;
 
-class PatternPropertiesKeyword implements IKeyword
+class PatternPropertiesKeyword implements Keyword
 {
     use PropertiesTrait;
     use CheckedPropertiesTrait;
@@ -41,7 +41,7 @@ class PatternPropertiesKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $props = $this->getObjectProperties($context);
 
@@ -71,7 +71,7 @@ class PatternPropertiesKeyword implements IKeyword
                 continue;
             }
 
-            if (is_object($value) && !($value instanceof ISchema)) {
+            if (is_object($value) && !($value instanceof Schema)) {
                 $value = $this->value[$pattern] = $context->loader()->loadObjectSchema($value);
             }
 

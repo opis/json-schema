@@ -17,15 +17,15 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\IContext;
+use Opis\JsonSchema\ValidationContext;
 
 trait DecodedContentTrait
 {
     /**
-     * @param IContext $context
+     * @param ValidationContext $context
      * @return string
      */
-    protected function getDecodedContent(IContext $context): string
+    protected function getDecodedContent(ValidationContext $context): string
     {
         $shared = $context->sharedObject();
         if ($shared && isset($shared->decodedContent)) {
@@ -36,11 +36,11 @@ trait DecodedContentTrait
     }
 
     /**
-     * @param IContext $context
+     * @param ValidationContext $context
      * @param string $content
      * @return bool
      */
-    protected function setDecodedContent(IContext $context, string $content): bool
+    protected function setDecodedContent(ValidationContext $context, string $content): bool
     {
         $shared = $context->sharedObject();
         if ($shared) {

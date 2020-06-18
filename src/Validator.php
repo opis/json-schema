@@ -18,24 +18,24 @@
 namespace Opis\JsonSchema;
 
 use InvalidArgumentException;
-use Opis\JsonSchema\Errors\IValidationError;
-use Opis\JsonSchema\Resolvers\{ISchemaResolver};
-use Opis\JsonSchema\Parsers\{ISchemaParser, SchemaParser};
+use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\Resolvers\{SchemaResolver};
+use Opis\JsonSchema\Parsers\{SchemaParser, DefaultSchemaParser};
 
 class Validator
 {
 
-    protected ISchemaLoader $loader;
+    protected SchemaLoader $loader;
 
     protected int $maxErrors = 1;
 
     /**
-     * @param ISchemaLoader|null $loader
+     * @param SchemaLoader|null $loader
      * @param int $max_errors
      */
-    public function __construct(?ISchemaLoader $loader = null, int $max_errors = 1)
+    public function __construct(?SchemaLoader $loader = null, int $max_errors = 1)
     {
-        $this->loader = $loader ?? new SchemaLoader(new SchemaParser());
+        $this->loader = $loader ?? new DefaultSchemaLoader(new DefaultSchemaParser());
         $this->maxErrors = $max_errors;
     }
 
@@ -44,9 +44,9 @@ class Validator
      * @param Uri|string $uri
      * @param array|null $globals
      * @param array|null $slots
-     * @return null|IValidationError
+     * @return null|ValidationError
      */
-    public function uriValidation($data, $uri, ?array $globals = null, ?array $slots = null): ?IValidationError
+    public function uriValidation($data, $uri, ?array $globals = null, ?array $slots = null): ?ValidationError
     {
         if (is_string($uri)) {
             $uri = Uri::parse($uri, true);
@@ -68,7 +68,7 @@ class Validator
      * @param array|null $slots
      * @param string|null $id
      * @param string|null $draft
-     * @return IValidationError|null
+     * @return ValidationError|null
      */
     public function dataValidation(
         $data,
@@ -77,7 +77,7 @@ class Validator
         ?array $slots = null,
         ?string $id = null,
         ?string $draft = null
-    ): ?IValidationError
+    ): ?ValidationError
     {
         if (is_string($schema)) {
             $schema = json_decode($schema, false);
@@ -102,17 +102,17 @@ class Validator
 
     /**
      * @param $data
-     * @param ISchema $schema
+     * @param Schema $schema
      * @param array|null $globals
      * @param array|null $slots
-     * @return null|IValidationError
+     * @return null|ValidationError
      */
     public function schemaValidation(
         $data,
-        ISchema $schema,
+        Schema $schema,
         ?array $globals = null,
         ?array $slots = null
-    ): ?IValidationError
+    ): ?ValidationError
     {
         return $schema->validate($this->createContext($data, $globals, $slots));
     }
@@ -121,30 +121,30 @@ class Validator
      * @param $data
      * @param array $globals
      * @param array $slots
-     * @return IContext
+     * @return ValidationContext
      */
-    public function createContext($data, ?array $globals = null, ?array $slots = null): IContext
+    public function createContext($data, ?array $globals = null, ?array $slots = null): ValidationContext
     {
         if ($slots) {
             $slots = $this->parseSlots($slots);
         }
 
-        return new Context($data, $this->loader, null, $globals ?? [], $slots, $this->maxErrors);
+        return new DefaultValidationContext($data, $this->loader, null, $globals ?? [], $slots, $this->maxErrors);
     }
 
     /**
-     * @return ISchemaParser
+     * @return SchemaParser
      */
-    public function parser(): ISchemaParser
+    public function parser(): SchemaParser
     {
         return $this->loader->parser();
     }
 
     /**
-     * @param ISchemaParser $parser
+     * @param SchemaParser $parser
      * @return Validator
      */
-    public function setParser(ISchemaParser $parser): self
+    public function setParser(SchemaParser $parser): self
     {
         $this->loader->setParser($parser);
 
@@ -152,18 +152,18 @@ class Validator
     }
 
     /**
-     * @return ISchemaResolver|null
+     * @return SchemaResolver|null
      */
-    public function resolver(): ?ISchemaResolver
+    public function resolver(): ?SchemaResolver
     {
         return $this->loader->resolver();
     }
 
     /**
-     * @param ISchemaResolver|null $resolver
+     * @param SchemaResolver|null $resolver
      * @return Validator
      */
-    public function setResolver(?ISchemaResolver $resolver): self
+    public function setResolver(?SchemaResolver $resolver): self
     {
         $this->loader->setResolver($resolver);
 
@@ -171,18 +171,18 @@ class Validator
     }
 
     /**
-     * @return ISchemaLoader
+     * @return SchemaLoader
      */
-    public function loader(): ISchemaLoader
+    public function loader(): SchemaLoader
     {
         return $this->loader;
     }
 
     /**
-     * @param ISchemaLoader $loader
+     * @param SchemaLoader $loader
      * @return Validator
      */
-    public function setLoader(ISchemaLoader $loader): self
+    public function setLoader(SchemaLoader $loader): self
     {
         $this->loader = $loader;
 

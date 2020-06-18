@@ -15,11 +15,18 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Exceptions;
+namespace Opis\JsonSchema\Parsers;
 
-use Throwable;
+use Opis\JsonSchema\WrapperKeyword;
+use Opis\JsonSchema\Info\SchemaInfo;
 
-interface ISchemaException extends Throwable
+interface WrapperKeywordParser
 {
-
+    /**
+     * @param SchemaInfo $info
+     * @param SchemaParser $parser
+     * @param object $shared
+     * @return WrapperKeyword|null
+     */
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?WrapperKeyword;
 }

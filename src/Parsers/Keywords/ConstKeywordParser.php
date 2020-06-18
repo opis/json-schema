@@ -17,11 +17,11 @@
 
 namespace Opis\JsonSchema\Parsers\Keywords;
 
-use Opis\JsonSchema\Info\ISchemaInfo;
-use Opis\JsonSchema\{IKeyword, Helper};
+use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\{Keyword, Helper};
 use Opis\JsonSchema\Keywords\{ConstDataKeyword, ConstKeyword};
 use Opis\JsonSchema\Parsers\{
-    AbstractKeywordParser, DataKeywordTrait, ISchemaParser
+    AbstractKeywordParser, DataKeywordTrait, SchemaParser
 };
 
 class ConstKeywordParser extends AbstractKeywordParser
@@ -39,7 +39,7 @@ class ConstKeywordParser extends AbstractKeywordParser
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IKeyword
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
         $schema = $info->data();
 

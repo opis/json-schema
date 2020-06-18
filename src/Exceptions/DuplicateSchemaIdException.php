@@ -20,7 +20,7 @@ namespace Opis\JsonSchema\Exceptions;
 use RuntimeException;
 use Opis\JsonSchema\Uri;
 
-class DuplicateSchemaIdException extends RuntimeException implements ISchemaException
+class DuplicateSchemaIdException extends RuntimeException implements SchemaException
 {
 
     protected Uri $id;

@@ -15,17 +15,19 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Parsers;
+namespace Opis\JsonSchema;
 
-interface IDraft extends IVocabulary
+interface Pragma
 {
     /**
-     * @return string
+     * @param ValidationContext $context
+     * @return mixed Data to pass to leave() method
      */
-    public function version(): string;
+    public function enter(ValidationContext $context);
 
     /**
-     * @return bool
+     * @param ValidationContext $context
+     * @param mixed $data Data returned by the enter() method
      */
-    public function allowKeywordsAlongsideRef(): bool;
+    public function leave(ValidationContext $context, $data): void;
 }

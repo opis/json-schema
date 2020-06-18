@@ -15,22 +15,14 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Resolvers;
+namespace Opis\JsonSchema\Variables;
 
-use Opis\JsonSchema\IFormat;
-
-interface IFormatResolver
+interface Variables
 {
     /**
-     * @param string $name
-     * @param string $type
-     * @return callable|IFormat|null
+     * @param array|object $data
+     * @param string[]|int[] $path
+     * @return mixed
      */
-    public function resolve(string $name, string $type);
-
-    /**
-     * @param string $name
-     * @return callable[]|IFormat[]|null
-     */
-    public function resolveAll(string $name): ?array;
+    public function resolve($data, array $path = []);
 }

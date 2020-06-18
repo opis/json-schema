@@ -17,19 +17,19 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{IContext, IKeyword, ISchema};
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{ValidationContext, Keyword, Schema};
+use Opis\JsonSchema\Errors\ValidationError;
 
-class RefKeyword implements IKeyword
+class RefKeyword implements Keyword
 {
     use ErrorTrait;
 
-    protected ISchema $ref;
+    protected Schema $ref;
 
     /**
-     * @param ISchema $ref
+     * @param Schema $ref
      */
-    public function __construct(ISchema $ref)
+    public function __construct(Schema $ref)
     {
         $this->ref = $ref;
     }
@@ -37,7 +37,7 @@ class RefKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if ($error = $this->ref->validate($context)) {
             return $this->error($schema, $context, '$ref', 'The data must match $ref', [], $error);

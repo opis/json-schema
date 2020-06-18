@@ -17,8 +17,8 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{Helper, IContext, ISchema, JsonPointer};
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{Helper, ValidationContext, Schema, JsonPointer};
+use Opis\JsonSchema\Errors\ValidationError;
 
 class PatternDataKeyword extends PatternKeyword
 {
@@ -37,7 +37,7 @@ class PatternDataKeyword extends PatternKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $pattern = $this->value->data($context->rootData(), $context->currentDataPath(), $this);
         if ($pattern === $this || !is_string($pattern) || !Helper::isValidPattern($pattern)) {

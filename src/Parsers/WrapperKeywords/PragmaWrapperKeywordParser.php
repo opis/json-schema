@@ -17,17 +17,17 @@
 
 namespace Opis\JsonSchema\Parsers\WrapperKeywords;
 
-use Opis\JsonSchema\IWrapperKeyword;
-use Opis\JsonSchema\Info\{SchemaInfo, ISchemaInfo};
+use Opis\JsonSchema\WrapperKeyword;
+use Opis\JsonSchema\Info\{DefaultSchemaInfo, SchemaInfo};
 use Opis\JsonSchema\WrapperKeywords\PragmaWrapperKeyword;
-use Opis\JsonSchema\Parsers\{AbstractWrapperKeywordParser, ISchemaParser};
+use Opis\JsonSchema\Parsers\{AbstractWrapperKeywordParser, SchemaParser};
 
 class PragmaWrapperKeywordParser extends AbstractWrapperKeywordParser
 {
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IWrapperKeyword
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?WrapperKeyword
     {
         if (!$parser->option('allowPragmas') || !$this->keywordExists($info)) {
             return null;
@@ -43,7 +43,7 @@ class PragmaWrapperKeywordParser extends AbstractWrapperKeywordParser
 
         $draft = $info->draft() ?? $parser->defaultDraftVersion();
 
-        $pragmaInfo = new SchemaInfo($value, null, $info->id() ?? $info->base(), $info->root(),
+        $pragmaInfo = new DefaultSchemaInfo($value, null, $info->id() ?? $info->base(), $info->root(),
             array_merge($info->path(), [$this->keyword]), $draft);
 
         foreach ($parser->draft($draft)->pragmas() as $pragma) {

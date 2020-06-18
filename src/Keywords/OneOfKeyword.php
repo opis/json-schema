@@ -18,13 +18,13 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IContext,
-    IKeyword,
-    ISchema
+    ValidationContext,
+    Keyword,
+    Schema
 };
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 
-class OneOfKeyword implements IKeyword
+class OneOfKeyword implements Keyword
 {
     use ErrorTrait;
 
@@ -42,7 +42,7 @@ class OneOfKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $count = 0;
         $matchedIndex = -1;
@@ -63,7 +63,7 @@ class OneOfKeyword implements IKeyword
                 continue;
             }
 
-            if (is_object($value) && !($value instanceof ISchema)) {
+            if (is_object($value) && !($value instanceof Schema)) {
                 $value = $this->value[$index] = $context->loader()->loadObjectSchema($value);
             }
 

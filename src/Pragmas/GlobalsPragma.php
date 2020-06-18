@@ -17,18 +17,18 @@
 
 namespace Opis\JsonSchema\Pragmas;
 
-use Opis\JsonSchema\{IContext, IPragma};
-use Opis\JsonSchema\Variables\IVariables;
+use Opis\JsonSchema\{ValidationContext, Pragma};
+use Opis\JsonSchema\Variables\Variables;
 
-class GlobalsPragma implements IPragma
+class GlobalsPragma implements Pragma
 {
 
-    protected IVariables $globals;
+    protected Variables $globals;
 
     /**
-     * @param IVariables $globals
+     * @param Variables $globals
      */
-    public function __construct(IVariables $globals)
+    public function __construct(Variables $globals)
     {
         $this->globals = $globals;
     }
@@ -36,7 +36,7 @@ class GlobalsPragma implements IPragma
     /**
      * @inheritDoc
      */
-    public function enter(IContext $context)
+    public function enter(ValidationContext $context)
     {
         $resolved = (array) $this->globals->resolve($context->rootData(), $context->currentDataPath());
         if (!$resolved) {
@@ -51,7 +51,7 @@ class GlobalsPragma implements IPragma
     /**
      * @inheritDoc
      */
-    public function leave(IContext $context, $data): void
+    public function leave(ValidationContext $context, $data): void
     {
         if ($data === null) {
             return;

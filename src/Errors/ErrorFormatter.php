@@ -55,11 +55,11 @@ class ErrorFormatter
     }
 
     /**
-     * @param IValidationError|null $error
+     * @param ValidationError|null $error
      * @param string|callable $mode
      * @return array
      */
-    public function format(?IValidationError $error, $mode = "flag"): array {
+    public function format(?ValidationError $error, $mode = "flag"): array {
         if ($error === null) {
             return ['valid' => true];
         }
@@ -76,7 +76,7 @@ class ErrorFormatter
             return ['valid' => false];
         }
 
-        return $this->getNestedErrors($error, static function (IValidationError $error, ?array $subErrors = null) use ($mode) {
+        return $this->getNestedErrors($error, static function (ValidationError $error, ?array $subErrors = null) use ($mode) {
             $info = $mode($error);
 
             if (!is_array($info)) {
@@ -93,21 +93,21 @@ class ErrorFormatter
     }
 
     /**
-     * @param IValidationError $error
+     * @param ValidationError $error
      * @param callable $formatter
      * @return mixed
      */
-    public function formatNested(IValidationError $error, callable $formatter)
+    public function formatNested(ValidationError $error, callable $formatter)
     {
         return $this->getNestedErrors($error, $formatter);
     }
 
     /**
-     * @param IValidationError $error
+     * @param ValidationError $error
      * @param callable $formatter
      * @return array
      */
-    public function formatFlat(IValidationError $error, callable $formatter): array
+    public function formatFlat(ValidationError $error, callable $formatter): array
     {
         $list = [];
 
@@ -119,12 +119,12 @@ class ErrorFormatter
     }
 
     /**
-     * @param IValidationError $error
+     * @param ValidationError $error
      * @param callable $formatter
      * @param callable|null $key_formatter
      * @return array
      */
-    public function formatKeyed(IValidationError $error, callable $formatter, ?callable $key_formatter = null): array
+    public function formatKeyed(ValidationError $error, callable $formatter, ?callable $key_formatter = null): array
     {
         if (!$key_formatter) {
             $key_formatter = JsonPointer::class . '::pathToString';
@@ -146,11 +146,11 @@ class ErrorFormatter
     }
 
     /**
-     * @param IValidationError $error
+     * @param ValidationError $error
      * @param callable $formatter
      * @return mixed
      */
-    protected function getNestedErrors(IValidationError $error, callable $formatter)
+    protected function getNestedErrors(ValidationError $error, callable $formatter)
     {
         if ($subErrors = $error->subErrors()) {
             foreach ($subErrors as &$subError) {
@@ -163,10 +163,10 @@ class ErrorFormatter
     }
 
     /**
-     * @param IValidationError $error
-     * @return iterable|IValidationError[]
+     * @param ValidationError $error
+     * @return iterable|ValidationError[]
      */
-    protected function getFlatErrors(IValidationError $error): iterable
+    protected function getFlatErrors(ValidationError $error): iterable
     {
         yield $error;
 
@@ -176,10 +176,10 @@ class ErrorFormatter
     }
 
     /**
-     * @param IValidationError $error
-     * @return iterable|IValidationError[]
+     * @param ValidationError $error
+     * @return iterable|ValidationError[]
      */
-    protected function getLeafErrors(IValidationError $error): iterable
+    protected function getLeafErrors(ValidationError $error): iterable
     {
         if ($subErrors = $error->subErrors()) {
             foreach ($subErrors as $subError) {

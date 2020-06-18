@@ -17,16 +17,16 @@
 
 namespace Opis\JsonSchema\WrapperKeywords;
 
-use Opis\JsonSchema\{IContext, IPragma};
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{ValidationContext, Pragma};
+use Opis\JsonSchema\Errors\ValidationError;
 
 final class PragmaWrapperKeyword extends AbstractWrapperKeyword
 {
-    /** @var IPragma[] */
+    /** @var Pragma[] */
     protected array $pragmas = [];
 
     /**
-     * @param IPragma[] $pragmas
+     * @param Pragma[] $pragmas
      */
     public function __construct(array $pragmas)
     {
@@ -36,7 +36,7 @@ final class PragmaWrapperKeyword extends AbstractWrapperKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context): ?IValidationError
+    public function validate(ValidationContext $context): ?ValidationError
     {
         if (!$this->next) {
             return null;

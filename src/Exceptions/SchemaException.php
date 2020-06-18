@@ -15,14 +15,11 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema;
+namespace Opis\JsonSchema\Exceptions;
 
-interface IContentEncoding
+use Throwable;
+
+interface SchemaException extends Throwable
 {
-    /**
-     * @param string $value
-     * @param string $type
-     * @return null|string
-     */
-    public function decode(string $value, string $type): ?string;
+
 }

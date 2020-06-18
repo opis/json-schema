@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{Helper, IContext, IKeyword, ISchema};
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{Helper, ValidationContext, Keyword, Schema};
+use Opis\JsonSchema\Errors\ValidationError;
 
-class DefaultKeyword implements IKeyword
+class DefaultKeyword implements Keyword
 {
 
     protected array $defaults;
@@ -36,7 +36,7 @@ class DefaultKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $data = $context->currentData();
 

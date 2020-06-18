@@ -17,20 +17,32 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-interface IVocabulary
+use Opis\JsonSchema\Keyword;
+use Opis\JsonSchema\Info\SchemaInfo;
+
+interface KeywordParser
 {
-    /**
-     * @return IKeywordParser[]
-     */
-    public function keywords(): array;
+    const TYPE_PREPEND = '_prepend';
+    const TYPE_BEFORE = '_before';
+    const TYPE_AFTER = '_after';
+    const TYPE_APPEND = '_append';
+
+    const TYPE_STRING = 'string';
+    const TYPE_NUMBER = 'number';
+    const TYPE_ARRAY = 'array';
+    const TYPE_OBJECT = 'object';
 
     /**
-     * @return IWrapperKeywordParser[]
+     * The keyword type, can be one of the TYPE_* const
+     * @return string
      */
-    public function wrappers(): array;
+    public function type(): string;
 
     /**
-     * @return IPragmaParser[]
+     * @param SchemaInfo $info
+     * @param SchemaParser $parser
+     * @param object $shared
+     * @return Keyword|null
      */
-    public function pragmas(): array;
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword;
 }

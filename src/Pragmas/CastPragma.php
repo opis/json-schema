@@ -17,9 +17,9 @@
 
 namespace Opis\JsonSchema\Pragmas;
 
-use Opis\JsonSchema\{Helper, IContext, IPragma};
+use Opis\JsonSchema\{Helper, ValidationContext, Pragma};
 
-class CastPragma implements IPragma
+class CastPragma implements Pragma
 {
 
     protected string $cast;
@@ -39,7 +39,7 @@ class CastPragma implements IPragma
     /**
      * @inheritDoc
      */
-    public function enter(IContext $context)
+    public function enter(ValidationContext $context)
     {
         $currentType = $context->currentDataType();
         if ($currentType !== null && Helper::jsonTypeMatches($currentType, $this->cast)) {
@@ -58,7 +58,7 @@ class CastPragma implements IPragma
     /**
      * @inheritDoc
      */
-    public function leave(IContext $context, $data): void
+    public function leave(ValidationContext $context, $data): void
     {
         if ($data !== $this) {
             $context->setCurrentData($data);

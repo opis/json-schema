@@ -17,28 +17,28 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{IContext, IKeyword, ISchema, IContentEncoding};
-use Opis\JsonSchema\Resolvers\IContentEncodingResolver;
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{ValidationContext, Keyword, Schema, ContentEncoding};
+use Opis\JsonSchema\Resolvers\ContentEncodingResolver;
+use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\UnresolvedContentEncodingException;
 
-class ContentEncodingKeyword implements IKeyword
+class ContentEncodingKeyword implements Keyword
 {
     use ErrorTrait;
     use DecodedContentTrait;
 
     protected string $name;
 
-    protected ?IContentEncodingResolver $resolver;
+    protected ?ContentEncodingResolver $resolver;
 
-    /** @var bool|null|callable|IContentEncoding */
+    /** @var bool|null|callable|ContentEncoding */
     protected $encoding = false;
 
     /**
      * @param string $name
-     * @param null|IContentEncodingResolver $resolver
+     * @param null|ContentEncodingResolver $resolver
      */
-    public function __construct(string $name, ?IContentEncodingResolver $resolver = null)
+    public function __construct(string $name, ?ContentEncodingResolver $resolver = null)
     {
         $this->name = $name;
         $this->resolver = $resolver;
@@ -47,7 +47,7 @@ class ContentEncodingKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if (!$this->resolver) {
             return null;
@@ -61,7 +61,7 @@ class ContentEncodingKeyword implements IKeyword
             throw new UnresolvedContentEncodingException($this->name, $schema, $context);
         }
 
-        $result = $this->encoding instanceof IContentEncoding
+        $result = $this->encoding instanceof ContentEncoding
             ? $this->encoding->decode($context->currentData(), $this->name)
             : ($this->encoding)($context->currentData(), $this->name);
 

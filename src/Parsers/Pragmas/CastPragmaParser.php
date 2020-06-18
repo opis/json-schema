@@ -18,17 +18,17 @@
 namespace Opis\JsonSchema\Parsers\Pragmas;
 
 use Opis\JsonSchema\Helper;
-use Opis\JsonSchema\IPragma;
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Pragma;
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Pragmas\CastPragma;
-use Opis\JsonSchema\Parsers\{AbstractPragmaParser, ISchemaParser};
+use Opis\JsonSchema\Parsers\{AbstractPragmaParser, SchemaParser};
 
 class CastPragmaParser extends AbstractPragmaParser
 {
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IPragma
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Pragma
     {
         if (!$this->pragmaExists($info)) {
             return null;

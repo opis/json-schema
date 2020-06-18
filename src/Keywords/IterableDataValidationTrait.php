@@ -17,8 +17,8 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{IContext, ISchema};
-use Opis\JsonSchema\Errors\{IValidationError, ErrorContainer};
+use Opis\JsonSchema\{ValidationContext, Schema};
+use Opis\JsonSchema\Errors\{ValidationError, ErrorContainer};
 
 trait IterableDataValidationTrait
 {
@@ -34,12 +34,12 @@ trait IterableDataValidationTrait
     }
 
     /**
-     * @param ISchema $schema
-     * @param IContext $context
+     * @param Schema $schema
+     * @param ValidationContext $context
      * @param iterable $iterator
      * @return ErrorContainer
      */
-    protected function iterateAndValidate(ISchema $schema, IContext $context, iterable $iterator): ErrorContainer
+    protected function iterateAndValidate(Schema $schema, ValidationContext $context, iterable $iterator): ErrorContainer
     {
         $container = $this->errorContainer($context->maxErrors());
 
@@ -57,24 +57,24 @@ trait IterableDataValidationTrait
     }
 
     /**
-     * @param ISchema $parentSchema
-     * @param ISchema $schema
-     * @param IContext $context
+     * @param Schema $parentSchema
+     * @param Schema $schema
+     * @param ValidationContext $context
      * @param iterable $iterator
      * @param string $keyword
      * @param string $message
      * @param array $args
-     * @return IValidationError|null
+     * @return ValidationError|null
      */
     protected function validateIterableData(
-        ISchema $parentSchema,
-        ISchema $schema,
-        IContext $context,
+        Schema $parentSchema,
+        Schema $schema,
+        ValidationContext $context,
         iterable $iterator,
         string $keyword,
         string $message,
         array $args = []
-    ): ?IValidationError
+    ): ?ValidationError
     {
         $errors = $this->iterateAndValidate($schema, $context, $iterator);
 

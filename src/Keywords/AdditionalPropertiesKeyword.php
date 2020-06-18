@@ -18,23 +18,23 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IContext,
-    IKeyword,
-    ISchema
+    ValidationContext,
+    Keyword,
+    Schema
 };
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 
-class AdditionalPropertiesKeyword implements IKeyword
+class AdditionalPropertiesKeyword implements Keyword
 {
     use PropertiesTrait;
     use CheckedPropertiesTrait;
     use IterableDataValidationTrait;
 
-    /** @var bool|object|ISchema */
+    /** @var bool|object|Schema */
     protected $value;
 
     /**
-     * @param bool|object|ISchema $value
+     * @param bool|object|Schema $value
      */
     public function __construct($value)
     {
@@ -44,7 +44,7 @@ class AdditionalPropertiesKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if ($this->value === true) {
             return null;
@@ -66,7 +66,7 @@ class AdditionalPropertiesKeyword implements IKeyword
                 'additionalProperties', 'Additional object properties are not allowed');
         }
 
-        if (is_object($this->value) && !($this->value instanceof ISchema)) {
+        if (is_object($this->value) && !($this->value instanceof Schema)) {
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
 

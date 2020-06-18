@@ -17,9 +17,9 @@
 
 namespace Opis\JsonSchema\Pragmas;
 
-use Opis\JsonSchema\{IContext, IPragma};
+use Opis\JsonSchema\{ValidationContext, Pragma};
 
-class SlotsPragma implements IPragma
+class SlotsPragma implements Pragma
 {
 
     protected array $slots;
@@ -35,7 +35,7 @@ class SlotsPragma implements IPragma
     /**
      * @inheritDoc
      */
-    public function enter(IContext $context)
+    public function enter(ValidationContext $context)
     {
         $data = $context->slots();
         $context->setSlots($data ? $this->slots + $data : $this->slots);
@@ -45,7 +45,7 @@ class SlotsPragma implements IPragma
     /**
      * @inheritDoc
      */
-    public function leave(IContext $context, $data): void
+    public function leave(ValidationContext $context, $data): void
     {
         $context->setSlots($data);
     }

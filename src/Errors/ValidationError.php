@@ -17,99 +17,38 @@
 
 namespace Opis\JsonSchema\Errors;
 
-use Opis\JsonSchema\ISchema;
-use Opis\JsonSchema\Info\IDataInfo;
+use Opis\JsonSchema\Schema;
+use Opis\JsonSchema\Info\DataInfo;
 
-class ValidationError implements IValidationError
+interface ValidationError
 {
-
-    protected string $keyword;
-
-    protected ISchema $schema;
-
-    protected IDataInfo $data;
-
-    protected array $args;
-
-    protected string $message;
-
-    /** @var IValidationError[] */
-    protected array $subErrors;
+    /**
+     * @return string
+     */
+    public function keyword(): string;
 
     /**
-     * @param string $keyword
-     * @param ISchema $schema
-     * @param IDataInfo $data
-     * @param string $message
-     * @param array $args
-     * @param IValidationError[] $subErrors
+     * @return Schema
      */
-    public function __construct(
-        string $keyword,
-        ISchema $schema,
-        IDataInfo $data,
-        string $message,
-        array $args = [],
-        array $subErrors = []
-    ) {
-        $this->keyword = $keyword;
-        $this->schema = $schema;
-        $this->data = $data;
-        $this->message = $message;
-        $this->args = $args;
-        $this->subErrors = $subErrors;
-    }
+    public function schema(): Schema;
 
     /**
-     * @inheritDoc
+     * @return DataInfo
      */
-    public function keyword(): string
-    {
-        return $this->keyword;
-    }
+    public function data(): DataInfo;
 
     /**
-     * @inheritDoc
+     * @return array
      */
-    public function schema(): ISchema
-    {
-        return $this->schema;
-    }
+    public function args(): array;
 
     /**
-     * @inheritDoc
+     * @return string
      */
-    public function data(): IDataInfo
-    {
-        return $this->data;
-    }
+    public function message(): string;
 
     /**
-     * @inheritDoc
+     * @return ValidationError[]
      */
-    public function args(): array
-    {
-        return $this->args;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function message(): string
-    {
-        return $this->message;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function subErrors(): array
-    {
-        return $this->subErrors;
-    }
-
-    public function __toString(): string
-    {
-        return $this->message;
-    }
+    public function subErrors(): array;
 }

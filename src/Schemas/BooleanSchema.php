@@ -17,9 +17,9 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\IContext;
-use Opis\JsonSchema\Info\{DataInfo, ISchemaInfo};
-use Opis\JsonSchema\Errors\{ValidationError, IValidationError};
+use Opis\JsonSchema\ValidationContext;
+use Opis\JsonSchema\Info\{DefaultDataInfo, SchemaInfo};
+use Opis\JsonSchema\Errors\{DefaultValidationError, ValidationError};
 
 final class BooleanSchema extends AbstractSchema
 {
@@ -27,9 +27,9 @@ final class BooleanSchema extends AbstractSchema
     private bool $data;
 
     /**
-     * @param ISchemaInfo $info
+     * @param SchemaInfo $info
      */
-    public function __construct(ISchemaInfo $info)
+    public function __construct(SchemaInfo $info)
     {
         parent::__construct($info);
         $this->data = $info->data();
@@ -38,12 +38,12 @@ final class BooleanSchema extends AbstractSchema
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context): ?IValidationError
+    public function validate(ValidationContext $context): ?ValidationError
     {
         if ($this->data) {
             return null;
         }
 
-        return new ValidationError('', $this, DataInfo::fromContext($context), 'Data not allowed');
+        return new DefaultValidationError('', $this, DefaultDataInfo::fromContext($context), 'Data not allowed');
     }
 }

@@ -18,13 +18,13 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IContext,
-    IKeyword,
-    ISchema
+    ValidationContext,
+    Keyword,
+    Schema
 };
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 
-class IfThenElseKeyword implements IKeyword
+class IfThenElseKeyword implements Keyword
 {
     use ErrorTrait;
 
@@ -52,7 +52,7 @@ class IfThenElseKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if ($this->if === true) {
             return $this->validateBranch('then', $context, $schema);
@@ -60,7 +60,7 @@ class IfThenElseKeyword implements IKeyword
             return $this->validateBranch('else', $context, $schema);
         }
 
-        if (is_object($this->if) && !($this->if instanceof ISchema)) {
+        if (is_object($this->if) && !($this->if instanceof Schema)) {
             $this->if = $context->loader()->loadObjectSchema($this->if);
         }
 
@@ -73,11 +73,11 @@ class IfThenElseKeyword implements IKeyword
 
     /**
      * @param string $branch
-     * @param IContext $context
-     * @param ISchema $schema
-     * @return IValidationError|null
+     * @param ValidationContext $context
+     * @param Schema $schema
+     * @return ValidationError|null
      */
-    protected function validateBranch(string $branch, IContext $context, ISchema $schema): ?IValidationError
+    protected function validateBranch(string $branch, ValidationContext $context, Schema $schema): ?ValidationError
     {
         $value = $this->{$branch};
 
@@ -87,7 +87,7 @@ class IfThenElseKeyword implements IKeyword
             return $this->error($schema, $context, $branch, "The data is never valid on '{$branch}' branch");
         }
 
-        if (is_object($value) && !($value instanceof ISchema)) {
+        if (is_object($value) && !($value instanceof Schema)) {
             $value = $this->{$branch} = $context->loader()->loadObjectSchema($value);
         }
 

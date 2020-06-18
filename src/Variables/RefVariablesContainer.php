@@ -19,12 +19,12 @@ namespace Opis\JsonSchema\Variables;
 
 use Opis\JsonSchema\JsonPointer;
 
-final class RefVariablesContainer implements IVariables
+final class RefVariablesContainer implements Variables
 {
 
     private JsonPointer $pointer;
 
-    private ?IVariables $each;
+    private ?Variables $each;
 
     private bool $hasDefault;
 
@@ -33,10 +33,10 @@ final class RefVariablesContainer implements IVariables
 
     /**
      * @param JsonPointer $pointer
-     * @param IVariables|null $each
+     * @param Variables|null $each
      * @param mixed $default
      */
-    public function __construct(JsonPointer $pointer, ?IVariables $each = null, $default = null)
+    public function __construct(JsonPointer $pointer, ?Variables $each = null, $default = null)
     {
         $this->pointer = $pointer;
         $this->each = $each;
@@ -53,9 +53,9 @@ final class RefVariablesContainer implements IVariables
     }
 
     /**
-     * @return null|IVariables
+     * @return null|Variables
      */
-    public function each(): ?IVariables
+    public function each(): ?Variables
     {
         return $this->each;
     }

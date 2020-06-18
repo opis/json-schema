@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\Parsers\Keywords;
 
-use Opis\JsonSchema\IKeyword;
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Keyword;
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Keywords\IfThenElseKeyword;
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, ISchemaParser};
+use Opis\JsonSchema\Parsers\{AbstractKeywordParser, SchemaParser};
 
 class IfThenElseKeywordParser extends AbstractKeywordParser
 {
@@ -52,7 +52,7 @@ class IfThenElseKeywordParser extends AbstractKeywordParser
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IKeyword
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
         $schema = $info->data();
 

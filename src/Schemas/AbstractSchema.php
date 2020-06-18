@@ -17,18 +17,18 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\ISchema;
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Schema;
+use Opis\JsonSchema\Info\SchemaInfo;
 
-abstract class AbstractSchema implements ISchema
+abstract class AbstractSchema implements Schema
 {
 
-    protected ISchemaInfo $info;
+    protected SchemaInfo $info;
 
     /**
-     * @param ISchemaInfo $info
+     * @param SchemaInfo $info
      */
-    public function __construct(ISchemaInfo $info)
+    public function __construct(SchemaInfo $info)
     {
         $this->info = $info;
     }
@@ -36,7 +36,7 @@ abstract class AbstractSchema implements ISchema
     /**
      * @inheritDoc
      */
-    public function info(): ISchemaInfo
+    public function info(): SchemaInfo
     {
         return $this->info;
     }

@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Exceptions;
 
-use Opis\JsonSchema\{IContext, ISchema};
+use Opis\JsonSchema\{ValidationContext, Schema};
 
 class UnresolvedFilterException extends UnresolvedException
 {
@@ -29,10 +29,10 @@ class UnresolvedFilterException extends UnresolvedException
     /**
      * @param string $filter
      * @param string $type
-     * @param ISchema $schema
-     * @param IContext $context
+     * @param Schema $schema
+     * @param ValidationContext $context
      */
-    public function __construct(string $filter, string $type, ISchema $schema, IContext $context)
+    public function __construct(string $filter, string $type, Schema $schema, ValidationContext $context)
     {
         parent::__construct("Cannot resolve filter '{$filter}' for type '{$type}'", $schema, $context);
         $this->filter = $filter;

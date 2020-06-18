@@ -17,13 +17,12 @@
 
 namespace Opis\JsonSchema;
 
-interface IFilter
+interface ContentEncoding
 {
     /**
-     * @param IContext $context
-     * @param ISchema $schema
-     * @param array $args
-     * @return bool
+     * @param string $value
+     * @param string $type
+     * @return null|string
      */
-    public function validate(IContext $context, ISchema $schema, array $args = []): bool;
+    public function decode(string $value, string $type): ?string;
 }

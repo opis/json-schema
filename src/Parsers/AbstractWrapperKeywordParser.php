@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-abstract class AbstractWrapperKeywordParser implements IWrapperKeywordParser
+abstract class AbstractWrapperKeywordParser implements WrapperKeywordParser
 {
     use KeywordParserTrait;
 }

@@ -17,22 +17,22 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\{IContext, Info\ISchemaInfo, ISchema};
-use Opis\JsonSchema\Parsers\ISchemaParser;
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{ValidationContext, Info\SchemaInfo, Schema};
+use Opis\JsonSchema\Parsers\SchemaParser;
+use Opis\JsonSchema\Errors\ValidationError;
 
 final class LazySchema extends AbstractSchema
 {
 
-    private ISchemaParser $parser;
+    private SchemaParser $parser;
 
-    private ?ISchema $schema = null;
+    private ?Schema $schema = null;
 
     /**
-     * @param ISchemaInfo $info
-     * @param ISchemaParser $parser
+     * @param SchemaInfo $info
+     * @param SchemaParser $parser
      */
-    public function __construct(ISchemaInfo $info, ISchemaParser $parser)
+    public function __construct(SchemaInfo $info, SchemaParser $parser)
     {
         parent::__construct($info);
         $this->parser = $parser;
@@ -41,15 +41,15 @@ final class LazySchema extends AbstractSchema
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context): ?IValidationError
+    public function validate(ValidationContext $context): ?ValidationError
     {
         return $this->schema()->validate($context);
     }
 
     /**
-     * @return ISchema
+     * @return Schema
      */
-    public function schema(): ISchema
+    public function schema(): Schema
     {
         if ($this->schema === null) {
             $this->schema = $this->parser->parseSchema($this->info);

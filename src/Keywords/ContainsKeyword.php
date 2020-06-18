@@ -18,13 +18,13 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IContext,
-    IKeyword,
-    ISchema
+    ValidationContext,
+    Keyword,
+    Schema
 };
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 
-class ContainsKeyword implements IKeyword
+class ContainsKeyword implements Keyword
 {
     use ErrorTrait;
 
@@ -42,7 +42,7 @@ class ContainsKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $data = $context->currentData();
 
@@ -58,7 +58,7 @@ class ContainsKeyword implements IKeyword
             return $this->error($schema, $context, 'contains', 'Array must be empty');
         }
 
-        if (is_object($this->value) && !($this->value instanceof ISchema)) {
+        if (is_object($this->value) && !($this->value instanceof Schema)) {
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
 

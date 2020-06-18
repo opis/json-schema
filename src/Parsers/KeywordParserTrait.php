@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Exceptions\InvalidKeywordException;
 
 trait KeywordParserTrait
@@ -34,13 +34,13 @@ trait KeywordParserTrait
     }
 
     /**
-     * @param object|ISchemaInfo $schema
+     * @param object|SchemaInfo $schema
      * @param string|null $keyword
      * @return bool
      */
     protected function keywordExists(object $schema, ?string $keyword = null): bool
     {
-        if ($schema instanceof ISchemaInfo) {
+        if ($schema instanceof SchemaInfo) {
             $schema = $schema->data();
         }
 
@@ -48,13 +48,13 @@ trait KeywordParserTrait
     }
 
     /**
-     * @param object|ISchemaInfo $schema
+     * @param object|SchemaInfo $schema
      * @param string|null $keyword
      * @return mixed
      */
     protected function keywordValue(object $schema, ?string $keyword = null)
     {
-        if ($schema instanceof ISchemaInfo) {
+        if ($schema instanceof SchemaInfo) {
             $schema = $schema->data();
         }
 
@@ -63,11 +63,11 @@ trait KeywordParserTrait
 
     /**
      * @param string $message
-     * @param ISchemaInfo $info
+     * @param SchemaInfo $info
      * @param string|null $keyword
      * @return InvalidKeywordException
      */
-    protected function keywordException(string $message, ISchemaInfo $info, ?string $keyword = null): InvalidKeywordException
+    protected function keywordException(string $message, SchemaInfo $info, ?string $keyword = null): InvalidKeywordException
     {
         $keyword = $keyword ?? $this->keyword;
 

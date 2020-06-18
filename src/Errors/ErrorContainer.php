@@ -24,7 +24,7 @@ class ErrorContainer implements Countable, Iterator
 
     protected int $maxErrors;
 
-    /** @var IValidationError[] */
+    /** @var ValidationError[] */
     protected array $errors = [];
 
     /**
@@ -51,17 +51,17 @@ class ErrorContainer implements Countable, Iterator
     }
 
     /**
-     * @param IValidationError $error
+     * @param ValidationError $error
      * @return ErrorContainer
      */
-    public function add(IValidationError $error): self
+    public function add(ValidationError $error): self
     {
         $this->errors[] = $error;
         return $this;
     }
 
     /**
-     * @return IValidationError[]
+     * @return ValidationError[]
      */
     public function all(): array
     {
@@ -69,9 +69,9 @@ class ErrorContainer implements Countable, Iterator
     }
 
     /**
-     * @return IValidationError|null
+     * @return ValidationError|null
      */
-    public function first(): ?IValidationError
+    public function first(): ?ValidationError
     {
         if (!$this->errors) {
             return null;
@@ -107,7 +107,7 @@ class ErrorContainer implements Countable, Iterator
     /**
      * @inheritDoc
      */
-    public function current(): ?IValidationError
+    public function current(): ?ValidationError
     {
         return current($this->errors) ?: null;
     }
@@ -115,7 +115,7 @@ class ErrorContainer implements Countable, Iterator
     /**
      * @inheritDoc
      */
-    public function next(): ?IValidationError
+    public function next(): ?ValidationError
     {
         return next($this->errors) ?: null;
     }
@@ -139,7 +139,7 @@ class ErrorContainer implements Countable, Iterator
     /**
      * @inheritDoc
      */
-    public function rewind(): ?IValidationError
+    public function rewind(): ?ValidationError
     {
         return reset($this->errors) ?: null;
     }

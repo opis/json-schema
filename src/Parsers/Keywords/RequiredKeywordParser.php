@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\Parsers\Keywords;
 
-use Opis\JsonSchema\IKeyword;
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Keyword;
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Parsers\{AbstractKeywordParser, DataKeywordTrait,
-    ISchemaParser};
+    SchemaParser};
 use Opis\JsonSchema\Keywords\{RequiredDataKeyword, RequiredKeyword};
 
 class RequiredKeywordParser extends AbstractKeywordParser
@@ -38,7 +38,7 @@ class RequiredKeywordParser extends AbstractKeywordParser
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IKeyword
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
         $schema = $info->data();
 
@@ -74,11 +74,11 @@ class RequiredKeywordParser extends AbstractKeywordParser
     }
 
     /**
-     * @param ISchemaParser $parser
+     * @param SchemaParser $parser
      * @param object $schema
      * @return callable|null
      */
-    protected function propertiesFilter(ISchemaParser $parser, object $schema): ?callable
+    protected function propertiesFilter(SchemaParser $parser, object $schema): ?callable
     {
         if (!$parser->option('allowDefaults')) {
             return null;

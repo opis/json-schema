@@ -18,13 +18,13 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IContext,
-    IKeyword,
-    ISchema
+    ValidationContext,
+    Keyword,
+    Schema
 };
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 
-class PropertyNamesKeyword implements IKeyword
+class PropertyNamesKeyword implements Keyword
 {
     use ErrorTrait;
     use PropertiesTrait;
@@ -43,7 +43,7 @@ class PropertyNamesKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if ($this->value === true) {
             return null;
@@ -58,7 +58,7 @@ class PropertyNamesKeyword implements IKeyword
             return $this->error($schema, $context, 'propertyNames', "No properties are allowed");
         }
 
-        if (is_object($this->value) && !($this->value instanceof ISchema)) {
+        if (is_object($this->value) && !($this->value instanceof Schema)) {
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
 

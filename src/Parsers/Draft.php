@@ -15,42 +15,17 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Info;
+namespace Opis\JsonSchema\Parsers;
 
-interface IDataInfo
+interface Draft extends Vocabulary
 {
     /**
-     * Data value
-     * @return mixed
+     * @return string
      */
-    public function value();
+    public function version(): string;
 
     /**
-     * Json data type
-     * @return string|null
+     * @return bool
      */
-    public function type(): ?string;
-
-    /**
-     * Root data that holds the current value somewhere
-     * @return mixed
-     */
-    public function root();
-
-    /**
-     * Path to data value, starting from root
-     * @return string[]|int[]
-     */
-    public function path(): array;
-
-    /**
-     * Absolute path to data
-     * @return string[]|int[]
-     */
-    public function fullPath(): array;
-
-    /**
-     * @return IDataInfo|null
-     */
-    public function parent(): ?IDataInfo;
+    public function allowKeywordsAlongsideRef(): bool;
 }

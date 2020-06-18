@@ -17,17 +17,14 @@
 
 namespace Opis\JsonSchema;
 
-interface IPragma
+use Opis\JsonSchema\Errors\ValidationError;
+
+interface Keyword
 {
     /**
-     * @param IContext $context
-     * @return mixed Data to pass to leave() method
+     * @param ValidationContext $context
+     * @param Schema $schema
+     * @return null|ValidationError
      */
-    public function enter(IContext $context);
-
-    /**
-     * @param IContext $context
-     * @param mixed $data Data returned by the enter() method
-     */
-    public function leave(IContext $context, $data): void;
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError;
 }

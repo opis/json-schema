@@ -15,34 +15,18 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Parsers;
+namespace Opis\JsonSchema;
 
-use Opis\JsonSchema\IKeyword;
-use Opis\JsonSchema\Info\ISchemaInfo;
-
-interface IKeywordParser
+interface WrapperKeyword extends SchemaValidator
 {
-    const TYPE_PREPEND = '_prepend';
-    const TYPE_BEFORE = '_before';
-    const TYPE_AFTER = '_after';
-    const TYPE_APPEND = '_append';
-
-    const TYPE_STRING = 'string';
-    const TYPE_NUMBER = 'number';
-    const TYPE_ARRAY = 'array';
-    const TYPE_OBJECT = 'object';
+    /**
+     * @return WrapperKeyword|null
+     */
+    public function next(): ?WrapperKeyword;
 
     /**
-     * The keyword type, can be one of the TYPE_* const
-     * @return string
+     * @param WrapperKeyword|null $next
+     * @return WrapperKeyword
      */
-    public function type(): string;
-
-    /**
-     * @param ISchemaInfo $info
-     * @param ISchemaParser $parser
-     * @param object $shared
-     * @return IKeyword|null
-     */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IKeyword;
+    public function setNext(?WrapperKeyword $next): WrapperKeyword;
 }

@@ -17,16 +17,16 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\IContext;
+use Opis\JsonSchema\ValidationContext;
 use Opis\String\UnicodeString;
 
 trait StrLengthTrait
 {
     /**
-     * @param IContext $context
+     * @param ValidationContext $context
      * @return int
      */
-    protected function getStrLength(IContext $context): int
+    protected function getStrLength(ValidationContext $context): int
     {
         $shared = $context->sharedObject();
 

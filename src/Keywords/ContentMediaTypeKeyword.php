@@ -18,28 +18,28 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IContext,
-    IKeyword,
-    ISchema,
-    IContentMediaType
+    ValidationContext,
+    Keyword,
+    Schema,
+    ContentMediaType
 };
-use Opis\JsonSchema\Errors\IValidationError;
-use Opis\JsonSchema\Resolvers\IContentMediaTypeResolver;
+use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\Resolvers\ContentMediaTypeResolver;
 
-class ContentMediaTypeKeyword implements IKeyword
+class ContentMediaTypeKeyword implements Keyword
 {
     use ErrorTrait;
     use DecodedContentTrait;
 
     protected string $name;
 
-    protected ?IContentMediaTypeResolver $resolver;
+    protected ?ContentMediaTypeResolver $resolver;
 
     /**
      * @param string $name
-     * @param null|IContentMediaTypeResolver $resolver
+     * @param null|ContentMediaTypeResolver $resolver
      */
-    public function __construct(string $name, ?IContentMediaTypeResolver $resolver)
+    public function __construct(string $name, ?ContentMediaTypeResolver $resolver)
     {
         $this->name = $name;
         $this->resolver = $resolver;
@@ -48,7 +48,7 @@ class ContentMediaTypeKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if (!$this->resolver) {
             return null;
@@ -58,7 +58,7 @@ class ContentMediaTypeKeyword implements IKeyword
 
         if ($media !== null) {
             $data = $this->getDecodedContent($context);
-            $ok = $media instanceof IContentMediaType
+            $ok = $media instanceof ContentMediaType
                 ? $media->validate($data, $this->name)
                 : $media($data, $this->name);
             if ($ok) {

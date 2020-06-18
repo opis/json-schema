@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\WrapperKeywords;
 
-use Opis\JsonSchema\{IContext, IWrapperKeyword};
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{ValidationContext, WrapperKeyword};
+use Opis\JsonSchema\Errors\ValidationError;
 
-final class CallbackWrapperKeyword implements IWrapperKeyword
+final class CallbackWrapperKeyword implements WrapperKeyword
 {
     /** @var callable */
     private $callback;
@@ -36,7 +36,7 @@ final class CallbackWrapperKeyword implements IWrapperKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context): ?IValidationError
+    public function validate(ValidationContext $context): ?ValidationError
     {
         return ($this->callback)($context);
     }
@@ -44,7 +44,7 @@ final class CallbackWrapperKeyword implements IWrapperKeyword
     /**
      * @inheritDoc
      */
-    public function next(): ?IWrapperKeyword
+    public function next(): ?WrapperKeyword
     {
         return null;
     }
@@ -52,7 +52,7 @@ final class CallbackWrapperKeyword implements IWrapperKeyword
     /**
      * @inheritDoc
      */
-    public function setNext(?IWrapperKeyword $next): IWrapperKeyword
+    public function setNext(?WrapperKeyword $next): WrapperKeyword
     {
         return $this;
     }

@@ -17,36 +17,36 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\{Uri, ISchema, UriTemplate, IContext, JsonPointer};
-use Opis\JsonSchema\Info\ISchemaInfo;
-use Opis\JsonSchema\ISchemaLoader;
-use Opis\JsonSchema\Variables\IVariables;
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{Uri, Schema, UriTemplate, ValidationContext, JsonPointer};
+use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\SchemaLoader;
+use Opis\JsonSchema\Variables\Variables;
+use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\UnresolvedRefException;
 
 class TemplateRefSchema extends AbstractRefSchema
 {
 
-    protected ?IVariables $vars;
+    protected ?Variables $vars;
 
     protected UriTemplate $template;
 
-    /** @var ISchema[]|null[] */
+    /** @var Schema[]|null[] */
     protected ?array $cached = [];
 
     protected ?Uri $baseUri = null;
 
     /**
-     * @param ISchemaInfo $info
+     * @param SchemaInfo $info
      * @param UriTemplate $template
-     * @param IVariables|null $vars
-     * @param IVariables|null $mapper
-     * @param IVariables|null $globals
+     * @param Variables|null $vars
+     * @param Variables|null $mapper
+     * @param Variables|null $globals
      * @param array|null $slots
      */
-    public function __construct(ISchemaInfo $info, UriTemplate $template,
-                                ?IVariables $vars, ?IVariables $mapper,
-                                ?IVariables $globals, ?array $slots = null)
+    public function __construct(SchemaInfo $info, UriTemplate $template,
+                                ?Variables $vars, ?Variables $mapper,
+                                ?Variables $globals, ?array $slots = null)
     {
         parent::__construct($info, $mapper, $globals, $slots);
         $this->template = $template;
@@ -57,7 +57,7 @@ class TemplateRefSchema extends AbstractRefSchema
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context): ?IValidationError
+    public function validate(ValidationContext $context): ?ValidationError
     {
         if ($this->vars) {
             $vars = $this->vars->resolve($context->rootData(), $context->currentDataPath());
@@ -89,10 +89,10 @@ class TemplateRefSchema extends AbstractRefSchema
 
     /**
      * @param string $ref
-     * @param ISchemaLoader $repo
-     * @return null|ISchema
+     * @param SchemaLoader $repo
+     * @return null|Schema
      */
-    protected function resolveRef(string $ref, ISchemaLoader $repo): ?ISchema
+    protected function resolveRef(string $ref, SchemaLoader $repo): ?Schema
     {
         if ($ref === '') {
             return null;

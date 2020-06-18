@@ -17,20 +17,20 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\IContext;
-use Opis\JsonSchema\Errors\IValidationError;
-use Opis\JsonSchema\Info\ISchemaInfo;
-use Opis\JsonSchema\IWrapperKeyword;
+use Opis\JsonSchema\ValidationContext;
+use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\WrapperKeyword;
 
 final class EmptySchema extends AbstractSchema
 {
 
-    protected ?IWrapperKeyword $wrapper;
+    protected ?WrapperKeyword $wrapper;
 
     /**
      * @inheritDoc
      */
-    public function __construct(ISchemaInfo $info, ?IWrapperKeyword $wrapper = null)
+    public function __construct(SchemaInfo $info, ?WrapperKeyword $wrapper = null)
     {
         parent::__construct($info);
         $this->wrapper = $wrapper;
@@ -39,7 +39,7 @@ final class EmptySchema extends AbstractSchema
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context): ?IValidationError
+    public function validate(ValidationContext $context): ?ValidationError
     {
         if (!$this->wrapper) {
             return null;

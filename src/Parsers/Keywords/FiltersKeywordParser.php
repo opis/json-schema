@@ -17,11 +17,11 @@
 
 namespace Opis\JsonSchema\Parsers\Keywords;
 
-use Opis\JsonSchema\IKeyword;
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Keyword;
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Keywords\FiltersKeyword;
-use Opis\JsonSchema\Resolvers\IFilterResolver;
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, ISchemaParser,
+use Opis\JsonSchema\Resolvers\FilterResolver;
+use Opis\JsonSchema\Parsers\{AbstractKeywordParser, SchemaParser,
     ResolverTrait, VariablesTrait};
 
 class FiltersKeywordParser extends AbstractKeywordParser
@@ -40,7 +40,7 @@ class FiltersKeywordParser extends AbstractKeywordParser
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IKeyword
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
         $schema = $info->data();
 
@@ -48,7 +48,7 @@ class FiltersKeywordParser extends AbstractKeywordParser
             return null;
         }
 
-        $resolver = $parser->resolver($this->keyword, IFilterResolver::class);
+        $resolver = $parser->resolver($this->keyword, FilterResolver::class);
 
         if (!$resolver || !$this->keywordExists($schema)) {
             return null;
@@ -63,17 +63,17 @@ class FiltersKeywordParser extends AbstractKeywordParser
     }
 
     /**
-     * @param ISchemaParser $parser
-     * @param IFilterResolver $filterResolver
+     * @param SchemaParser $parser
+     * @param FilterResolver $filterResolver
      * @param mixed $filters
-     * @param ISchemaInfo $info
+     * @param SchemaInfo $info
      * @return array|null
      */
     protected function parseFilters(
-        ISchemaParser $parser,
-        IFilterResolver $filterResolver,
+        SchemaParser $parser,
+        FilterResolver $filterResolver,
         $filters,
-        ISchemaInfo $info
+        SchemaInfo $info
     ): ?array
     {
         if (is_string($filters)) {
@@ -110,17 +110,17 @@ class FiltersKeywordParser extends AbstractKeywordParser
     }
 
     /**
-     * @param ISchemaParser $parser
-     * @param IFilterResolver $resolver
+     * @param SchemaParser $parser
+     * @param FilterResolver $resolver
      * @param $filter
-     * @param ISchemaInfo $info
+     * @param SchemaInfo $info
      * @return object|null
      */
     protected function parseFilter(
-        ISchemaParser $parser,
-        IFilterResolver $resolver,
+        SchemaParser $parser,
+        FilterResolver $resolver,
         $filter,
-        ISchemaInfo $info
+        SchemaInfo $info
     ): ?object
     {
         $vars = null;

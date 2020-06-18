@@ -17,26 +17,26 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\{IContext, ISchema, ISchemaLoader, JsonPointer, Uri};
-use Opis\JsonSchema\Info\ISchemaInfo;
-use Opis\JsonSchema\Variables\IVariables;
+use Opis\JsonSchema\{ValidationContext, Schema, SchemaLoader, JsonPointer, Uri};
+use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\Variables\Variables;
 
 abstract class AbstractRefSchema extends AbstractSchema
 {
 
-    protected ?IVariables $mapper;
+    protected ?Variables $mapper;
 
-    protected ?IVariables $globals;
+    protected ?Variables $globals;
 
     protected ?array $slots = null;
 
     /**
-     * @param ISchemaInfo $info
-     * @param IVariables|null $mapper
-     * @param IVariables|null $globals
+     * @param SchemaInfo $info
+     * @param Variables|null $mapper
+     * @param Variables|null $globals
      * @param array|null $slots
      */
-    public function __construct(ISchemaInfo $info, ?IVariables $mapper, ?IVariables $globals, ?array $slots = null)
+    public function __construct(SchemaInfo $info, ?Variables $mapper, ?Variables $globals, ?array $slots = null)
     {
         parent::__construct($info);
         $this->mapper = $mapper;
@@ -45,18 +45,18 @@ abstract class AbstractRefSchema extends AbstractSchema
     }
 
     /**
-     * @param IContext $context
-     * @param null|IVariables $mapper
-     * @param null|IVariables $globals
+     * @param ValidationContext $context
+     * @param null|Variables $mapper
+     * @param null|Variables $globals
      * @param null|array $slots
-     * @return IContext
+     * @return ValidationContext
      */
     protected function createContext(
-        IContext $context,
-        ?IVariables $mapper = null,
-        ?IVariables $globals = null,
+        ValidationContext $context,
+        ?Variables $mapper = null,
+        ?Variables $globals = null,
         ?array $slots = null
-    ): IContext
+    ): ValidationContext
     {
         if ($globals) {
             $globals = $globals->resolve($context->rootData(), $context->currentDataPath());
@@ -78,14 +78,14 @@ abstract class AbstractRefSchema extends AbstractSchema
     }
 
     /**
-     * @param ISchemaLoader $repo
+     * @param SchemaLoader $repo
      * @param JsonPointer $pointer
      * @param Uri $base
      * @param array|null $path
-     * @return null|ISchema
+     * @return null|Schema
      */
-    protected function resolvePointer(ISchemaLoader $repo, JsonPointer $pointer,
-                                      Uri $base, ?array $path = null): ?ISchema
+    protected function resolvePointer(SchemaLoader $repo, JsonPointer $pointer,
+                                      Uri $base, ?array $path = null): ?Schema
     {
         if ($pointer->isAbsolute()) {
             $path = (string)$pointer;
@@ -106,10 +106,10 @@ abstract class AbstractRefSchema extends AbstractSchema
     }
 
     /**
-     * @param ISchemaInfo $info
+     * @param SchemaInfo $info
      * @return Uri|null
      */
-    protected function resolveBaseUri(ISchemaInfo $info): ?Uri
+    protected function resolveBaseUri(SchemaInfo $info): ?Uri
     {
         return $info->id() ?? $info->base() ?? $info->root();
     }

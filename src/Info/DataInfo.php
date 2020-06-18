@@ -17,110 +17,40 @@
 
 namespace Opis\JsonSchema\Info;
 
-use Opis\JsonSchema\IContext;
-
-class DataInfo implements IDataInfo
+interface DataInfo
 {
-    /** @var mixed */
-    protected $value;
-
-    protected ?string $type;
-
-    /** @var mixed */
-    protected $root;
-
-    /** @var string[]|int[] */
-    protected array $path;
-
-    protected ?IDataInfo $parent = null;
-
-    /** @var string[]|int[]|null */
-    protected ?array $fullPath = null;
+    /**
+     * Data value
+     * @return mixed
+     */
+    public function value();
 
     /**
-     * DataInfo constructor.
-     * @param $value
-     * @param string|null $type
-     * @param $root
-     * @param string[]|int[] $path
-     * @param IDataInfo|null $parent
+     * Json data type
+     * @return string|null
      */
-    public function __construct($value, ?string $type, $root, array $path = [], ?IDataInfo $parent = null)
-    {
-        $this->value = $value;
-        $this->type = $type;
-        $this->root = $root;
-        $this->path = $path;
-        $this->parent = $parent;
-    }
+    public function type(): ?string;
 
     /**
-     * @inheritDoc
+     * Root data that holds the current value somewhere
+     * @return mixed
      */
-    public function value()
-    {
-        return $this->value;
-    }
+    public function root();
 
     /**
-     * @inheritDoc
+     * Path to data value, starting from root
+     * @return string[]|int[]
      */
-    public function type(): ?string
-    {
-        return $this->type;
-    }
+    public function path(): array;
 
     /**
-     * @inheritDoc
+     * Absolute path to data
+     * @return string[]|int[]
      */
-    public function root()
-    {
-        return $this->root;
-    }
+    public function fullPath(): array;
 
     /**
-     * @inheritDoc
+     * @return DataInfo|null
      */
-    public function path(): array
-    {
-        return $this->path;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function parent(): ?IDataInfo
-    {
-        return $this->parent;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function fullPath(): array
-    {
-        if ($this->parent === null) {
-            return $this->path;
-        }
-
-        if ($this->fullPath === null) {
-            $this->fullPath = array_merge($this->parent->fullPath(), $this->path);
-        }
-
-        return $this->fullPath;
-    }
-
-    /**
-     * @param IContext $context
-     * @return DataInfo
-     */
-    public static function fromContext(IContext $context): self
-    {
-        if ($parent = $context->parent()) {
-            $parent = self::fromContext($parent);
-        }
-
-        return new self($context->currentData(), $context->currentDataType(), $context->rootData(),
-            $context->currentDataPath(), $parent);
-    }
+    public function parent(): ?DataInfo;
 }

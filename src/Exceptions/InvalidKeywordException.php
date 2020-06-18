@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Exceptions;
 
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Info\SchemaInfo;
 
 class InvalidKeywordException extends ParseException
 {
@@ -28,9 +28,9 @@ class InvalidKeywordException extends ParseException
      * InvalidKeywordException constructor.
      * @param string $message
      * @param string $keyword
-     * @param ISchemaInfo|null $info
+     * @param SchemaInfo|null $info
      */
-    public function __construct(string $message, string $keyword, ?ISchemaInfo $info = null)
+    public function __construct(string $message, string $keyword, ?SchemaInfo $info = null)
     {
         parent::__construct($message, $info);
         $this->keyword = $keyword;

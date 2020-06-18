@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Exceptions;
 
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Info\SchemaInfo;
 
 class InvalidPragmaException extends InvalidKeywordException
 {
@@ -28,9 +28,9 @@ class InvalidPragmaException extends InvalidKeywordException
      * InvalidPragmaException constructor.
      * @param string $message
      * @param string $pragma
-     * @param ISchemaInfo|null $info
+     * @param SchemaInfo|null $info
      */
-    public function __construct(string $message, string $pragma, ?ISchemaInfo $info = null)
+    public function __construct(string $message, string $pragma, ?SchemaInfo $info = null)
     {
         parent::__construct($message, '$pragma', $info);
         $this->pragma = $pragma;

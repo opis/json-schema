@@ -18,24 +18,24 @@
 namespace Opis\JsonSchema\Parsers\Drafts;
 
 use Opis\JsonSchema\Parsers\{
-    IDraft, IPragmaParser, IVocabulary, IKeywordParser, IWrapperKeywordParser
+    Draft, PragmaParser, Vocabulary, KeywordParser, WrapperKeywordParser
 };
 
-abstract class AbstractDraft implements IDraft
+abstract class AbstractDraft implements Draft
 {
-    /** @var IKeywordParser[] */
+    /** @var KeywordParser[] */
     protected array $keywords;
 
-    /** @var IWrapperKeywordParser[] */
+    /** @var WrapperKeywordParser[] */
     protected array $wrappers;
 
-    /** @var IPragmaParser[] */
+    /** @var PragmaParser[] */
     protected array $pragmas;
 
     /**
-     * @param IVocabulary|null $extraVocabulary
+     * @param Vocabulary|null $extraVocabulary
      */
-    public function __construct(?IVocabulary $extraVocabulary = null)
+    public function __construct(?Vocabulary $extraVocabulary = null)
     {
         $keywords = $this->getKeywordParsers();
         $wrappers = $this->getWrapperKeywordParsers();
@@ -87,17 +87,17 @@ abstract class AbstractDraft implements IDraft
     }
 
     /**
-     * @return IKeywordParser
+     * @return KeywordParser
      */
-    abstract protected function getRefKeywordParser(): IKeywordParser;
+    abstract protected function getRefKeywordParser(): KeywordParser;
 
     /**
-     * @return IKeywordParser[]
+     * @return KeywordParser[]
      */
     abstract protected function getKeywordParsers(): array;
 
     /**
-     * @return IWrapperKeywordParser[]
+     * @return WrapperKeywordParser[]
      */
     protected function getWrapperKeywordParsers(): array
     {
@@ -105,7 +105,7 @@ abstract class AbstractDraft implements IDraft
     }
 
     /**
-     * @return IPragmaParser[]
+     * @return PragmaParser[]
      */
     protected function getPragmaParsers(): array
     {

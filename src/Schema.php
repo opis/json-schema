@@ -15,14 +15,14 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Variables;
+namespace Opis\JsonSchema;
 
-interface IVariables
+use Opis\JsonSchema\Info\SchemaInfo;
+
+interface Schema extends SchemaValidator
 {
     /**
-     * @param array|object $data
-     * @param string[]|int[] $path
-     * @return mixed
+     * @return SchemaInfo
      */
-    public function resolve($data, array $path = []);
+    public function info(): SchemaInfo;
 }

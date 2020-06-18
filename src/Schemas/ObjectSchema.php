@@ -17,33 +17,33 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\{Helper, IKeyword, IContext, IWrapperKeyword};
-use Opis\JsonSchema\Info\ISchemaInfo;
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{Helper, Keyword, ValidationContext, WrapperKeyword};
+use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\WrapperKeywords\CallbackWrapperKeyword;
 
 class ObjectSchema extends AbstractSchema
 {
 
-    protected ?IWrapperKeyword $wrapper = null;
+    protected ?WrapperKeyword $wrapper = null;
 
-    /** @var IKeyword[]|null */
+    /** @var Keyword[]|null */
     protected ?array $before = null;
 
-    /** @var IKeyword[]|null */
+    /** @var Keyword[]|null */
     protected ?array $after = null;
 
-    /** @var IKeyword[][]|null */
+    /** @var Keyword[][]|null */
     protected ?array $types = null;
 
     /**
-     * @param ISchemaInfo $info
-     * @param IWrapperKeyword|null $wrapper
-     * @param IKeyword[][]|null $types
-     * @param IKeyword[]|null $before
-     * @param IKeyword[]|null $after
+     * @param SchemaInfo $info
+     * @param WrapperKeyword|null $wrapper
+     * @param Keyword[][]|null $types
+     * @param Keyword[]|null $before
+     * @param Keyword[]|null $after
      */
-    public function __construct(ISchemaInfo $info, ?IWrapperKeyword $wrapper, ?array $types, ?array $before, ?array $after)
+    public function __construct(SchemaInfo $info, ?WrapperKeyword $wrapper, ?array $types, ?array $before, ?array $after)
     {
         parent::__construct($info);
         $this->types = $types;
@@ -62,7 +62,7 @@ class ObjectSchema extends AbstractSchema
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context): ?IValidationError
+    public function validate(ValidationContext $context): ?ValidationError
     {
         $context->pushSharedObject();
         $error = $this->wrapper ? $this->wrapper->validate($context) : $this->doValidate($context);
@@ -72,11 +72,11 @@ class ObjectSchema extends AbstractSchema
     }
 
     /**
-     * @internal
-     * @param IContext $context
-     * @return null|IValidationError
+     * @param ValidationContext $context
+     * @return null|ValidationError
+     *@internal
      */
-    public function doValidate(IContext $context): ?IValidationError
+    public function doValidate(ValidationContext $context): ?ValidationError
     {
         if ($this->before && ($error = $this->applyKeywords($this->before, $context))) {
             return $error;
@@ -104,11 +104,11 @@ class ObjectSchema extends AbstractSchema
     }
 
     /**
-     * @param IKeyword[] $keywords
-     * @param IContext $context
-     * @return IValidationError|null
+     * @param Keyword[] $keywords
+     * @param ValidationContext $context
+     * @return ValidationError|null
      */
-    protected function applyKeywords(array $keywords, IContext $context): ?IValidationError
+    protected function applyKeywords(array $keywords, ValidationContext $context): ?ValidationError
     {
         foreach ($keywords as $keyword) {
             if ($error = $keyword->validate($context, $this)) {

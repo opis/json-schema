@@ -17,15 +17,15 @@
 
 namespace Opis\JsonSchema\Filters;
 
-use Opis\JsonSchema\{IContext, IFilter, ISchema, Uri, UriTemplate};
+use Opis\JsonSchema\{ValidationContext, Filter, Schema, Uri, UriTemplate};
 use Opis\JsonSchema\Variables\VariablesContainer;
 
-class SchemaExistsFilter implements IFilter
+class SchemaExistsFilter implements Filter
 {
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema, array $args = []): bool
+    public function validate(ValidationContext $context, Schema $schema, array $args = []): bool
     {
         $ref = $args['ref'] ?? $context->currentData();
         if (!is_string($ref)) {
@@ -56,11 +56,11 @@ class SchemaExistsFilter implements IFilter
 
     /**
      * @param string $ref
-     * @param IContext $context
-     * @param ISchema $schema
+     * @param ValidationContext $context
+     * @param Schema $schema
      * @return bool
      */
-    protected function refExists(string $ref, IContext $context, ISchema $schema): bool
+    protected function refExists(string $ref, ValidationContext $context, Schema $schema): bool
     {
         if ($ref === '') {
             return false;

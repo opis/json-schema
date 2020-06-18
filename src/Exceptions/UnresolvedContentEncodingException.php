@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Exceptions;
 
-use Opis\JsonSchema\{IContext, ISchema};
+use Opis\JsonSchema\{ValidationContext, Schema};
 
 class UnresolvedContentEncodingException extends UnresolvedException
 {
@@ -27,10 +27,10 @@ class UnresolvedContentEncodingException extends UnresolvedException
     /**
      * UnresolvedContentEncodingException constructor.
      * @param string $encoding
-     * @param ISchema $schema
-     * @param IContext $context
+     * @param Schema $schema
+     * @param ValidationContext $context
      */
-    public function __construct(string $encoding, ISchema $schema, IContext $context)
+    public function __construct(string $encoding, Schema $schema, ValidationContext $context)
     {
         parent::__construct("Cannot resolve '{$encoding}' content encoding", $schema, $context);
         $this->encoding = $encoding;

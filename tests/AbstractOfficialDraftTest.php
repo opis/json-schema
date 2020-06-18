@@ -17,11 +17,11 @@
 
 namespace Opis\JsonSchema\Test;
 
-use Opis\JsonSchema\{ISchema, Uri, Validator, SchemaLoader};
-use Opis\JsonSchema\Parsers\SchemaParser;
-use Opis\JsonSchema\Resolvers\SchemaResolver;
-use Opis\JsonSchema\Errors\IValidationError;
-use Opis\JsonSchema\Exceptions\ISchemaException;
+use Opis\JsonSchema\{Schema, Uri, Validator, DefaultSchemaLoader};
+use Opis\JsonSchema\Parsers\DefaultSchemaParser;
+use Opis\JsonSchema\Resolvers\DefaultSchemaResolver;
+use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\Exceptions\SchemaException;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractOfficialDraftTest extends TestCase
@@ -34,13 +34,13 @@ abstract class AbstractOfficialDraftTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $resolver = new SchemaResolver();
+        $resolver = new DefaultSchemaResolver();
 
         $resolver->registerFile('http://json-schema.org/draft-06/schema#', __DIR__ . '/official/drafts/draft6.json');
         $resolver->registerFile('http://json-schema.org/draft-07/schema#', __DIR__ . '/official/drafts/draft7.json');
         $resolver->registerPrefix('http://localhost:1234/', __DIR__ . '/official/remotes');
 
-        self::$validator = new Validator(new SchemaLoader(new SchemaParser(), $resolver));
+        self::$validator = new Validator(new DefaultSchemaLoader(new DefaultSchemaParser(), $resolver));
     }
 
     /**
@@ -67,7 +67,7 @@ abstract class AbstractOfficialDraftTest extends TestCase
 
         try {
             $result = $validator->dataValidation($data, $schema, null, null, null, $this->getDraft());
-        } catch (ISchemaException $exception) {
+        } catch (SchemaException $exception) {
             $this->assertFalse($valid, $file . ' -> ' . $description . ': ' . $comment);
             return;
         }
@@ -75,7 +75,7 @@ abstract class AbstractOfficialDraftTest extends TestCase
         if ($valid) {
             $this->assertNull($result, $file . ' -> ' . $description . ': ' . $comment);
         } else {
-            $this->assertInstanceOf(IValidationError::class, $result, $file . ' -> ' . $description . ': ' . $comment);
+            $this->assertInstanceOf(ValidationError::class, $result, $file . ' -> ' . $description . ': ' . $comment);
         }
     }
 
@@ -101,7 +101,7 @@ abstract class AbstractOfficialDraftTest extends TestCase
         $uri = "http://json-schema.org/draft-{$this->getDraft()}/schema#";
 
         $schema = $validator->loader()->loadSchemaById(Uri::parse($uri));
-        $this->assertInstanceOf(ISchema::class, $schema);
+        $this->assertInstanceOf(Schema::class, $schema);
 
         $data = $schema->info()->data();
 

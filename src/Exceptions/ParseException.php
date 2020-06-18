@@ -18,27 +18,27 @@
 namespace Opis\JsonSchema\Exceptions;
 
 use RuntimeException;
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Info\SchemaInfo;
 
-class ParseException extends RuntimeException implements ISchemaException
+class ParseException extends RuntimeException implements SchemaException
 {
 
-    protected ?ISchemaInfo $info = null;
+    protected ?SchemaInfo $info = null;
 
     /**
      * @param string $message
-     * @param ISchemaInfo|null $info
+     * @param SchemaInfo|null $info
      */
-    public function __construct(string $message, ?ISchemaInfo $info = null)
+    public function __construct(string $message, ?SchemaInfo $info = null)
     {
         parent::__construct($message, 0);
         $this->info = $info;
     }
 
     /**
-     * @return ISchemaInfo|null
+     * @return SchemaInfo|null
      */
-    public function schemaInfo(): ?ISchemaInfo
+    public function schemaInfo(): ?SchemaInfo
     {
         return $this->info;
     }

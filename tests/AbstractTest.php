@@ -17,11 +17,11 @@
 
 namespace Opis\JsonSchema\Test;
 
-use Opis\JsonSchema\Errors\IValidationError;
-use Opis\JsonSchema\Exceptions\ISchemaException;
-use Opis\JsonSchema\Resolvers\SchemaResolver;
-use Opis\JsonSchema\{Validator, SchemaLoader};
-use Opis\JsonSchema\Parsers\{IVocabulary, SchemaParser};
+use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\Exceptions\SchemaException;
+use Opis\JsonSchema\Resolvers\DefaultSchemaResolver;
+use Opis\JsonSchema\{Validator, DefaultSchemaLoader};
+use Opis\JsonSchema\Parsers\{Vocabulary, DefaultSchemaParser};
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
@@ -35,12 +35,12 @@ abstract class AbstractTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $resolver = new SchemaResolver();
+        $resolver = new DefaultSchemaResolver();
         $resolver->registerProtocolDir('file', '', __DIR__ . '/schemas');
 
-        $parser = new SchemaParser(static::parserResolvers(), static::parserOptions(), static::parserVocabulary());
+        $parser = new DefaultSchemaParser(static::parserResolvers(), static::parserOptions(), static::parserVocabulary());
 
-        self::$validator = new Validator(new SchemaLoader($parser, $resolver));
+        self::$validator = new Validator(new DefaultSchemaLoader($parser, $resolver));
     }
 
     /**
@@ -60,9 +60,9 @@ abstract class AbstractTest extends TestCase
     }
 
     /**
-     * @return IVocabulary|null
+     * @return Vocabulary|null
      */
-    protected static function parserVocabulary(): ?IVocabulary
+    protected static function parserVocabulary(): ?Vocabulary
     {
         return null;
     }
@@ -77,7 +77,7 @@ abstract class AbstractTest extends TestCase
             try {
                 $result = self::$validator->uriValidation($data, $uri, $globals ?? [], $slots);
             } catch (Throwable $exception) {
-                $this->assertInstanceOf(ISchemaException::class, $exception);
+                $this->assertInstanceOf(SchemaException::class, $exception);
                 return;
             }
         } else {
@@ -87,7 +87,7 @@ abstract class AbstractTest extends TestCase
         if ($valid) {
             $this->assertNull($result);
         } else {
-            $this->assertInstanceOf(IValidationError::class, $result);
+            $this->assertInstanceOf(ValidationError::class, $result);
         }
     }
 

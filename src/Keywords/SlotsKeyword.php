@@ -17,21 +17,21 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{IContext, IKeyword, ISchema};
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{ValidationContext, Keyword, Schema};
+use Opis\JsonSchema\Errors\ValidationError;
 
-class SlotsKeyword implements IKeyword
+class SlotsKeyword implements Keyword
 {
     use ErrorTrait;
 
-    /** @var bool[]|ISchema[]|object[]|string[] */
+    /** @var bool[]|Schema[]|object[]|string[] */
     protected array $slots;
 
     /** @var string[] */
     protected array $stack = [];
 
     /**
-     * @param string[]|bool[]|object[]|ISchema[] $slots
+     * @param string[]|bool[]|object[]|Schema[] $slots
      */
     public function __construct(array $slots)
     {
@@ -41,7 +41,7 @@ class SlotsKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $newContext = $context->newInstance($context->currentData());
 
@@ -65,7 +65,7 @@ class SlotsKeyword implements IKeyword
                     ]);
                 }
 
-                if (is_object($fallback) && !($fallback instanceof ISchema)) {
+                if (is_object($fallback) && !($fallback instanceof Schema)) {
                     $fallback = $context->loader()->loadObjectSchema($fallback);
                     if ($save) {
                         $this->slots[$name] = $fallback;
@@ -87,10 +87,10 @@ class SlotsKeyword implements IKeyword
 
     /**
      * @param string $name
-     * @param IContext $context
-     * @return ISchema|null
+     * @param ValidationContext $context
+     * @return Schema|null
      */
-    protected function resolveSlotSchema(string $name, IContext $context): ?ISchema
+    protected function resolveSlotSchema(string $name, ValidationContext $context): ?Schema
     {
         do {
             $slot = $context->slot($name);
@@ -101,10 +101,10 @@ class SlotsKeyword implements IKeyword
 
     /**
      * @param string $name
-     * @param IContext $context
-     * @return bool|ISchema
+     * @param ValidationContext $context
+     * @return bool|Schema
      */
-    protected function resolveSlot(string $name, IContext $context)
+    protected function resolveSlot(string $name, ValidationContext $context)
     {
         $slot = $this->resolveSlotSchema($name, $context);
 
@@ -123,7 +123,7 @@ class SlotsKeyword implements IKeyword
         }
 
         if (is_object($slot)) {
-            if ($slot instanceof ISchema) {
+            if ($slot instanceof Schema) {
                 return $slot;
             }
 

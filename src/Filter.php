@@ -15,22 +15,15 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Resolvers;
+namespace Opis\JsonSchema;
 
-use Opis\JsonSchema\IFilter;
-
-interface IFilterResolver
+interface Filter
 {
     /**
-     * @param string $name
-     * @param string $type
-     * @return null|callable|IFilter
+     * @param ValidationContext $context
+     * @param Schema $schema
+     * @param array $args
+     * @return bool
      */
-    public function resolve(string $name, string $type);
-
-    /**
-     * @param string $name
-     * @return callable[]|IFilter[]|null
-     */
-    public function resolveAll(string $name): ?array;
+    public function validate(ValidationContext $context, Schema $schema, array $args = []): bool;
 }

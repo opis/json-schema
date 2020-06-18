@@ -18,13 +18,13 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IContext,
-    IKeyword,
-    ISchema
+    ValidationContext,
+    Keyword,
+    Schema
 };
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 
-class MinPropertiesKeyword implements IKeyword
+class MinPropertiesKeyword implements Keyword
 {
     use ErrorTrait;
     use PropertiesTrait;
@@ -42,7 +42,7 @@ class MinPropertiesKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $count = count($this->getObjectProperties($context));
 

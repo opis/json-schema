@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\{ISchema, JsonPointer, IContext};
-use Opis\JsonSchema\Info\ISchemaInfo;
-use Opis\JsonSchema\Variables\IVariables;
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{Schema, JsonPointer, ValidationContext};
+use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\Variables\Variables;
+use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\UnresolvedRefException;
 
 class PointerRefSchema extends AbstractRefSchema
@@ -28,18 +28,18 @@ class PointerRefSchema extends AbstractRefSchema
 
     protected JsonPointer $pointer;
 
-    /** @var bool|null|ISchema */
+    /** @var bool|null|Schema */
     protected $resolved = false;
 
     /**
-     * @param ISchemaInfo $info
+     * @param SchemaInfo $info
      * @param JsonPointer $pointer
-     * @param IVariables|null $mapper
-     * @param IVariables|null $globals
+     * @param Variables|null $mapper
+     * @param Variables|null $globals
      * @param array|null $slots
      */
-    public function __construct(ISchemaInfo $info, JsonPointer $pointer,
-                                ?IVariables $mapper, ?IVariables $globals, ?array $slots = null)
+    public function __construct(SchemaInfo $info, JsonPointer $pointer,
+                                ?Variables $mapper, ?Variables $globals, ?array $slots = null)
     {
         parent::__construct($info, $mapper, $globals, $slots);
         $this->pointer = $pointer;
@@ -48,7 +48,7 @@ class PointerRefSchema extends AbstractRefSchema
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context): ?IValidationError
+    public function validate(ValidationContext $context): ?ValidationError
     {
         if ($this->resolved === false) {
             $this->resolved = $this->resolvePointer($context->loader(), $this->pointer,

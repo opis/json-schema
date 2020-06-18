@@ -18,21 +18,21 @@
 namespace Opis\JsonSchema\Exceptions;
 
 use RuntimeException;
-use Opis\JsonSchema\{IContext, ISchema};
+use Opis\JsonSchema\{ValidationContext, Schema};
 
-class UnresolvedException extends RuntimeException implements ISchemaException
+class UnresolvedException extends RuntimeException implements SchemaException
 {
 
-    protected ISchema $schema;
+    protected Schema $schema;
 
-    protected IContext $context;
+    protected ValidationContext $context;
 
     /**
      * @param string $message
-     * @param ISchema $schema
-     * @param IContext $context
+     * @param Schema $schema
+     * @param ValidationContext $context
      */
-    public function __construct(string $message, ISchema $schema, IContext $context)
+    public function __construct(string $message, Schema $schema, ValidationContext $context)
     {
         parent::__construct($message);
         $this->schema = $schema;
@@ -40,17 +40,17 @@ class UnresolvedException extends RuntimeException implements ISchemaException
     }
 
     /**
-     * @return ISchema
+     * @return Schema
      */
-    public function getSchema(): ISchema
+    public function getSchema(): Schema
     {
         return $this->schema;
     }
 
     /**
-     * @return IContext
+     * @return ValidationContext
      */
-    public function getContext(): IContext
+    public function getContext(): ValidationContext
     {
         return $this->context;
     }

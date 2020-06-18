@@ -17,9 +17,9 @@
 
 namespace Opis\JsonSchema\Pragmas;
 
-use Opis\JsonSchema\{IContext, IPragma};
+use Opis\JsonSchema\{ValidationContext, Pragma};
 
-class MaxErrorsPragma implements IPragma
+class MaxErrorsPragma implements Pragma
 {
 
     protected int $maxErrors;
@@ -35,7 +35,7 @@ class MaxErrorsPragma implements IPragma
     /**
      * @inheritDoc
      */
-    public function enter(IContext $context)
+    public function enter(ValidationContext $context)
     {
         $data = $context->maxErrors();
         $context->setMaxErrors($this->maxErrors);
@@ -45,7 +45,7 @@ class MaxErrorsPragma implements IPragma
     /**
      * @inheritDoc
      */
-    public function leave(IContext $context, $data): void
+    public function leave(ValidationContext $context, $data): void
     {
         if ($data === null) {
             return;

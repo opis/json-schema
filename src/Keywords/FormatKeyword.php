@@ -18,25 +18,25 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IContext,
-    IFormat,
-    IKeyword,
-    ISchema
+    ValidationContext,
+    Format,
+    Keyword,
+    Schema
 };
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 
-class FormatKeyword implements IKeyword
+class FormatKeyword implements Keyword
 {
     use ErrorTrait;
 
     protected ?string $name;
 
-    /** @var callable[]|IFormat[] */
+    /** @var callable[]|Format[] */
     protected ?array $types;
 
     /**
      * @param string $name
-     * @param callable[]|IFormat[] $types
+     * @param callable[]|Format[] $types
      */
     public function __construct(string $name, array $types)
     {
@@ -47,7 +47,7 @@ class FormatKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $type = $context->currentDataType();
 
@@ -56,7 +56,7 @@ class FormatKeyword implements IKeyword
         }
 
         $format = $this->types[$type];
-        if ($type instanceof IFormat) {
+        if ($type instanceof Format) {
             $ok = $format->validate($context->currentData());
         } else {
             $ok = $format($context->currentData());

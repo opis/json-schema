@@ -18,23 +18,23 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\{
-    IContext,
-    IKeyword,
-    ISchema
+    ValidationContext,
+    Keyword,
+    Schema
 };
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\Errors\ValidationError;
 
-class ItemsKeyword implements IKeyword
+class ItemsKeyword implements Keyword
 {
     use IterableDataValidationTrait;
 
-    /** @var bool|object|ISchema|bool[]|object[]|ISchema[] */
+    /** @var bool|object|Schema|bool[]|object[]|Schema[] */
     protected $value;
 
     protected int $count = -1;
 
     /**
-     * @param bool|object|ISchema|bool[]|object[]|ISchema[] $value
+     * @param bool|object|Schema|bool[]|object[]|Schema[] $value
      */
     public function __construct($value)
     {
@@ -48,7 +48,7 @@ class ItemsKeyword implements IKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if ($this->value === true) {
             return null;
@@ -80,7 +80,7 @@ class ItemsKeyword implements IKeyword
                     ]);
                 }
 
-                if (is_object($this->value[$i]) && !($this->value[$i] instanceof ISchema)) {
+                if (is_object($this->value[$i]) && !($this->value[$i] instanceof Schema)) {
                     $this->value[$i] = $context->loader()->loadObjectSchema($this->value[$i]);
                 }
 
@@ -104,7 +104,7 @@ class ItemsKeyword implements IKeyword
                 $errors);
         }
 
-        if (is_object($this->value) && !($this->value instanceof ISchema)) {
+        if (is_object($this->value) && !($this->value instanceof Schema)) {
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
 

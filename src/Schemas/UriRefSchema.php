@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\{IContext, ISchema, Uri};
-use Opis\JsonSchema\Info\ISchemaInfo;
-use Opis\JsonSchema\Variables\IVariables;
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{ValidationContext, Schema, Uri};
+use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\Variables\Variables;
+use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\UnresolvedRefException;
 
 class UriRefSchema extends AbstractRefSchema
@@ -28,18 +28,18 @@ class UriRefSchema extends AbstractRefSchema
 
     protected Uri $uri;
 
-    /** @var bool|null|ISchema */
+    /** @var bool|null|Schema */
     protected $resolved = false;
 
     /**
-     * @param ISchemaInfo $info
+     * @param SchemaInfo $info
      * @param Uri $uri
-     * @param IVariables|null $mapper
-     * @param IVariables|null $globals
+     * @param Variables|null $mapper
+     * @param Variables|null $globals
      * @param array|null $slots
      */
-    public function __construct(ISchemaInfo $info, Uri $uri, ?IVariables $mapper,
-                                ?IVariables $globals, ?array $slots = null)
+    public function __construct(SchemaInfo $info, Uri $uri, ?Variables $mapper,
+                                ?Variables $globals, ?array $slots = null)
     {
         parent::__construct($info, $mapper, $globals, $slots);
         $this->uri = $uri;
@@ -48,7 +48,7 @@ class UriRefSchema extends AbstractRefSchema
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context): ?IValidationError
+    public function validate(ValidationContext $context): ?ValidationError
     {
         if ($this->resolved === false) {
             $this->resolved = $context->loader()->loadSchemaById($this->uri);

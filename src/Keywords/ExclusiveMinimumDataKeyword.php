@@ -17,8 +17,8 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{IContext, ISchema, JsonPointer};
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{ValidationContext, Schema, JsonPointer};
+use Opis\JsonSchema\Errors\ValidationError;
 
 class ExclusiveMinimumDataKeyword extends ExclusiveMinimumKeyword
 {
@@ -37,7 +37,7 @@ class ExclusiveMinimumDataKeyword extends ExclusiveMinimumKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         /** @var float|int $number */
         $number = $this->value->data($context->rootData(), $context->currentDataPath(), $this);

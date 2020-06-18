@@ -36,11 +36,11 @@ trait DataKeywordTrait
     }
 
     /**
-     * @param ISchemaParser $parser
+     * @param SchemaParser $parser
      * @param string|null $keyword
      * @return bool
      */
-    protected function isDataKeywordAllowed(ISchemaParser $parser, ?string $keyword = null): bool
+    protected function isDataKeywordAllowed(SchemaParser $parser, ?string $keyword = null): bool
     {
         if (!($enabled = $parser->option('allowDataKeyword'))) {
             return false;

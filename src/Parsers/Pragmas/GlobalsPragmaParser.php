@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\Parsers\Pragmas;
 
-use Opis\JsonSchema\IPragma;
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Pragma;
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Pragmas\GlobalsPragma;
-use Opis\JsonSchema\Parsers\{AbstractPragmaParser, ISchemaParser, VariablesTrait};
+use Opis\JsonSchema\Parsers\{AbstractPragmaParser, SchemaParser, VariablesTrait};
 
 class GlobalsPragmaParser extends AbstractPragmaParser
 {
@@ -29,7 +29,7 @@ class GlobalsPragmaParser extends AbstractPragmaParser
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IPragma
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Pragma
     {
         if (!$parser->option('allowGlobals') || !$this->pragmaExists($info)) {
             return null;

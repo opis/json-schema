@@ -17,16 +17,13 @@
 
 namespace Opis\JsonSchema;
 
-interface IWrapperKeyword extends ISchemaValidator
+use Opis\JsonSchema\Errors\ValidationError;
+
+interface SchemaValidator
 {
     /**
-     * @return IWrapperKeyword|null
+     * @param ValidationContext $context
+     * @return null|ValidationError
      */
-    public function next(): ?IWrapperKeyword;
-
-    /**
-     * @param IWrapperKeyword|null $next
-     * @return IWrapperKeyword
-     */
-    public function setNext(?IWrapperKeyword $next): IWrapperKeyword;
+    public function validate(ValidationContext $context): ?ValidationError;
 }

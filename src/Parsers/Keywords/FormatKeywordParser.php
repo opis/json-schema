@@ -17,12 +17,12 @@
 
 namespace Opis\JsonSchema\Parsers\Keywords;
 
-use Opis\JsonSchema\IKeyword;
-use Opis\JsonSchema\Info\ISchemaInfo;
-use Opis\JsonSchema\Resolvers\IFormatResolver;
+use Opis\JsonSchema\Keyword;
+use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\Resolvers\FormatResolver;
 use Opis\JsonSchema\Keywords\{FormatDataKeyword, FormatKeyword};
 use Opis\JsonSchema\Parsers\{AbstractKeywordParser, DataKeywordTrait,
-    ISchemaParser, ResolverTrait};
+    SchemaParser, ResolverTrait};
 
 class FormatKeywordParser extends AbstractKeywordParser
 {
@@ -40,11 +40,11 @@ class FormatKeywordParser extends AbstractKeywordParser
     /**
      * @inheritDoc
      */
-    public function parse(ISchemaInfo $info, ISchemaParser $parser, object $shared): ?IKeyword
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
         $schema = $info->data();
 
-        $resolver = $parser->resolver($this->keyword, IFormatResolver::class);
+        $resolver = $parser->resolver($this->keyword, FormatResolver::class);
 
         if (!$resolver || !$this->keywordExists($schema)) {
             return null;

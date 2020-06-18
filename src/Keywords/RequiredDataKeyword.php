@@ -17,8 +17,8 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{IContext, ISchema, JsonPointer};
-use Opis\JsonSchema\Errors\IValidationError;
+use Opis\JsonSchema\{ValidationContext, Schema, JsonPointer};
+use Opis\JsonSchema\Errors\ValidationError;
 
 class RequiredDataKeyword extends RequiredKeyword
 {
@@ -42,7 +42,7 @@ class RequiredDataKeyword extends RequiredKeyword
     /**
      * @inheritDoc
      */
-    public function validate(IContext $context, ISchema $schema): ?IValidationError
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $required = $this->value->data($context->rootData(), $context->currentDataPath(), $this);
         if ($required === $this || !is_array($required) || !$this->requiredPropsAreValid($required)) {

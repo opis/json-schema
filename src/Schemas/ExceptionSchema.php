@@ -17,21 +17,21 @@
 
 namespace Opis\JsonSchema\Schemas;
 
-use Opis\JsonSchema\IContext;
-use Opis\JsonSchema\Info\ISchemaInfo;
-use Opis\JsonSchema\Errors\IValidationError;
-use Opis\JsonSchema\Exceptions\ISchemaException;
+use Opis\JsonSchema\ValidationContext;
+use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\Exceptions\SchemaException;
 
 final class ExceptionSchema extends AbstractSchema
 {
 
-    private ISchemaException $exception;
+    private SchemaException $exception;
 
     /**
-     * @param ISchemaInfo $info
-     * @param ISchemaException $exception
+     * @param SchemaInfo $info
+     * @param SchemaException $exception
      */
-    public function __construct(ISchemaInfo $info, ISchemaException $exception)
+    public function __construct(SchemaInfo $info, SchemaException $exception)
     {
         parent::__construct($info);
         $this->exception = $exception;
@@ -39,9 +39,9 @@ final class ExceptionSchema extends AbstractSchema
 
     /**
      * @inheritDoc
-     * @throws ISchemaException
+     * @throws SchemaException
      */
-    public function validate(IContext $context): ?IValidationError
+    public function validate(ValidationContext $context): ?ValidationError
     {
         throw $this->exception;
     }

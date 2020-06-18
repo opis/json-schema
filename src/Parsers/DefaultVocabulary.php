@@ -26,12 +26,12 @@ use Opis\JsonSchema\Parsers\Pragmas\{CastPragmaParser, GlobalsPragmaParser,
     MaxErrorsPragmaParser, SlotsPragmaParser};
 use Opis\JsonSchema\Parsers\WrapperKeywords\PragmaWrapperKeywordParser;
 
-class DefaultVocabulary extends Vocabulary
+class DefaultVocabulary extends BaseVocabulary
 {
     /**
-     * @param IKeywordParser[] $keywords
-     * @param IWrapperKeywordParser[] $wrappers
-     * @param IPragmaParser[] $pragmas
+     * @param KeywordParser[] $keywords
+     * @param WrapperKeywordParser[] $wrappers
+     * @param PragmaParser[] $pragmas
      */
     public function __construct(array $keywords = [], array $wrappers = [], array $pragmas = [])
     {

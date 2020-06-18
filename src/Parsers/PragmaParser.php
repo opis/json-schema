@@ -1,5 +1,5 @@
 <?php
-/* ============================================================================
+/* ===========================================================================
  * Copyright 2020 Zindex Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,39 +15,18 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Info;
+namespace Opis\JsonSchema\Parsers;
 
-use Opis\JsonSchema\Uri;
+use Opis\JsonSchema\Pragma;
+use Opis\JsonSchema\Info\SchemaInfo;
 
-interface ISchemaInfo
+interface PragmaParser
 {
     /**
-     * @return null|Uri
+     * @param SchemaInfo $info
+     * @param SchemaParser $parser
+     * @param object $shared
+     * @return Pragma|null
      */
-    public function id(): ?Uri;
-
-    /**
-     * @return null|Uri
-     */
-    public function root(): ?Uri;
-
-    /**
-     * @return null|Uri
-     */
-    public function base(): ?Uri;
-
-    /**
-     * @return string|null
-     */
-    public function draft(): ?string;
-
-    /**
-     * @return object|bool
-     */
-    public function data();
-
-    /**
-     * @return string[]|int[]
-     */
-    public function path(): array;
+    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Pragma;
 }

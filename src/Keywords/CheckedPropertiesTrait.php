@@ -17,16 +17,16 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\IContext;
+use Opis\JsonSchema\ValidationContext;
 
 trait CheckedPropertiesTrait
 {
     /**
-     * @param IContext $context
+     * @param ValidationContext $context
      * @param array $props
      * @return bool
      */
-    protected function addCheckedProperties(IContext $context, array $props): bool
+    protected function addCheckedProperties(ValidationContext $context, array $props): bool
     {
         $shared = $context->sharedObject();
         if (!$shared) {
@@ -43,10 +43,10 @@ trait CheckedPropertiesTrait
     }
 
     /**
-     * @param IContext $context
+     * @param ValidationContext $context
      * @return array|null
      */
-    protected function getCheckedProperties(IContext $context): ?array
+    protected function getCheckedProperties(ValidationContext $context): ?array
     {
         $shared = $context->sharedObject();
         if (!$shared || !isset($shared->checkedProperties)) {

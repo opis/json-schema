@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema;
 
-class Context implements IContext
+class DefaultValidationContext implements ValidationContext
 {
     /** @var mixed */
     protected $rootData;
@@ -30,14 +30,14 @@ class Context implements IContext
     /** @var mixed */
     protected $currentData = null;
 
-    protected ?IContext $parent = null;
+    protected ?ValidationContext $parent = null;
 
-    protected ISchemaLoader $loader;
+    protected SchemaLoader $loader;
 
     /** @var object[]|null[]|null */
     protected ?array $shared = null;
 
-    /** @var null|string[]|ISchema[]|object[] */
+    /** @var null|string[]|Schema[]|object[] */
     protected ?array $slots = null;
 
     protected int $sharedIndex = -1;
@@ -48,16 +48,16 @@ class Context implements IContext
 
     /**
      * @param $data
-     * @param ISchemaLoader $loader
-     * @param null|IContext $parent
+     * @param SchemaLoader $loader
+     * @param null|ValidationContext $parent
      * @param array $globals
-     * @param null|string[]|ISchema[] $slots
+     * @param null|string[]|Schema[] $slots
      * @param int $max_errors
      */
     public function __construct(
         $data,
-        ISchemaLoader $loader,
-        ?IContext $parent = null,
+        SchemaLoader $loader,
+        ?ValidationContext $parent = null,
         array $globals = [],
         ?array $slots = null,
         int $max_errors = 1
@@ -81,7 +81,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function newInstance($data, ?array $globals = null, ?array $slots = null, ?int $max_errors = null): IContext
+    public function newInstance($data, ?array $globals = null, ?array $slots = null, ?int $max_errors = null): ValidationContext
     {
         return new self($data, $this->loader, $this, $globals ?? $this->globals, $slots ?? $this->slots,
             $max_errors ?? $this->maxErrors);
@@ -90,7 +90,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function parent(): ?IContext
+    public function parent(): ?ValidationContext
     {
         return $this->parent;
     }
@@ -98,7 +98,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function loader(): ISchemaLoader
+    public function loader(): SchemaLoader
     {
         return $this->loader;
     }
@@ -153,7 +153,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function pushDataPath($key): IContext
+    public function pushDataPath($key): ValidationContext
     {
         $this->currentDataPath[] = $key;
 
@@ -176,7 +176,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function popDataPath(): IContext
+    public function popDataPath(): ValidationContext
     {
         if ($this->pathIndex < 1) {
             return $this;
@@ -200,7 +200,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function setGlobals(array $globals, bool $overwrite = false): IContext
+    public function setGlobals(array $globals, bool $overwrite = false): ValidationContext
     {
         if ($overwrite) {
             $this->globals = $globals;
@@ -214,7 +214,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function pushSharedObject(?object $object = null): IContext
+    public function pushSharedObject(?object $object = null): ValidationContext
     {
         $this->shared[] = $object;
         $this->sharedIndex++;
@@ -225,7 +225,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function popSharedObject(): IContext
+    public function popSharedObject(): ValidationContext
     {
         if ($this->sharedIndex >= 0) {
             array_pop($this->shared);
@@ -263,7 +263,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function setSlots(?array $slots): IContext
+    public function setSlots(?array $slots): ValidationContext
     {
         if ($slots) {
             $list = [];
@@ -272,7 +272,7 @@ class Context implements IContext
                 if (is_bool($value)) {
                     $value = $this->loader->loadBooleanSchema($value);
                 } elseif (is_object($value)) {
-                    if ($value instanceof ISchema) {
+                    if ($value instanceof Schema) {
                         $list[$name] = $value;
                         continue;
                     }
@@ -285,7 +285,7 @@ class Context implements IContext
                     }
                 }
 
-                if ($value instanceof ISchema) {
+                if ($value instanceof Schema) {
                     $list[$name] = $value;
                 }
             }
@@ -301,7 +301,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function slot(string $name): ?ISchema
+    public function slot(string $name): ?Schema
     {
         return $this->slots[$name] ?? null;
     }
@@ -317,7 +317,7 @@ class Context implements IContext
     /**
      * @inheritDoc
      */
-    public function setMaxErrors(int $max): IContext
+    public function setMaxErrors(int $max): ValidationContext
     {
         $this->maxErrors = $max;
 

@@ -17,17 +17,17 @@
 
 namespace Opis\JsonSchema;
 
-interface IContext
+interface ValidationContext
 {
     /**
-     * @return null|IContext
+     * @return null|ValidationContext
      */
     public function parent(): ?self;
 
     /**
-     * @return ISchemaLoader
+     * @return SchemaLoader
      */
-    public function loader(): ISchemaLoader;
+    public function loader(): SchemaLoader;
 
     /**
      * Current data
@@ -59,23 +59,23 @@ interface IContext
 
     /**
      * @param int|string $key
-     * @return IContext
+     * @return ValidationContext
      */
     public function pushDataPath($key): self;
 
     /**
-     * @return IContext
+     * @return ValidationContext
      */
     public function popDataPath(): self;
 
     /**
      * @param object|null $object
-     * @return IContext
+     * @return ValidationContext
      */
     public function pushSharedObject(?object $object = null): self;
 
     /**
-     * @return IContext
+     * @return ValidationContext
      */
     public function popSharedObject(): self;
 
@@ -92,26 +92,26 @@ interface IContext
     /**
      * @param array $globals
      * @param bool $overwrite
-     * @return IContext
+     * @return ValidationContext
      */
     public function setGlobals(array $globals, bool $overwrite = false): self;
 
     /**
-     * @return ISchema[]|null
+     * @return Schema[]|null
      */
     public function slots(): ?array;
 
     /**
-     * @param string[]|object[]|ISchema[]|null $slots
-     * @return IContext
+     * @param string[]|object[]|Schema[]|null $slots
+     * @return ValidationContext
      */
     public function setSlots(?array $slots): self;
 
     /**
      * @param string $name
-     * @return null|ISchema
+     * @return null|Schema
      */
-    public function slot(string $name): ?ISchema;
+    public function slot(string $name): ?Schema;
 
     /**
      * @return int
@@ -120,16 +120,16 @@ interface IContext
 
     /**
      * @param int $max
-     * @return IContext
+     * @return ValidationContext
      */
     public function setMaxErrors(int $max): self;
 
     /**
      * @param $data
      * @param array|null $globals
-     * @param null|string[]|ISchema[] $slots
+     * @param null|string[]|Schema[] $slots
      * @param int|null $max_errors
-     * @return IContext
+     * @return ValidationContext
      */
     public function newInstance($data, ?array $globals = null, ?array $slots = null, ?int $max_errors = 1): self;
 }

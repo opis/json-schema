@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-use Opis\JsonSchema\Info\ISchemaInfo;
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Exceptions\InvalidPragmaException;
 
-abstract class AbstractPragmaParser implements IPragmaParser
+abstract class AbstractPragmaParser implements PragmaParser
 {
 
     protected string $pragma;
@@ -34,13 +34,13 @@ abstract class AbstractPragmaParser implements IPragmaParser
     }
 
     /**
-     * @param object|ISchemaInfo $schema
+     * @param object|SchemaInfo $schema
      * @param string|null $pragma
      * @return bool
      */
     protected function pragmaExists(object $schema, ?string $pragma = null): bool
     {
-        if ($schema instanceof ISchemaInfo) {
+        if ($schema instanceof SchemaInfo) {
             $schema = $schema->data();
         }
 
@@ -48,13 +48,13 @@ abstract class AbstractPragmaParser implements IPragmaParser
     }
 
     /**
-     * @param object|ISchemaInfo $schema
+     * @param object|SchemaInfo $schema
      * @param string|null $pragma
      * @return mixed
      */
     protected function pragmaValue(object $schema, ?string $pragma = null)
     {
-        if ($schema instanceof ISchemaInfo) {
+        if ($schema instanceof SchemaInfo) {
             $schema = $schema->data();
         }
 
@@ -63,11 +63,11 @@ abstract class AbstractPragmaParser implements IPragmaParser
 
     /**
      * @param string $message
-     * @param ISchemaInfo $info
+     * @param SchemaInfo $info
      * @param string|null $pragma
      * @return InvalidPragmaException
      */
-    protected function pragmaException(string $message, ISchemaInfo $info, ?string $pragma = null): InvalidPragmaException
+    protected function pragmaException(string $message, SchemaInfo $info, ?string $pragma = null): InvalidPragmaException
     {
         $pragma = $pragma ?? $this->pragma;
 

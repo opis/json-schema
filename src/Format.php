@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema;
 
-interface IFormat
+interface Format
 {
     /**
      * @param $data
