@@ -17,119 +17,310 @@
 
 namespace Opis\JsonSchema;
 
-interface ValidationContext
+class ValidationContext
 {
-    /**
-     * @return null|ValidationContext
-     */
-    public function parent(): ?self;
+    /** @var mixed */
+    protected $rootData;
 
-    /**
-     * @return SchemaLoader
-     */
-    public function loader(): SchemaLoader;
+    /** @var string[]|int[] */
+    protected array $currentDataPath = [];
 
-    /**
-     * Current data
-     * @return mixed
-     */
-    public function rootData();
+    protected array $globals;
 
-    /**
-     * @return mixed
-     */
-    public function currentData();
+    /** @var mixed */
+    protected $currentData = null;
 
-    /**
-     * @param mixed $value
-     */
-    public function setCurrentData($value): void;
+    protected ?ValidationContext $parent = null;
 
-    /**
-     * Current data type
-     * @return string|null
-     */
-    public function currentDataType(): ?string;
+    protected SchemaLoader $loader;
 
-    /**
-     * Path to this data
-     * @return string[]|int[]
-     */
-    public function currentDataPath(): array;
+    /** @var object[]|null[]|null */
+    protected ?array $shared = null;
 
-    /**
-     * @param int|string $key
-     * @return ValidationContext
-     */
-    public function pushDataPath($key): self;
+    /** @var null|string[]|Schema[]|object[] */
+    protected ?array $slots = null;
 
-    /**
-     * @return ValidationContext
-     */
-    public function popDataPath(): self;
+    protected int $sharedIndex = -1;
 
-    /**
-     * @param object|null $object
-     * @return ValidationContext
-     */
-    public function pushSharedObject(?object $object = null): self;
+    protected int $pathIndex = 0;
 
-    /**
-     * @return ValidationContext
-     */
-    public function popSharedObject(): self;
-
-    /**
-     * @return null|object
-     */
-    public function sharedObject(): ?object;
-
-    /**
-     * @return array
-     */
-    public function globals(): array;
-
-    /**
-     * @param array $globals
-     * @param bool $overwrite
-     * @return ValidationContext
-     */
-    public function setGlobals(array $globals, bool $overwrite = false): self;
-
-    /**
-     * @return Schema[]|null
-     */
-    public function slots(): ?array;
-
-    /**
-     * @param string[]|object[]|Schema[]|null $slots
-     * @return ValidationContext
-     */
-    public function setSlots(?array $slots): self;
-
-    /**
-     * @param string $name
-     * @return null|Schema
-     */
-    public function slot(string $name): ?Schema;
-
-    /**
-     * @return int
-     */
-    public function maxErrors(): int;
-
-    /**
-     * @param int $max
-     * @return ValidationContext
-     */
-    public function setMaxErrors(int $max): self;
+    protected int $maxErrors = 1;
 
     /**
      * @param $data
-     * @param array|null $globals
+     * @param SchemaLoader $loader
+     * @param null|ValidationContext $parent
+     * @param array $globals
      * @param null|string[]|Schema[] $slots
-     * @param int|null $max_errors
-     * @return ValidationContext
+     * @param int $max_errors
      */
-    public function newInstance($data, ?array $globals = null, ?array $slots = null, ?int $max_errors = 1): self;
+    public function __construct(
+        $data,
+        SchemaLoader $loader,
+        ?ValidationContext $parent = null,
+        array $globals = [],
+        ?array $slots = null,
+        int $max_errors = 1
+    )
+    {
+        $this->rootData = $data;
+        $this->loader = $loader;
+        $this->parent = $parent;
+        $this->globals = $globals;
+        $this->slots = null;
+        $this->maxErrors = $max_errors;
+        $this->currentData = [
+            [$data, false],
+        ];
+
+        if ($slots) {
+            $this->setSlots($slots);
+        }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function newInstance($data, ?array $globals = null, ?array $slots = null, ?int $max_errors = null): ValidationContext
+    {
+        return new self($data, $this->loader, $this, $globals ?? $this->globals, $slots ?? $this->slots,
+            $max_errors ?? $this->maxErrors);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parent(): ?ValidationContext
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function loader(): SchemaLoader
+    {
+        return $this->loader;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rootData()
+    {
+        return $this->rootData;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function currentData()
+    {
+        return $this->currentData[$this->pathIndex][0];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setCurrentData($value): void
+    {
+        $this->currentData[$this->pathIndex][0] = $value;
+        $this->currentData[$this->pathIndex][1] = false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function currentDataType(): ?string
+    {
+        $type = $this->currentData[$this->pathIndex][1];
+        if ($type === false) {
+            $type = Helper::getJsonType($this->currentData[$this->pathIndex][0]);
+            $this->currentData[$this->pathIndex][1] = $type;
+        }
+
+        return $type;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function currentDataPath(): array
+    {
+        return $this->currentDataPath;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function pushDataPath($key): ValidationContext
+    {
+        $this->currentDataPath[] = $key;
+
+        $data = $this->currentData[$this->pathIndex][0];
+
+        if (is_array($data)) {
+            $data = $data[$key] ?? null;
+        } elseif (is_object($data)) {
+            $data = $data->{$key} ?? null;
+        } else {
+            $data = null;
+        }
+
+        $this->currentData[] = [$data, false];
+        $this->pathIndex++;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function popDataPath(): ValidationContext
+    {
+        if ($this->pathIndex < 1) {
+            return $this;
+        }
+
+        array_pop($this->currentDataPath);
+        array_pop($this->currentData);
+        $this->pathIndex--;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function globals(): array
+    {
+        return $this->globals;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setGlobals(array $globals, bool $overwrite = false): ValidationContext
+    {
+        if ($overwrite) {
+            $this->globals = $globals;
+        } elseif ($globals) {
+            $this->globals = $globals + $this->globals;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function pushSharedObject(?object $object = null): ValidationContext
+    {
+        $this->shared[] = $object;
+        $this->sharedIndex++;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function popSharedObject(): ValidationContext
+    {
+        if ($this->sharedIndex >= 0) {
+            array_pop($this->shared);
+            $this->sharedIndex--;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function sharedObject(): ?object
+    {
+        if ($this->sharedIndex < 0) {
+            return null;
+        }
+
+        $obj = $this->shared[$this->sharedIndex];
+        if ($obj === null) {
+            $obj = $this->shared[$this->sharedIndex] = (object) [];
+        }
+
+        return $obj;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function slots(): ?array
+    {
+        return $this->slots;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setSlots(?array $slots): ValidationContext
+    {
+        if ($slots) {
+            $list = [];
+
+            foreach ($slots as $name => $value) {
+                if (is_bool($value)) {
+                    $value = $this->loader->loadBooleanSchema($value);
+                } elseif (is_object($value)) {
+                    if ($value instanceof Schema) {
+                        $list[$name] = $value;
+                        continue;
+                    }
+                    $value = $this->loader->loadObjectSchema($value);
+                } elseif (is_string($value)) {
+                    if (isset($this->slots[$value])) {
+                        $value = $this->slots[$value];
+                    } elseif ($this->parent) {
+                        $value = $this->parent->slot($value);
+                    }
+                }
+
+                if ($value instanceof Schema) {
+                    $list[$name] = $value;
+                }
+            }
+
+            $this->slots = $list;
+        } else {
+            $this->slots = null;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function slot(string $name): ?Schema
+    {
+        return $this->slots[$name] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function maxErrors(): int
+    {
+        return $this->maxErrors;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setMaxErrors(int $max): ValidationContext
+    {
+        $this->maxErrors = $max;
+
+        return $this;
+    }
 }

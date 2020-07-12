@@ -35,7 +35,7 @@ class Validator
      */
     public function __construct(?SchemaLoader $loader = null, int $max_errors = 1)
     {
-        $this->loader = $loader ?? new DefaultSchemaLoader(new DefaultSchemaParser());
+        $this->loader = $loader ?? new SchemaLoader(new DefaultSchemaParser());
         $this->maxErrors = $max_errors;
     }
 
@@ -129,7 +129,7 @@ class Validator
             $slots = $this->parseSlots($slots);
         }
 
-        return new DefaultValidationContext($data, $this->loader, null, $globals ?? [], $slots, $this->maxErrors);
+        return new ValidationContext($data, $this->loader, null, $globals ?? [], $slots, $this->maxErrors);
     }
 
     /**

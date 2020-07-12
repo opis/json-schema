@@ -20,7 +20,7 @@ namespace Opis\JsonSchema\Test;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\SchemaException;
 use Opis\JsonSchema\Resolvers\DefaultSchemaResolver;
-use Opis\JsonSchema\{Validator, DefaultSchemaLoader};
+use Opis\JsonSchema\{Validator, SchemaLoader};
 use Opis\JsonSchema\Parsers\{Vocabulary, DefaultSchemaParser};
 use PHPUnit\Framework\TestCase;
 use Throwable;
@@ -40,7 +40,7 @@ abstract class AbstractTest extends TestCase
 
         $parser = new DefaultSchemaParser(static::parserResolvers(), static::parserOptions(), static::parserVocabulary());
 
-        self::$validator = new Validator(new DefaultSchemaLoader($parser, $resolver));
+        self::$validator = new Validator(new SchemaLoader($parser, $resolver));
     }
 
     /**
