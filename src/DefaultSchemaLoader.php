@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema;
 
 use SplObjectStorage;
-use Opis\JsonSchema\Info\DefaultSchemaInfo;
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Schemas\LazySchema;
 use Opis\JsonSchema\Parsers\SchemaParser;
 use Opis\JsonSchema\Resolvers\SchemaResolver;
@@ -138,7 +138,7 @@ class DefaultSchemaLoader implements SchemaLoader
             $id = $this->createSchemaId($data);
         }
 
-        return $this->parser->parseSchema(new DefaultSchemaInfo($data, Uri::parse($id, true), null, null, [], $draft));
+        return $this->parser->parseSchema(new SchemaInfo($data, Uri::parse($id, true), null, null, [], $draft));
     }
 
     /**
@@ -305,7 +305,7 @@ class DefaultSchemaLoader implements SchemaLoader
             return;
         }
 
-        $this->uriCache[$key] = $this->parser->parseSchema(new DefaultSchemaInfo($data, $id, $base, $root, $path, $draft));
+        $this->uriCache[$key] = $this->parser->parseSchema(new SchemaInfo($data, $id, $base, $root, $path, $draft));
     }
 
     /**
@@ -357,7 +357,7 @@ class DefaultSchemaLoader implements SchemaLoader
         $id = $this->parser->parseSchemaId($data, $base) ?? $id;
         $draft = $this->parser->parseSchemaDraft($data) ?? $draft;
 
-        $lazy = new LazySchema(new DefaultSchemaInfo($data, $id, $base, $root, $path, $draft), $this->parser);
+        $lazy = new LazySchema(new SchemaInfo($data, $id, $base, $root, $path, $draft), $this->parser);
 
         if ($id && $id->isAbsolute()) {
             $key = $this->cacheKey((string)$id);

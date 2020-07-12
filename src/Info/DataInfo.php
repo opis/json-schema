@@ -17,40 +17,110 @@
 
 namespace Opis\JsonSchema\Info;
 
-interface DataInfo
+use Opis\JsonSchema\ValidationContext;
+
+class DataInfo
 {
-    /**
-     * Data value
-     * @return mixed
-     */
-    public function value();
+    /** @var mixed */
+    protected $value;
+
+    protected ?string $type;
+
+    /** @var mixed */
+    protected $root;
+
+    /** @var string[]|int[] */
+    protected array $path;
+
+    protected ?DataInfo $parent = null;
+
+    /** @var string[]|int[]|null */
+    protected ?array $fullPath = null;
 
     /**
-     * Json data type
-     * @return string|null
+     * DataInfo constructor.
+     * @param $value
+     * @param string|null $type
+     * @param $root
+     * @param string[]|int[] $path
+     * @param DataInfo|null $parent
      */
-    public function type(): ?string;
+    public function __construct($value, ?string $type, $root, array $path = [], ?DataInfo $parent = null)
+    {
+        $this->value = $value;
+        $this->type = $type;
+        $this->root = $root;
+        $this->path = $path;
+        $this->parent = $parent;
+    }
 
     /**
-     * Root data that holds the current value somewhere
-     * @return mixed
+     * @inheritDoc
      */
-    public function root();
+    public function value()
+    {
+        return $this->value;
+    }
 
     /**
-     * Path to data value, starting from root
-     * @return string[]|int[]
+     * @inheritDoc
      */
-    public function path(): array;
+    public function type(): ?string
+    {
+        return $this->type;
+    }
 
     /**
-     * Absolute path to data
-     * @return string[]|int[]
+     * @inheritDoc
      */
-    public function fullPath(): array;
+    public function root()
+    {
+        return $this->root;
+    }
 
     /**
-     * @return DataInfo|null
+     * @inheritDoc
      */
-    public function parent(): ?DataInfo;
+    public function path(): array
+    {
+        return $this->path;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function parent(): ?DataInfo
+    {
+        return $this->parent;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function fullPath(): array
+    {
+        if ($this->parent === null) {
+            return $this->path;
+        }
+
+        if ($this->fullPath === null) {
+            $this->fullPath = array_merge($this->parent->fullPath(), $this->path);
+        }
+
+        return $this->fullPath;
+    }
+
+    /**
+     * @param ValidationContext $context
+     * @return DataInfo
+     */
+    public static function fromContext(ValidationContext $context): self
+    {
+        if ($parent = $context->parent()) {
+            $parent = self::fromContext($parent);
+        }
+
+        return new self($context->currentData(), $context->currentDataType(), $context->rootData(),
+            $context->currentDataPath(), $parent);
+    }
 }

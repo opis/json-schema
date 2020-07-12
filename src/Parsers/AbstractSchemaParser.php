@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema\Parsers;
 
 use Opis\JsonSchema\{Keyword, Schema, KeywordValidator, Uri};
-use Opis\JsonSchema\Info\{SchemaInfo, DefaultSchemaInfo};
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Exceptions\{SchemaException, ParseException};
 use Opis\JsonSchema\Schemas\{
     BooleanSchema,
@@ -294,15 +294,15 @@ abstract class AbstractSchemaParser implements SchemaParser
                 $id = Uri::merge($id, null, true);
             }
         } else {
-            throw new ParseException('Root schema id must be an URI', new DefaultSchemaInfo($schema, $id));
+            throw new ParseException('Root schema id must be an URI', new SchemaInfo($schema, $id));
         }
 
         if (!$id->isAbsolute()) {
-            throw new ParseException('Root schema id must be an absolute URI', new DefaultSchemaInfo($schema, $id));
+            throw new ParseException('Root schema id must be an absolute URI', new SchemaInfo($schema, $id));
         }
 
         if ($id->fragment() !== '') {
-            throw new ParseException('Root schema id must have an empty fragment or none', new DefaultSchemaInfo($schema, $id));
+            throw new ParseException('Root schema id must have an empty fragment or none', new SchemaInfo($schema, $id));
         }
 
         // Check if id exists
@@ -312,7 +312,7 @@ abstract class AbstractSchemaParser implements SchemaParser
 
         if (property_exists($schema, '$schema')) {
             if (!is_string($schema->{'$schema'})) {
-                throw new ParseException('Schema draft must be a string', new DefaultSchemaInfo($schema, $id));
+                throw new ParseException('Schema draft must be a string', new SchemaInfo($schema, $id));
             }
             $draft = $this->parseDraftVersion($schema->{'$schema'});
         }

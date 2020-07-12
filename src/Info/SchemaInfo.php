@@ -19,35 +19,93 @@ namespace Opis\JsonSchema\Info;
 
 use Opis\JsonSchema\Uri;
 
-interface SchemaInfo
+class SchemaInfo
 {
-    /**
-     * @return null|Uri
-     */
-    public function id(): ?Uri;
+    /** @var bool|object */
+    protected $data;
+
+    protected ?Uri $id;
+
+    protected ?Uri $root;
+
+    protected ?Uri $base;
+
+    /** @var string[]|int[] */
+    protected array $path;
+
+    protected ?string $draft;
 
     /**
-     * @return null|Uri
+     * @param object|bool $data
+     * @param Uri|null $id
+     * @param Uri|null $base
+     * @param Uri|null $root
+     * @param string[]|int[] $path
+     * @param string|null $draft
      */
-    public function root(): ?Uri;
+    public function __construct($data, ?Uri $id, ?Uri $base = null, ?Uri $root = null, array $path = [], ?string $draft = null)
+    {
+        if ($root === $id || ((string)$root === (string)$id)) {
+            $root = null;
+        }
+
+        if ($root === null) {
+            $base = null;
+        }
+
+        $this->data = $data;
+        $this->id = $id;
+        $this->root = $root;
+        $this->base = $base;
+        $this->path = $path;
+        $this->draft = $draft;
+    }
 
     /**
-     * @return null|Uri
+     * @inheritDoc
      */
-    public function base(): ?Uri;
+    public function id(): ?Uri
+    {
+        return $this->id;
+    }
 
     /**
-     * @return string|null
+     * @inheritDoc
      */
-    public function draft(): ?string;
+    public function root(): ?Uri
+    {
+       return $this->root;
+    }
 
     /**
-     * @return object|bool
+     * @inheritDoc
      */
-    public function data();
+    public function base(): ?Uri
+    {
+        return $this->base;
+    }
 
     /**
-     * @return string[]|int[]
+     * @inheritDoc
      */
-    public function path(): array;
+    public function draft(): ?string
+    {
+        return $this->draft;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function data()
+    {
+        return $this->data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function path(): array
+    {
+        return $this->path;
+    }
 }

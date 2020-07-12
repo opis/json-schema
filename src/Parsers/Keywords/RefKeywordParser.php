@@ -19,7 +19,7 @@ namespace Opis\JsonSchema\Parsers\Keywords;
 
 use Opis\JsonSchema\Keywords\RefKeyword;
 use Opis\JsonSchema\Variables\Variables;
-use Opis\JsonSchema\Info\{SchemaInfo, DefaultSchemaInfo};
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri, UriTemplate};
 use Opis\JsonSchema\Schemas\{PointerRefSchema, TemplateRefSchema, UriRefSchema};
 use Opis\JsonSchema\Parsers\{AbstractKeywordParser, SchemaParser, VariablesTrait};
@@ -191,7 +191,7 @@ class RefKeywordParser extends AbstractKeywordParser
             if (is_string($value) || is_object($value)) {
                 $list[$name] = $value;
             } elseif (is_bool($value)) {
-                $list[$name] = $parser->parseSchema(new DefaultSchemaInfo(
+                $list[$name] = $parser->parseSchema(new SchemaInfo(
                     $value, null, $info->id() ?? $info->base(), $info->root(),
                     array_merge($path, [$name]),
                     $info->draft() ?? $parser->defaultDraftVersion()

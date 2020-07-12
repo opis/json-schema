@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema\Parsers\KeywordValidators;
 
 use Opis\JsonSchema\KeywordValidator;
-use Opis\JsonSchema\Info\{DefaultSchemaInfo, SchemaInfo};
+use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\KeywordValidators\PragmaKeywordValidator;
 use Opis\JsonSchema\Parsers\{AbstractKeywordValidatorParser, SchemaParser};
 
@@ -43,7 +43,7 @@ class PragmaKeywordValidatorParser extends AbstractKeywordValidatorParser
 
         $draft = $info->draft() ?? $parser->defaultDraftVersion();
 
-        $pragmaInfo = new DefaultSchemaInfo($value, null, $info->id() ?? $info->base(), $info->root(),
+        $pragmaInfo = new SchemaInfo($value, null, $info->id() ?? $info->base(), $info->root(),
             array_merge($info->path(), [$this->keyword]), $draft);
 
         foreach ($parser->draft($draft)->pragmas() as $pragma) {
