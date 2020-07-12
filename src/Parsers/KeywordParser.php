@@ -17,10 +17,10 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-use Opis\JsonSchema\Keyword;
 use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\Keyword;
 
-interface KeywordParser
+abstract class KeywordParser
 {
     const TYPE_PREPEND = '_prepend';
     const TYPE_BEFORE = '_before';
@@ -32,11 +32,13 @@ interface KeywordParser
     const TYPE_ARRAY = 'array';
     const TYPE_OBJECT = 'object';
 
+    use KeywordParserTrait;
+
     /**
      * The keyword type, can be one of the TYPE_* const
      * @return string
      */
-    public function type(): string;
+    abstract public function type(): string;
 
     /**
      * @param SchemaInfo $info
@@ -44,5 +46,5 @@ interface KeywordParser
      * @param object $shared
      * @return Keyword|null
      */
-    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword;
+    abstract public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword;
 }

@@ -20,9 +20,9 @@ namespace Opis\JsonSchema\Parsers\Pragmas;
 use Opis\JsonSchema\Pragma;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Pragmas\MaxErrorsPragma;
-use Opis\JsonSchema\Parsers\{AbstractPragmaParser, SchemaParser};
+use Opis\JsonSchema\Parsers\{PragmaParser, SchemaParser};
 
-class MaxErrorsPragmaParser extends AbstractPragmaParser
+class MaxErrorsPragmaParser extends PragmaParser
 {
     /**
      * @inheritDoc

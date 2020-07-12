@@ -21,10 +21,10 @@ use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\{Keyword, Helper};
 use Opis\JsonSchema\Keywords\{ConstDataKeyword, ConstKeyword};
 use Opis\JsonSchema\Parsers\{
-    AbstractKeywordParser, DataKeywordTrait, SchemaParser
+    KeywordParser, DataKeywordTrait, SchemaParser
 };
 
-class ConstKeywordParser extends AbstractKeywordParser
+class ConstKeywordParser extends KeywordParser
 {
     use DataKeywordTrait;
 

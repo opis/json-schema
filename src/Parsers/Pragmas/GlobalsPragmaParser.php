@@ -20,9 +20,9 @@ namespace Opis\JsonSchema\Parsers\Pragmas;
 use Opis\JsonSchema\Pragma;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Pragmas\GlobalsPragma;
-use Opis\JsonSchema\Parsers\{AbstractPragmaParser, SchemaParser, VariablesTrait};
+use Opis\JsonSchema\Parsers\{PragmaParser, SchemaParser, VariablesTrait};
 
-class GlobalsPragmaParser extends AbstractPragmaParser
+class GlobalsPragmaParser extends PragmaParser
 {
     use VariablesTrait;
 

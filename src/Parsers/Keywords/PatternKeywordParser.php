@@ -20,10 +20,10 @@ namespace Opis\JsonSchema\Parsers\Keywords;
 use Opis\JsonSchema\{Helper, Keyword};
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Keywords\{PatternKeyword, PatternDataKeyword};
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, DataKeywordTrait,
+use Opis\JsonSchema\Parsers\{KeywordParser, DataKeywordTrait,
     SchemaParser};
 
-class PatternKeywordParser extends AbstractKeywordParser
+class PatternKeywordParser extends KeywordParser
 {
     use DataKeywordTrait;
 

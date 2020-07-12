@@ -17,6 +17,7 @@
 
 namespace Opis\JsonSchema\Parsers\Drafts;
 
+use Opis\JsonSchema\Parsers\Draft;
 use Opis\JsonSchema\Parsers\KeywordParser;
 use Opis\JsonSchema\Parsers\Keywords\{
     AdditionalItemsKeywordParser,
@@ -55,7 +56,7 @@ use Opis\JsonSchema\Parsers\Keywords\{
     UniqueItemsKeywordParser
 };
 
-class Draft06 extends AbstractDraft
+class Draft06 extends Draft
 {
     /**
      * @inheritDoc
@@ -63,6 +64,11 @@ class Draft06 extends AbstractDraft
     public function version(): string
     {
         return '06';
+    }
+
+    public function allowKeywordsAlongsideRef(): bool
+    {
+        return false;
     }
 
     /**

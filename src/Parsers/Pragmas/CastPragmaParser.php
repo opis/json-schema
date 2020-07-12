@@ -21,9 +21,9 @@ use Opis\JsonSchema\Helper;
 use Opis\JsonSchema\Pragma;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Pragmas\CastPragma;
-use Opis\JsonSchema\Parsers\{AbstractPragmaParser, SchemaParser};
+use Opis\JsonSchema\Parsers\{PragmaParser, SchemaParser};
 
-class CastPragmaParser extends AbstractPragmaParser
+class CastPragmaParser extends PragmaParser
 {
     /**
      * @inheritDoc

@@ -22,9 +22,9 @@ use Opis\JsonSchema\Variables\Variables;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri, UriTemplate};
 use Opis\JsonSchema\Schemas\{PointerRefSchema, TemplateRefSchema, UriRefSchema};
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, SchemaParser, VariablesTrait};
+use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser, VariablesTrait};
 
-class RefKeywordParser extends AbstractKeywordParser
+class RefKeywordParser extends KeywordParser
 {
     use VariablesTrait;
 

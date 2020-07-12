@@ -20,9 +20,9 @@ namespace Opis\JsonSchema\Parsers\Keywords;
 use Opis\JsonSchema\{Keyword, Helper};
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Keywords\DefaultKeyword;
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, SchemaParser};
+use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser};
 
-class DefaultKeywordParser extends AbstractKeywordParser
+class DefaultKeywordParser extends KeywordParser
 {
 
     protected ?string $properties = null;

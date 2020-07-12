@@ -20,9 +20,9 @@ namespace Opis\JsonSchema\Parsers\Keywords;
 use Opis\JsonSchema\Keyword;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Keywords\DependenciesKeyword;
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, SchemaParser};
+use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser};
 
-class DependenciesKeywordParser extends AbstractKeywordParser
+class DependenciesKeywordParser extends KeywordParser
 {
     /**
      * @inheritDoc

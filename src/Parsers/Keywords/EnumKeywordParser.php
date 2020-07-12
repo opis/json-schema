@@ -21,10 +21,10 @@ use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\{Keyword, Helper};
 use Opis\JsonSchema\Keywords\{EnumDataKeyword, EnumKeyword};
 use Opis\JsonSchema\Parsers\{
-    AbstractKeywordParser, DataKeywordTrait, SchemaParser
+    KeywordParser, DataKeywordTrait, SchemaParser
 };
 
-class EnumKeywordParser extends AbstractKeywordParser
+class EnumKeywordParser extends KeywordParser
 {
     use DataKeywordTrait;
 

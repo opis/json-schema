@@ -20,9 +20,9 @@ namespace Opis\JsonSchema\Parsers\KeywordValidators;
 use Opis\JsonSchema\KeywordValidator;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\KeywordValidators\PragmaKeywordValidator;
-use Opis\JsonSchema\Parsers\{AbstractKeywordValidatorParser, SchemaParser};
+use Opis\JsonSchema\Parsers\{KeywordValidatorParser, SchemaParser};
 
-class PragmaKeywordValidatorParser extends AbstractKeywordValidatorParser
+class PragmaKeywordValidatorParser extends KeywordValidatorParser
 {
     /**
      * @inheritDoc

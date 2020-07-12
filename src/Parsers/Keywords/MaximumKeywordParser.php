@@ -19,7 +19,7 @@ namespace Opis\JsonSchema\Parsers\Keywords;
 
 use Opis\JsonSchema\Keyword;
 use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, DataKeywordTrait,
+use Opis\JsonSchema\Parsers\{KeywordParser, DataKeywordTrait,
     SchemaParser};
 use Opis\JsonSchema\Keywords\{
     ExclusiveMaximumDataKeyword,
@@ -28,7 +28,7 @@ use Opis\JsonSchema\Keywords\{
     MaximumKeyword
 };
 
-class MaximumKeywordParser extends AbstractKeywordParser
+class MaximumKeywordParser extends KeywordParser
 {
     use DataKeywordTrait;
 

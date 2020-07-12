@@ -19,11 +19,11 @@ namespace Opis\JsonSchema\Parsers\Keywords;
 
 use Opis\JsonSchema\Keyword;
 use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, DataKeywordTrait,
+use Opis\JsonSchema\Parsers\{KeywordParser, DataKeywordTrait,
     SchemaParser};
 use Opis\JsonSchema\Keywords\{MinItemsDataKeyword, MinItemsKeyword};
 
-class MinItemsKeywordParser extends AbstractKeywordParser
+class MinItemsKeywordParser extends KeywordParser
 {
     use DataKeywordTrait;
 

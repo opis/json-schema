@@ -26,7 +26,7 @@ use Opis\JsonSchema\Parsers\Pragmas\{CastPragmaParser, GlobalsPragmaParser,
     MaxErrorsPragmaParser, SlotsPragmaParser};
 use Opis\JsonSchema\Parsers\KeywordValidators\PragmaKeywordValidatorParser;
 
-class DefaultVocabulary extends BaseVocabulary
+class DefaultVocabulary extends Vocabulary
 {
     /**
      * @param KeywordParser[] $keywords

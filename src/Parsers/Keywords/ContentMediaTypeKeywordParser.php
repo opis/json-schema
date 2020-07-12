@@ -21,9 +21,9 @@ use Opis\JsonSchema\Keyword;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Keywords\ContentMediaTypeKeyword;
 use Opis\JsonSchema\Resolvers\ContentMediaTypeResolver;
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, SchemaParser};
+use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser};
 
-class ContentMediaTypeKeywordParser extends AbstractKeywordParser
+class ContentMediaTypeKeywordParser extends KeywordParser
 {
     /**
      * @inheritDoc

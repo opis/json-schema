@@ -25,7 +25,7 @@ use Opis\JsonSchema\Resolvers\{
 };
 use Opis\JsonSchema\Parsers\Drafts\{Draft06, Draft07};
 
-class DefaultSchemaParser extends AbstractSchemaParser
+class DefaultSchemaParser extends SchemaParser
 {
     /**
      * @param array $resolvers

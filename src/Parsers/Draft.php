@@ -17,15 +17,61 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-interface Draft extends Vocabulary
+abstract class Draft extends Vocabulary
 {
+    /**
+     * @param Vocabulary|null $extraVocabulary
+     */
+    public function __construct(?Vocabulary $extraVocabulary = null)
+    {
+        $keywords = $this->getKeywordParsers();
+        $keywordValidators = $this->getKeywordValidatorParsers();
+        $pragmas = $this->getPragmaParsers();
+
+        if ($extraVocabulary) {
+            $keywords = array_merge($keywords, $extraVocabulary->keywords());
+            $keywordValidators = array_merge($keywordValidators, $extraVocabulary->keywordValidators());
+            $pragmas = array_merge($pragmas, $extraVocabulary->pragmas());
+        }
+
+        $keywords[] = $this->getRefKeywordParser();
+
+        parent::__construct($keywords, $keywordValidators, $pragmas);
+    }
+
     /**
      * @return string
      */
-    public function version(): string;
+    abstract public function version(): string;
 
     /**
      * @return bool
      */
-    public function allowKeywordsAlongsideRef(): bool;
+    abstract public function allowKeywordsAlongsideRef(): bool;
+
+    /**
+     * @return KeywordParser
+     */
+    abstract protected function getRefKeywordParser(): KeywordParser;
+
+    /**
+     * @return KeywordParser[]
+     */
+    abstract protected function getKeywordParsers(): array;
+
+    /**
+     * @return KeywordValidatorParser[]
+     */
+    protected function getKeywordValidatorParsers(): array
+    {
+        return [];
+    }
+
+    /**
+     * @return PragmaParser[]
+     */
+    protected function getPragmaParsers(): array
+    {
+        return [];
+    }
 }

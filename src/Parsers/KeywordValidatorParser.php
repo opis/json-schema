@@ -17,16 +17,18 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-use Opis\JsonSchema\KeywordValidator;
 use Opis\JsonSchema\Info\SchemaInfo;
+use Opis\JsonSchema\KeywordValidator;
 
-interface KeywordValidatorParser
+abstract class KeywordValidatorParser
 {
+    use KeywordParserTrait;
+
     /**
      * @param SchemaInfo $info
      * @param SchemaParser $parser
      * @param object $shared
      * @return KeywordValidator|null
      */
-    public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?KeywordValidator;
+    abstract public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?KeywordValidator;
 }

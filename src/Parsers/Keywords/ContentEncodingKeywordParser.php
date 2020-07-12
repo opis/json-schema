@@ -21,9 +21,9 @@ use Opis\JsonSchema\Keyword;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Keywords\ContentEncodingKeyword;
 use Opis\JsonSchema\Resolvers\ContentEncodingResolver;
-use Opis\JsonSchema\Parsers\{AbstractKeywordParser, SchemaParser};
+use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser};
 
-class ContentEncodingKeywordParser extends AbstractKeywordParser
+class ContentEncodingKeywordParser extends KeywordParser
 {
     /**
      * @inheritDoc
