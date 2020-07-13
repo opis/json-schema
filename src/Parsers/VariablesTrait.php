@@ -17,7 +17,8 @@
 
 namespace Opis\JsonSchema\Parsers;
 
-use Opis\JsonSchema\Variables\{Variables, VariablesContainer};
+use Opis\JsonSchema\Variables;
+use Opis\JsonSchema\Variables\{VariablesContainer};
 
 trait VariablesTrait
 {

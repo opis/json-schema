@@ -20,7 +20,7 @@ namespace Opis\JsonSchema\Schemas;
 use Opis\JsonSchema\{Uri, Schema, UriTemplate, ValidationContext, JsonPointer};
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\SchemaLoader;
-use Opis\JsonSchema\Variables\Variables;
+use Opis\JsonSchema\Variables;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\UnresolvedRefException;
 

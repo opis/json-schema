@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema\Parsers\Keywords;
 
 use Opis\JsonSchema\Keywords\RefKeyword;
-use Opis\JsonSchema\Variables\Variables;
+use Opis\JsonSchema\Variables;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri, UriTemplate};
 use Opis\JsonSchema\Schemas\{PointerRefSchema, TemplateRefSchema, UriRefSchema};

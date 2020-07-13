@@ -19,7 +19,7 @@ namespace Opis\JsonSchema\Schemas;
 
 use Opis\JsonSchema\{ValidationContext, Schema, SchemaLoader, JsonPointer, Uri};
 use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\Variables\Variables;
+use Opis\JsonSchema\Variables;
 
 abstract class AbstractRefSchema extends AbstractSchema
 {

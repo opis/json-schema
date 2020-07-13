@@ -18,6 +18,7 @@
 namespace Opis\JsonSchema\Variables;
 
 use Opis\JsonSchema\JsonPointer;
+use Opis\JsonSchema\Variables;
 
 final class RefVariablesContainer implements Variables
 {

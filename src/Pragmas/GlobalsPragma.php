@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema\Pragmas;
 
 use Opis\JsonSchema\{ValidationContext, Pragma};
-use Opis\JsonSchema\Variables\Variables;
+use Opis\JsonSchema\Variables;
 
 class GlobalsPragma implements Pragma
 {
