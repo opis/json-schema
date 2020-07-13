@@ -18,10 +18,10 @@
 namespace Opis\JsonSchema\Parsers;
 
 use Opis\JsonSchema\Resolvers\{
-    DefaultFilterResolver,
-    DefaultFormatResolver,
-    DefaultContentMediaTypeResolver,
-    DefaultContentEncodingResolver
+    FilterResolver,
+    FormatResolver,
+    ContentMediaTypeResolver,
+    ContentEncodingResolver
 };
 use Opis\JsonSchema\Parsers\Drafts\{Draft06, Draft07};
 
@@ -39,19 +39,19 @@ class SchemaParser extends BaseSchemaParser
     )
     {
         if (!array_key_exists('format', $resolvers)) {
-            $resolvers['format'] = new DefaultFormatResolver();
+            $resolvers['format'] = new FormatResolver();
         }
 
         if (!array_key_exists('contentEncoding', $resolvers)) {
-            $resolvers['contentEncoding'] = new DefaultContentEncodingResolver();
+            $resolvers['contentEncoding'] = new ContentEncodingResolver();
         }
 
         if (!array_key_exists('contentMediaType', $resolvers)) {
-            $resolvers['contentMediaType'] = new DefaultContentMediaTypeResolver();
+            $resolvers['contentMediaType'] = new ContentMediaTypeResolver();
         }
 
         if (!array_key_exists('$filters', $resolvers)) {
-            $resolvers['$filters'] = new DefaultFilterResolver();
+            $resolvers['$filters'] = new FilterResolver();
         }
 
         parent::__construct($this->getDrafts($extraVocabulary ?? new DefaultVocabulary()), $resolvers, $options);

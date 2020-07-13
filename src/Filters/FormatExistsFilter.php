@@ -40,8 +40,8 @@ class FormatExistsFilter implements Filter
             $type = $args['type'];
         }
 
-        /** @var FormatResolver $resolver */
-        $resolver = $context->loader()->parser()->resolver('format', FormatResolver::class);
+        $resolver = $context->loader()->parser()->getFormatResolver();
+
         if (!$resolver) {
             return false;
         }

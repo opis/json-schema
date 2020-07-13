@@ -19,7 +19,7 @@ namespace Opis\JsonSchema\Test;
 
 use Opis\JsonSchema\{Schema, Uri, Validator, SchemaLoader};
 use Opis\JsonSchema\Parsers\SchemaParser;
-use Opis\JsonSchema\Resolvers\DefaultSchemaResolver;
+use Opis\JsonSchema\Resolvers\SchemaResolver;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\SchemaException;
 use PHPUnit\Framework\TestCase;
@@ -34,7 +34,7 @@ abstract class AbstractOfficialDraftTest extends TestCase
      */
     public static function setUpBeforeClass(): void
     {
-        $resolver = new DefaultSchemaResolver();
+        $resolver = new SchemaResolver();
 
         $resolver->registerFile('http://json-schema.org/draft-06/schema#', __DIR__ . '/official/drafts/draft6.json');
         $resolver->registerFile('http://json-schema.org/draft-07/schema#', __DIR__ . '/official/drafts/draft7.json');

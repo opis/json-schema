@@ -40,7 +40,7 @@ class ContentMediaTypeKeywordParser extends KeywordParser
     {
         $schema = $info->data();
 
-        $resolver = $parser->resolver($this->keyword, ContentMediaTypeResolver::class);
+        $resolver = $parser->getMediaTypeResolver();
 
         if (!$resolver || !$this->keywordExists($schema)) {
             return null;

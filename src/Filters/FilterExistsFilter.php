@@ -40,8 +40,8 @@ class FilterExistsFilter implements Filter
             $type = $args['type'];
         }
 
-        /** @var FilterResolver $resolver */
-        $resolver = $context->loader()->parser()->resolver('$filters', FilterResolver::class);
+        $resolver = $context->loader()->parser()->getFilterResolver();
+
         if (!$resolver) {
             return false;
         }

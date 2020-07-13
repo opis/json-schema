@@ -40,7 +40,7 @@ class ContentEncodingKeywordParser extends KeywordParser
     {
         $schema = $info->data();
 
-        $resolver = $parser->resolver($this->keyword, ContentEncodingResolver::class);
+        $resolver = $parser->getContentEncodingResolver();
 
         if (!$resolver || !$this->keywordExists($schema)) {
             return null;

@@ -48,7 +48,7 @@ class FiltersKeywordParser extends KeywordParser
             return null;
         }
 
-        $resolver = $parser->resolver($this->keyword, FilterResolver::class);
+        $resolver = $parser->getFilterResolver();
 
         if (!$resolver || !$this->keywordExists($schema)) {
             return null;

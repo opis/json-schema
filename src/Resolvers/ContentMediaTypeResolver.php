@@ -17,13 +17,128 @@
 
 namespace Opis\JsonSchema\Resolvers;
 
+use finfo;
 use Opis\JsonSchema\ContentMediaType;
 
-interface ContentMediaTypeResolver
+class ContentMediaTypeResolver
 {
+    /** @var callable[]|ContentMediaType[] */
+    protected array $media;
+
+    /** @var callable|null|ContentMediaType */
+    protected $defaultMedia = null;
+
+    /**
+     * @param callable[]|ContentMediaType[] $media
+     * @param callable|ContentMediaType|null $defaultMedia
+     */
+    public function __construct(array $media = [], $defaultMedia = null)
+    {
+        $media += [
+            'application/json' => self::class . '::IsJsonEncoded',
+        ];
+
+        $this->media = $media;
+        $this->defaultMedia = $defaultMedia ?? self::class . '::IsEncodedAsType';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function resolve(string $name)
+    {
+        return $this->media[$name] ?? $this->defaultMedia;
+    }
+
     /**
      * @param string $name
-     * @return callable|ContentMediaType|null
+     * @param ContentMediaType $media
+     * @return ContentMediaTypeResolver
      */
-    public function resolve(string $name);
+    public function register(string $name, ContentMediaType $media): self
+    {
+        $this->media[$name] = $media;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @param callable $media
+     * @return ContentMediaTypeResolver
+     */
+    public function registerCallable(string $name, callable $media): self
+    {
+        $this->media[$name] = $media;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return bool
+     */
+    public function unregister(string $name): bool
+    {
+        if (isset($this->media[$name])) {
+            unset($this->media[$name]);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * @param callable|ContentMediaType|null $handler
+     * @return ContentMediaTypeResolver
+     */
+    public function setDefaultHandler($handler): self
+    {
+        $this->defaultMedia = $handler;
+
+        return $this;
+    }
+
+    public function __serialize(): array
+    {
+        return [
+            'media' => $this->media,
+            'defaultMedia' => $this->defaultMedia,
+        ];
+    }
+
+    public function __unserialize(array $data): void
+    {
+        $this->media = $data['media'];
+        $this->defaultMedia = $data['defaultMedia'];
+    }
+
+    public static function IsJsonEncoded(string $value,
+        /** @noinspection PhpUnusedParameterInspection */ string $type): bool
+    {
+        json_decode($value);
+
+        return json_last_error() === JSON_ERROR_NONE;
+    }
+
+    public static function IsEncodedAsType(string $value, string $type): bool
+    {
+        /** @var finfo|null|bool $finfo */
+        static $finfo = false;
+
+        if ($finfo === false) {
+            if (!class_exists(finfo::class)) {
+                $finfo = null;
+                return false;
+            }
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+        } elseif (!$finfo) {
+            return false;
+        }
+
+        $r = $finfo->buffer($value);
+
+        return $r == $type || $r == 'application/x-empty';
+    }
 }

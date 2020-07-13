@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema\Test;
 
 use Opis\JsonSchema\Parsers\SchemaParser;
-use Opis\JsonSchema\Resolvers\DefaultFilterResolver;
+use Opis\JsonSchema\Resolvers\FilterResolver;
 
 class FiltersTest extends AbstractTest
 {
@@ -31,7 +31,7 @@ class FiltersTest extends AbstractTest
 
         /** @var SchemaParser $parser */
         $parser = self::$validator->parser();
-        /** @var DefaultFilterResolver $filters */
+        /** @var FilterResolver $filters */
         $filters = $parser->getFilterResolver();
 
         $filters->registerCallable('string', 'oddLen', function (string $value): bool {

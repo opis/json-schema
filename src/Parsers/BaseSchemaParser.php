@@ -112,38 +112,9 @@ abstract class BaseSchemaParser
     }
 
     /**
-     * @param array $options
-     * @return SchemaParser
-     */
-    public function setOptions(array $options): self
-    {
-        $this->options = $options + $this->options;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function resolver(string $name, ?string $class = null)
-    {
-        $resolver = $this->resolvers[$name] ?? null;
-        if (!is_object($resolver)) {
-            return null;
-        }
-
-        if ($class !== null) {
-            if (!is_subclass_of($resolver, $class, true)) {
-                return null;
-            }
-        }
-
-        return $resolver;
-    }
-
-    /**
-     * @inheritDoc
-     * @return self
+     * @param string $name
+     * @param $resolver
+     * @return $this
      */
     public function setResolver(string $name, $resolver): self
     {
@@ -157,7 +128,7 @@ abstract class BaseSchemaParser
      */
     public function getFilterResolver(): ?FilterResolver
     {
-        return $this->resolver('$filters', FilterResolver::class);
+        return $this->getResolver('$filters');
     }
 
     /**
@@ -174,7 +145,7 @@ abstract class BaseSchemaParser
      */
     public function getFormatResolver(): ?FormatResolver
     {
-        return $this->resolver('format', FormatResolver::class);
+        return $this->getResolver('format');
     }
 
     /**
@@ -191,7 +162,7 @@ abstract class BaseSchemaParser
      */
     public function getContentEncodingResolver(): ?ContentEncodingResolver
     {
-        return $this->resolver('contentEncoding', ContentEncodingResolver::class);
+        return $this->getResolver('contentEncoding');
     }
 
     /**
@@ -208,7 +179,7 @@ abstract class BaseSchemaParser
      */
     public function getMediaTypeResolver(): ?ContentMediaTypeResolver
     {
-        return $this->resolver('contentMediaType', ContentMediaTypeResolver::class);
+        return $this->getResolver('contentMediaType');
     }
 
     /**
@@ -348,6 +319,50 @@ abstract class BaseSchemaParser
         } catch (SchemaException $exception) {
             return new ExceptionSchema($info, $exception);
         }
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function draft(string $version): ?Draft
+    {
+        return $this->drafts[$version] ?? null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function addDraft(Draft $draft): SchemaParser
+    {
+        $this->drafts[$draft->version()] = $draft;
+
+        return $this;
+    }
+
+    /**
+     * @param array $options
+     * @return SchemaParser
+     */
+    protected function setOptions(array $options): self
+    {
+        $this->options = $options + $this->options;
+
+        return $this;
+    }
+
+    /**
+     * @param string $name
+     * @return mixed|null
+     */
+    protected function getResolver(string $name)
+    {
+        $resolver = $this->resolvers[$name] ?? null;
+
+        if (!is_object($resolver)) {
+            return null;
+        }
+
+        return $resolver;
     }
 
     /**
@@ -513,23 +528,5 @@ abstract class BaseSchemaParser
         }
 
         return new ObjectSchema($info, $keywordValidator, $types, $before, $after);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function draft(string $version): ?Draft
-    {
-        return $this->drafts[$version] ?? null;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function addDraft(Draft $draft): SchemaParser
-    {
-        $this->drafts[$draft->version()] = $draft;
-
-        return $this;
     }
 }
