@@ -20,35 +20,95 @@ namespace Opis\JsonSchema\Errors;
 use Opis\JsonSchema\Schema;
 use Opis\JsonSchema\Info\DataInfo;
 
-interface ValidationError
+class ValidationError
 {
-    /**
-     * @return string
-     */
-    public function keyword(): string;
+    protected string $keyword;
+
+    protected Schema $schema;
+
+    protected DataInfo $data;
+
+    protected array $args;
+
+    protected string $message;
+
+    /** @var ValidationError[] */
+    protected array $subErrors;
 
     /**
-     * @return Schema
+     * @param string $keyword
+     * @param Schema $schema
+     * @param DataInfo $data
+     * @param string $message
+     * @param array $args
+     * @param ValidationError[] $subErrors
      */
-    public function schema(): Schema;
+    public function __construct(
+        string $keyword,
+        Schema $schema,
+        DataInfo $data,
+        string $message,
+        array $args = [],
+        array $subErrors = []
+    ) {
+        $this->keyword = $keyword;
+        $this->schema = $schema;
+        $this->data = $data;
+        $this->message = $message;
+        $this->args = $args;
+        $this->subErrors = $subErrors;
+    }
 
     /**
-     * @return DataInfo
+     * @inheritDoc
      */
-    public function data(): DataInfo;
+    public function keyword(): string
+    {
+        return $this->keyword;
+    }
 
     /**
-     * @return array
+     * @inheritDoc
      */
-    public function args(): array;
+    public function schema(): Schema
+    {
+        return $this->schema;
+    }
 
     /**
-     * @return string
+     * @inheritDoc
      */
-    public function message(): string;
+    public function data(): DataInfo
+    {
+        return $this->data;
+    }
 
     /**
-     * @return ValidationError[]
+     * @inheritDoc
      */
-    public function subErrors(): array;
+    public function args(): array
+    {
+        return $this->args;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function message(): string
+    {
+        return $this->message;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function subErrors(): array
+    {
+        return $this->subErrors;
+    }
+
+    public function __toString(): string
+    {
+        return $this->message;
+    }
 }

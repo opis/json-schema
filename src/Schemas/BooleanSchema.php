@@ -19,7 +19,7 @@ namespace Opis\JsonSchema\Schemas;
 
 use Opis\JsonSchema\ValidationContext;
 use Opis\JsonSchema\Info\{DataInfo, SchemaInfo};
-use Opis\JsonSchema\Errors\{DefaultValidationError, ValidationError};
+use Opis\JsonSchema\Errors\ValidationError;
 
 final class BooleanSchema extends AbstractSchema
 {
@@ -44,6 +44,6 @@ final class BooleanSchema extends AbstractSchema
             return null;
         }
 
-        return new DefaultValidationError('', $this, DataInfo::fromContext($context), 'Data not allowed');
+        return new ValidationError('', $this, DataInfo::fromContext($context), 'Data not allowed');
     }
 }

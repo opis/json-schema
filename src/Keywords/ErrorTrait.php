@@ -19,7 +19,7 @@ namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\Info\DataInfo;
 use Opis\JsonSchema\{ValidationContext, Schema};
-use Opis\JsonSchema\Errors\{ErrorContainer, ValidationError, DefaultValidationError};
+use Opis\JsonSchema\Errors\{ErrorContainer, ValidationError};
 
 trait ErrorTrait
 {
@@ -49,7 +49,7 @@ trait ErrorTrait
             }
         }
 
-        return new DefaultValidationError($keyword, $schema, DataInfo::fromContext($context), $message, $args,
+        return new ValidationError($keyword, $schema, DataInfo::fromContext($context), $message, $args,
             is_array($errors) ? $errors : []);
     }
 }
