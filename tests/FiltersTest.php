@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Test;
 
-use Opis\JsonSchema\Parsers\DefaultSchemaParser;
+use Opis\JsonSchema\Parsers\SchemaParser;
 use Opis\JsonSchema\Resolvers\DefaultFilterResolver;
 
 class FiltersTest extends AbstractTest
@@ -29,7 +29,7 @@ class FiltersTest extends AbstractTest
     {
         parent::setUpBeforeClass();
 
-        /** @var DefaultSchemaParser $parser */
+        /** @var SchemaParser $parser */
         $parser = self::$validator->parser();
         /** @var DefaultFilterResolver $filters */
         $filters = $parser->getFilterResolver();

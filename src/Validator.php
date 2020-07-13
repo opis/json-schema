@@ -20,7 +20,7 @@ namespace Opis\JsonSchema;
 use InvalidArgumentException;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Resolvers\{SchemaResolver};
-use Opis\JsonSchema\Parsers\{SchemaParser, DefaultSchemaParser};
+use Opis\JsonSchema\Parsers\SchemaParser;
 
 class Validator
 {
@@ -35,7 +35,7 @@ class Validator
      */
     public function __construct(?SchemaLoader $loader = null, int $max_errors = 1)
     {
-        $this->loader = $loader ?? new SchemaLoader(new DefaultSchemaParser());
+        $this->loader = $loader ?? new SchemaLoader(new SchemaParser());
         $this->maxErrors = $max_errors;
     }
 

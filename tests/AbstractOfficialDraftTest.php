@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema\Test;
 
 use Opis\JsonSchema\{Schema, Uri, Validator, SchemaLoader};
-use Opis\JsonSchema\Parsers\DefaultSchemaParser;
+use Opis\JsonSchema\Parsers\SchemaParser;
 use Opis\JsonSchema\Resolvers\DefaultSchemaResolver;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\SchemaException;
@@ -40,7 +40,7 @@ abstract class AbstractOfficialDraftTest extends TestCase
         $resolver->registerFile('http://json-schema.org/draft-07/schema#', __DIR__ . '/official/drafts/draft7.json');
         $resolver->registerPrefix('http://localhost:1234/', __DIR__ . '/official/remotes');
 
-        self::$validator = new Validator(new SchemaLoader(new DefaultSchemaParser(), $resolver));
+        self::$validator = new Validator(new SchemaLoader(new SchemaParser(), $resolver));
     }
 
     /**

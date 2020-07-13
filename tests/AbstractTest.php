@@ -21,7 +21,7 @@ use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\SchemaException;
 use Opis\JsonSchema\Resolvers\DefaultSchemaResolver;
 use Opis\JsonSchema\{Validator, SchemaLoader};
-use Opis\JsonSchema\Parsers\{Vocabulary, DefaultSchemaParser};
+use Opis\JsonSchema\Parsers\{Vocabulary, SchemaParser};
 use PHPUnit\Framework\TestCase;
 use Throwable;
 
@@ -38,7 +38,7 @@ abstract class AbstractTest extends TestCase
         $resolver = new DefaultSchemaResolver();
         $resolver->registerProtocolDir('file', '', __DIR__ . '/schemas');
 
-        $parser = new DefaultSchemaParser(static::parserResolvers(), static::parserOptions(), static::parserVocabulary());
+        $parser = new SchemaParser(static::parserResolvers(), static::parserOptions(), static::parserVocabulary());
 
         self::$validator = new Validator(new SchemaLoader($parser, $resolver));
     }
