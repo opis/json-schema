@@ -79,7 +79,11 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @param $data
+     * @param array|null $globals
+     * @param array|null $slots
+     * @param int|null $max_errors
+     * @return ValidationContext
      */
     public function newInstance($data, ?array $globals = null, ?array $slots = null, ?int $max_errors = null): ValidationContext
     {
@@ -88,7 +92,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return ValidationContext|null
      */
     public function parent(): ?ValidationContext
     {
@@ -96,7 +100,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return SchemaLoader
      */
     public function loader(): SchemaLoader
     {
@@ -104,7 +108,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return mixed
      */
     public function rootData()
     {
@@ -112,7 +116,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return mixed
      */
     public function currentData()
     {
@@ -120,7 +124,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @param $value
      */
     public function setCurrentData($value): void
     {
@@ -129,7 +133,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return string|null
      */
     public function currentDataType(): ?string
     {
@@ -143,7 +147,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return int[]|string[]
      */
     public function currentDataPath(): array
     {
@@ -151,7 +155,8 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @param string|int $key
+     * @return $this
      */
     public function pushDataPath($key): ValidationContext
     {
@@ -174,7 +179,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return $this
      */
     public function popDataPath(): ValidationContext
     {
@@ -190,7 +195,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return array
      */
     public function globals(): array
     {
@@ -198,7 +203,9 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @param array $globals
+     * @param bool $overwrite
+     * @return $this
      */
     public function setGlobals(array $globals, bool $overwrite = false): ValidationContext
     {
@@ -212,7 +219,8 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @param object|null $object
+     * @return $this
      */
     public function pushSharedObject(?object $object = null): ValidationContext
     {
@@ -223,7 +231,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return $this
      */
     public function popSharedObject(): ValidationContext
     {
@@ -236,7 +244,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return object|null
      */
     public function sharedObject(): ?object
     {
@@ -253,7 +261,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return object[]|Schema[]|string[]|null
      */
     public function slots(): ?array
     {
@@ -261,7 +269,8 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @param array|null $slots
+     * @return $this
      */
     public function setSlots(?array $slots): ValidationContext
     {
@@ -299,7 +308,8 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @return Schema|null
      */
     public function slot(string $name): ?Schema
     {
@@ -307,7 +317,7 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @return int
      */
     public function maxErrors(): int
     {
@@ -315,7 +325,8 @@ class ValidationContext
     }
 
     /**
-     * @inheritDoc
+     * @param int $max
+     * @return $this
      */
     public function setMaxErrors(int $max): ValidationContext
     {

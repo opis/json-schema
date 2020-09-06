@@ -132,7 +132,7 @@ final class VariablesContainer implements Variables
      * @param object $data
      * @return null|Variables
      */
-    private function parseRef($data): ?Variables
+    private function parseRef(object $data): ?Variables
     {
         if (!property_exists($data, $this->keys['ref'])) {
             return null;

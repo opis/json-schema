@@ -57,7 +57,6 @@ class AllOfKeywordParser extends KeywordParser
         foreach ($value as $index => $item) {
             if ($item === false) {
                 throw $this->keywordException("{keyword} contains false schema", $info);
-                continue;
             }
             if ($item === true) {
                 continue;

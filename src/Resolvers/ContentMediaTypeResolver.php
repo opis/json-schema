@@ -43,7 +43,8 @@ class ContentMediaTypeResolver
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @return callable|ContentMediaType|string|null
      */
     public function resolve(string $name)
     {

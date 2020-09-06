@@ -134,15 +134,6 @@ REGEX;
                 continue;
             }
 
-            $resolved = [];
-            foreach ($item['vars'] as $name => $info) {
-                if (!isset($vars[$name])) {
-                    continue;
-                }
-                $resolved[$name] = is_scalar($vars[$name])
-                    ? (string)$vars[$name] : $vars[$name];
-            }
-
             $data .= $this->parseTemplateExpression(
                 self::TEMPLATE_TABLE[$item['operator']],
                 $this->resolveVars($item['vars'], $vars),
@@ -267,14 +258,14 @@ REGEX;
     protected function resolveVars(array $vars, array $data): array
     {
         $resolved = [];
+
         foreach ($vars as $name => $info) {
             if (!isset($data[$name])) {
                 continue;
             }
-            $resolved[$name] = $info + [
-                    'value' => is_scalar($data[$name]) ? (string)$data[$name]
-                        : $data[$name],
-                ];
+
+            $resolved[$name] = $info;
+            $resolved[$name]['value'] = is_scalar($data[$name]) ? (string)$data[$name] : $data[$name];
         }
 
         return $resolved;

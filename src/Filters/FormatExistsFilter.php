@@ -18,7 +18,6 @@
 namespace Opis\JsonSchema\Filters;
 
 use Opis\JsonSchema\{ValidationContext, Filter, Schema};
-use Opis\JsonSchema\Resolvers\FormatResolver;
 
 class FormatExistsFilter implements Filter
 {

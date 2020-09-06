@@ -37,7 +37,8 @@ class SchemaResolver
     protected array $dirs = [];
 
     /**
-     * @inheritDoc
+     * @param Uri $uri
+     * @return bool|mixed|object|null
      */
     public function resolve(Uri $uri)
     {

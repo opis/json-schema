@@ -46,8 +46,6 @@ class PatternDataKeyword extends PatternKeyword
             ]);
         }
 
-        /** @var string $pattern */
-
         $this->pattern = $pattern;
         $this->regex = Helper::patternToRegex($pattern);
         $ret = parent::validate($context, $schema);

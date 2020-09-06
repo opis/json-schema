@@ -119,8 +119,8 @@ class Validator
 
     /**
      * @param $data
-     * @param array $globals
-     * @param array $slots
+     * @param array|null $globals
+     * @param array|null $slots
      * @return ValidationContext
      */
     public function createContext($data, ?array $globals = null, ?array $slots = null): ValidationContext

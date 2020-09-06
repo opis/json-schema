@@ -61,49 +61,31 @@ class SchemaInfo
         $this->draft = $draft;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function id(): ?Uri
     {
         return $this->id;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function root(): ?Uri
     {
        return $this->root;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function base(): ?Uri
     {
         return $this->base;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function draft(): ?string
     {
         return $this->draft;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function data()
     {
         return $this->data;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function path(): array
     {
         return $this->path;

@@ -39,7 +39,8 @@ class ContentEncodingResolver
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @return callable|ContentEncoding|string|null
      */
     public function resolve(string $name)
     {

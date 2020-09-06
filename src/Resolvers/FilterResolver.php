@@ -58,7 +58,9 @@ class FilterResolver
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @param string $type
+     * @return Filter|callable|null
      */
     public function resolve(string $name, string $type)
     {
@@ -78,7 +80,8 @@ class FilterResolver
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @return Filter[]|callable[]|null
      */
     public function resolveAll(string $name): ?array
     {

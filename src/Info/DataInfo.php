@@ -54,48 +54,36 @@ class DataInfo
         $this->parent = $parent;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function value()
     {
         return $this->value;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function type(): ?string
     {
         return $this->type;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function root()
     {
         return $this->root;
     }
 
     /**
-     * @inheritDoc
+     * @return int[]|string[]
      */
     public function path(): array
     {
         return $this->path;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function parent(): ?DataInfo
     {
         return $this->parent;
     }
 
     /**
-     * @inheritDoc
+     * @return int[]|string[]
      */
     public function fullPath(): array
     {
@@ -112,7 +100,7 @@ class DataInfo
 
     /**
      * @param ValidationContext $context
-     * @return DataInfo
+     * @return static
      */
     public static function fromContext(ValidationContext $context): self
     {

@@ -63,7 +63,9 @@ class FormatResolver
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @param string $type
+     * @return callable|Format|null
      */
     public function resolve(string $name, string $type)
     {
@@ -71,7 +73,8 @@ class FormatResolver
     }
 
     /**
-     * @inheritDoc
+     * @param string $name
+     * @return Format[]|callable[]|null
      */
     public function resolveAll(string $name): ?array
     {

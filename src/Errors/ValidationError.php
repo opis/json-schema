@@ -59,49 +59,31 @@ class ValidationError
         $this->subErrors = $subErrors;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function keyword(): string
     {
         return $this->keyword;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function schema(): Schema
     {
         return $this->schema;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function data(): DataInfo
     {
         return $this->data;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function args(): array
     {
         return $this->args;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function message(): string
     {
         return $this->message;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function subErrors(): array
     {
         return $this->subErrors;

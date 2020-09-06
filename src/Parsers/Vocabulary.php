@@ -41,7 +41,7 @@ abstract class Vocabulary
     }
 
     /**
-     * @inheritDoc
+     * @return KeywordParser[]
      */
     public function keywords(): array
     {
@@ -49,7 +49,7 @@ abstract class Vocabulary
     }
 
     /**
-     * @inheritDoc
+     * @return KeywordValidatorParser[]
      */
     public function keywordValidators(): array
     {
@@ -57,7 +57,7 @@ abstract class Vocabulary
     }
 
     /**
-     * @inheritDoc
+     * @return PragmaParser[]
      */
     public function pragmas(): array
     {

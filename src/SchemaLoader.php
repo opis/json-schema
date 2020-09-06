@@ -52,52 +52,35 @@ class SchemaLoader
         $this->decodeJsonString = $decodeJsonString;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function baseUri(): ?Uri
     {
         return $this->base;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setBaseUri(?Uri $uri): SchemaLoader
+    public function setBaseUri(?Uri $uri): self
     {
         $this->base = $uri;
+        return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function parser(): SchemaParser
     {
         return $this->parser;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setParser(SchemaParser $parser): SchemaLoader
+    public function setParser(SchemaParser $parser): self
     {
         $this->parser = $parser;
 
         return $this;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function resolver(): ?SchemaResolver
     {
         return $this->resolver;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function setResolver(?SchemaResolver $resolver): SchemaLoader
+    public function setResolver(?SchemaResolver $resolver): self
     {
         $this->resolver = $resolver;
 
@@ -105,7 +88,10 @@ class SchemaLoader
     }
 
     /**
-     * @inheritdoc
+     * @param object $data
+     * @param null $id
+     * @param string|null $draft
+     * @return Schema
      */
     public function loadObjectSchema(object $data, $id = null, ?string $draft = null): Schema
     {
@@ -130,7 +116,10 @@ class SchemaLoader
     }
 
     /**
-     * @inheritDoc
+     * @param bool $data
+     * @param null $id
+     * @param string|null $draft
+     * @return Schema
      */
     public function loadBooleanSchema(bool $data, $id = null, ?string $draft = null): Schema
     {
@@ -142,7 +131,8 @@ class SchemaLoader
     }
 
     /**
-     * @inheritDoc
+     * @param Uri $uri
+     * @return Schema|null
      */
     public function loadSchemaById(Uri $uri): ?Schema
     {
