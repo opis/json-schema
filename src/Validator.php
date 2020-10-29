@@ -405,6 +405,23 @@ class Validator implements IValidator
             unset($pointer);
         }
 
+        // Check if we can find the fragment through the loader
+        if ($this->loader !== null) {
+            $fragmentDocument = $this->loader->loadSchema($ref);
+            if ($fragmentDocument) {
+                if (!$map_used) {
+                    unset($document_data);
+                    $document_data = &$data;
+                    if ($data_pointer) {
+                        $parent_data_pointer = array_merge($parent_data_pointer, $data_pointer);
+                        $data_pointer = [];
+                    }
+                }
+
+                return $this->validateSchema($document_data, $data, $data_pointer, $parent_data_pointer, $fragmentDocument, $fragmentDocument->resolve(), $bag);
+            }
+        }
+
         // Merge uris
         $ref = URI::merge($ref, $schema->{Schema::BASE_ID_PROP} ?? '', true);
 
