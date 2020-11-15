@@ -46,6 +46,11 @@ class SchemaResolver
             return null;
         }
 
+        $scheme = $uri->scheme();
+        if (isset($this->protocols[$scheme])) {
+            return ($this->protocols[$scheme])($uri);
+        }
+
         $id = (string) $uri;
         if (isset($this->raw[$id])) {
             return $this->raw[$id];
@@ -313,10 +318,6 @@ class SchemaResolver
                 return $this->dirs[$scheme][$host] . DIRECTORY_SEPARATOR . ltrim($uri->path(), DIRECTORY_SEPARATOR);
             }
             unset($host);
-        }
-
-        if (isset($this->protocols[$scheme])) {
-            return ($this->protocols[$scheme])($uri);
         }
 
         $path = null;
