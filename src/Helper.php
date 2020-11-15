@@ -69,13 +69,7 @@ final class Helper
         if ($type === null) {
             return null;
         } elseif ($type === 'array') {
-            for ($i = 0, $max = count($value); $i < $max; $i++) {
-                if (!array_key_exists($i, $value)) {
-                    return null;
-                }
-            }
-
-            return 'array';
+            return self::isIndexedArray($value) ? 'array' : null;
         }
 
         if ($use_subtypes) {
@@ -134,6 +128,43 @@ final class Helper
         }
 
         return self::jsonTypeMatches($t, $type);
+    }
+
+    /**
+     * @param array $array
+     * @return bool
+     */
+    public static function isIndexedArray(array $array): bool
+    {
+        for ($i = 0, $max = count($array); $i < $max; $i++) {
+            if (!array_key_exists($i, $array)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Converts assoc-arrays to objects (recursive)
+     * @param $schema
+     * @return mixed
+     */
+    public static function convertAssocArrayToObject($schema)
+    {
+        if (is_null($schema) || is_scalar($schema)) {
+            return $schema;
+        }
+
+        $keepArray = is_array($schema) && self::isIndexedArray($schema);
+
+        $data = [];
+
+        foreach ($schema as $key => $value) {
+            $data[$key] = is_array($value) || is_object($value) ? self::convertAssocArrayToObject($schema) : $value;
+        }
+
+        return $keepArray ? $data : (object) $data;
     }
 
     /**
