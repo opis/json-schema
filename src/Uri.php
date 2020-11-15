@@ -22,6 +22,20 @@ use Opis\Utils\Uri as BaseUri;
 class Uri extends BaseUri
 {
     /**
+     * @var bool Set this to true and the qs will always be sorted
+     */
+    protected static bool $normalizeQueryString = false;
+
+    public function __construct(array $components)
+    {
+        if (static::$normalizeQueryString && isset($components['query']) && $components['query'] !== '') {
+            $components['query'] = static::normalizeQueryString($components['query']);
+        }
+
+        parent::__construct($components);
+    }
+
+    /**
      * @param string $uri
      * @param bool $ensure_fragment
      * @return static|null
@@ -60,5 +74,13 @@ class Uri extends BaseUri
         }
 
         return new self(self::mergeComponents($uri, $base));
+    }
+
+    /**
+     * @param bool $value
+     */
+    public static function useNormalizedQueryString(bool $value): void
+    {
+        self::$normalizeQueryString = $value;
     }
 }
