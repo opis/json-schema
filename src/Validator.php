@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema;
 
-use InvalidArgumentException;
+use InvalidArgumentException, RuntimeException;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Resolvers\{SchemaResolver};
 use Opis\JsonSchema\Parsers\SchemaParser;
@@ -56,7 +56,15 @@ class Validator
             throw new InvalidArgumentException("Invalid uri");
         }
 
-        $schema = $this->loader->loadSchemaById(Uri::parse($uri, true));
+        if ($uri->fragment() === null) {
+            $uri = Uri::merge($uri, null, true);
+        }
+
+        $schema = $this->loader->loadSchemaById($uri);
+
+        if ($schema === null) {
+            throw new RuntimeException("Schema not found: $uri");
+        }
 
         return $this->schemaValidation($data, $schema, $globals, $slots);
     }
