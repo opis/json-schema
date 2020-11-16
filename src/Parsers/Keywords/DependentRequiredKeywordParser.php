@@ -19,17 +19,17 @@ namespace Opis\JsonSchema\Parsers\Keywords;
 
 use Opis\JsonSchema\Keyword;
 use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\Keywords\ContentSchemaKeyword;
+use Opis\JsonSchema\Keywords\DependentRequiredKeyword;
 use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser};
 
-class ContentSchemaKeywordParser extends KeywordParser
+class DependentRequiredKeywordParser extends KeywordParser
 {
     /**
      * @inheritDoc
      */
     public function type(): string
     {
-        return self::TYPE_STRING;
+        return self::TYPE_OBJECT;
     }
 
     /**
@@ -44,11 +44,27 @@ class ContentSchemaKeywordParser extends KeywordParser
         }
 
         $value = $this->keywordValue($schema);
-
         if (!is_object($value)) {
-            throw $this->keywordException("{keyword} must be a valid json schema object", $info);
+            throw $this->keywordException("{keyword} must be an object", $info);
         }
 
-        return new ContentSchemaKeyword($value);
+        $list = [];
+        foreach ($value as $name => $s) {
+            if (!is_array($s)) {
+                throw $this->keywordException("{keyword} must be an object containing json schemas or arrays of property names", $info);
+            }
+            if (!$s) {
+                // Empty array
+                continue;
+            }
+            foreach ($s as $p) {
+                if (!is_string($p)) {
+                    throw $this->keywordException("{keyword} must be an object containing arrays of property names", $info);
+                }
+            }
+            $list[$name] = array_unique($s);
+        }
+
+        return $list ? new DependentRequiredKeyword($list) : null;
     }
 }

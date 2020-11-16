@@ -29,7 +29,7 @@ use Opis\JsonSchema\Resolvers\{
     ContentMediaTypeResolver,
     ContentEncodingResolver
 };
-use Opis\JsonSchema\Parsers\Drafts\{Draft06, Draft07};
+use Opis\JsonSchema\Parsers\Drafts\{Draft06, Draft07, Draft201909};
 use Opis\JsonSchema\Exceptions\{ParseException, SchemaException};
 use Opis\JsonSchema\Info\SchemaInfo;
 
@@ -41,19 +41,19 @@ class SchemaParser
     /** @var array */
     protected const DEFAULT_OPTIONS = [
         'allowFilters' => true,
+        'allowFormats' => true,
         'allowMappers' => true,
         'allowTemplates' => true,
         'allowGlobals' => true,
         'allowDefaults' => true,
         'allowSlots' => true,
-        'allowContentSchema' => true,
         'allowKeywordValidators' => true,
         'allowPragmas' => true,
 
-        'allowDataKeyword' => false,
-        'allowKeywordsAlongsideRef' => false,
+        'allowDataKeyword' => true,
+        'allowKeywordsAlongsideRef' => true,
 
-        'defaultDraft' => '07',
+        'defaultDraft' => '2019-09',
 
         'varRefKey' => '$ref',
         'varEachKey' => '$each',
@@ -100,6 +100,7 @@ class SchemaParser
         return [
             '06' => new Draft06($extraVocabulary),
             '07' => new Draft07($extraVocabulary),
+            '2019-09' => new Draft201909($extraVocabulary),
         ];
     }
 
@@ -243,7 +244,7 @@ class SchemaParser
      */
     public function defaultDraftVersion(): string
     {
-        return $this->option('defaultDraft', '07');
+        return $this->option('defaultDraft', '2019-09');
     }
 
     /**

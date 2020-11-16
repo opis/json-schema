@@ -18,7 +18,6 @@
 namespace Opis\JsonSchema\Parsers;
 
 use Opis\JsonSchema\Parsers\Keywords\{
-    ContentSchemaKeywordParser,
     FiltersKeywordParser,
     SlotsKeywordParser
 };
@@ -36,7 +35,6 @@ class DefaultVocabulary extends Vocabulary
     public function __construct(array $keywords = [], array $keywordValidators = [], array $pragmas = [])
     {
         $keywords = array_merge($keywords, [
-            new ContentSchemaKeywordParser('contentSchema'),
             new FiltersKeywordParser('$filters'),
             new SlotsKeywordParser('$slots'),
         ]);

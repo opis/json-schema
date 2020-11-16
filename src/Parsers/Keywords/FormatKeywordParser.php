@@ -44,7 +44,7 @@ class FormatKeywordParser extends KeywordParser
 
         $resolver = $parser->getFormatResolver();
 
-        if (!$resolver || !$this->keywordExists($schema)) {
+        if (!$resolver || !$parser->option('allowFormats') || !$this->keywordExists($schema)) {
             return null;
         }
 
