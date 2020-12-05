@@ -296,6 +296,19 @@ final class JsonPointer
     }
 
     /**
+     * @param array $path
+     * @return string
+     */
+    public static function pathToFragment(array $path): string
+    {
+        if (!$path) {
+            return '#';
+        }
+
+        return '#/' . implode('/', self::encodePath($path));
+    }
+
+    /**
      * @param string $pointer
      * @return bool
      */

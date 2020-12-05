@@ -17,6 +17,7 @@
 
 namespace Opis\JsonSchema\Test;
 
+use Opis\JsonSchema\Helper;
 use stdClass;
 use Opis\JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
@@ -66,6 +67,14 @@ class ErrorFormatterTest extends TestCase
 
         if (property_exists($errors, 'keyed')) {
             $this->assertEquals($errors->keyed, (object)$this->formatter->formatKeyed($result, [$this, 'keyedCallback']));
+        }
+
+        if (property_exists($errors, 'output')) {
+            $this->assertEquals($errors->output, Helper::convertAssocArrayToObject($this->formatter->formatOutput($result, 'detailed')));
+        }
+
+        if (property_exists($errors, 'custom')) {
+            $this->assertEquals($errors->custom, (object)$this->formatter->format($result));
         }
     }
 
