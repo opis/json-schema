@@ -46,7 +46,7 @@ class ContentSchemaKeyword implements Keyword
         if ($error = json_last_error() !== JSON_ERROR_NONE) {
             $message = json_last_error_msg();
 
-            return $this->error($schema, $context, 'contentSchema', "Invalid JSON content: {$message}", [
+            return $this->error($schema, $context, 'contentSchema', "Invalid JSON content: @message", [
                 'error' => $error,
                 'message' => $message,
             ]);

@@ -52,7 +52,7 @@ class DependenciesKeyword implements Keyword
             }
 
             if ($value === false) {
-                return $this->error($schema, $context, 'dependencies', "'{$name}' property is not allowed", [
+                return $this->error($schema, $context, 'dependencies', "Property '@property' is not allowed", [
                     'property' => $name,
                 ]);
             }
@@ -61,7 +61,7 @@ class DependenciesKeyword implements Keyword
                 foreach ($value as $prop) {
                     if (!property_exists($data, $prop)) {
                         return $this->error($schema, $context, 'dependencies',
-                            "'{$prop}' property is required by '{$name}' property", [
+                            "Property '@missing' property is required by property '@property'", [
                                 'property' => $name,
                                 'missing' => $prop,
                             ]);
@@ -77,7 +77,7 @@ class DependenciesKeyword implements Keyword
 
             if ($error = $value->validate($context)) {
                 return $this->error($schema, $context, 'dependencies',
-                    "The object must match dependency schema defined on property '{$name}'", [
+                    "The object must match dependency schema defined on property '@property'", [
                         'property' => $name,
                     ], $error);
             }

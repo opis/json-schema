@@ -43,7 +43,7 @@ class ExclusiveMaximumKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'exclusiveMaximum', "Number must be lower than {$this->number}", [
+        return $this->error($schema, $context, 'exclusiveMaximum', "Number must be lower than @max", [
             'max' => $this->number,
         ]);
     }

@@ -1,0 +1,119 @@
+[
+  {
+    "schema": {
+      "$error": "Should be @const",
+      "const": 1
+    },
+    "tests": [
+      {
+        "data": 0,
+        "errors": {
+          "custom": {
+            "/": ["Should be 1"]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "schema": {
+      "$error": {
+        "type": "Only @expected, not @type",
+        "required": "Missing: @missing",
+        "properties": {
+          "b": "B should be valid"
+        },
+        "*": "Other object error"
+      },
+      "type": "object",
+      "required": ["a", "b"],
+      "properties": {
+        "a": {
+          "$error": "A must be valid",
+          "type": "integer"
+        },
+        "b": {
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "[a-z]": {
+          "type": ["integer", "string"]
+        }
+      }
+    },
+    "tests": [
+      {
+        "data": "abc",
+        "errors": {
+          "custom": {
+            "/": ["Only object, not string"]
+          }
+        }
+      },
+      {
+        "data": {},
+        "maxErrors": 1,
+        "errors": {
+          "custom": {
+            "/": ["Missing: a"]
+          }
+        }
+      },
+      {
+        "data": {},
+        "maxErrors": 2,
+        "errors": {
+          "custom": {
+            "/": ["Missing: a, b"]
+          }
+        }
+      },
+      {
+        "data": {
+          "a": 1
+        },
+        "maxErrors": 2,
+        "errors": {
+          "custom": {
+            "/": ["Missing: b"]
+          }
+        }
+      },
+      {
+        "data": {
+          "a": 1,
+          "b": 2
+        },
+        "errors": {
+          "custom": {
+            "/b": ["B should be valid"]
+          }
+        }
+      },
+      {
+        "data": {
+          "a": "1",
+          "b": "2"
+        },
+        "errors": {
+          "custom": {
+            "/a": ["A must be valid"]
+          }
+        }
+      },
+      {
+        "data": {
+          "a": 1,
+          "b": "2",
+          "c": 3.5
+        },
+        "errors": {
+          "custom": {
+            "/": ["Other object error"]
+          }
+        }
+      }
+    ]
+  }
+]

@@ -21,7 +21,7 @@
         }
     ],
     "require": {
-        "php": ">=7.4",
+        "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "opis/string": "2020.x-dev",
         "opis/utils": "2020.x-dev"

@@ -65,7 +65,7 @@ class PropertiesKeyword implements Keyword
             }
 
             if ($prop === false) {
-                return $this->error($schema, $context, 'properties', "Property '{$name}' is not allowed", [
+                return $this->error($schema, $context, 'properties', "Property '@property' is not allowed", [
                     'property' => $name,
                 ]);
             }

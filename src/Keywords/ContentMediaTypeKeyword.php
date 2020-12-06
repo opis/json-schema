@@ -67,9 +67,8 @@ class ContentMediaTypeKeyword implements Keyword
             unset($data);
         }
 
-        return $this->error($schema, $context, 'contentMediaType', "The media type of the data must be '{$this->name}'",
-            [
-                'media' => $this->name,
-            ]);
+        return $this->error($schema, $context, 'contentMediaType', "The media type of the data must be '@media'", [
+            'media' => $this->name,
+        ]);
     }
 }

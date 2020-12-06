@@ -40,7 +40,7 @@ the library's own API.
 
 ### Requirements
 
-* PHP ^7.4
+* PHP ^7.4|^8.0
 
 ## Installation
 

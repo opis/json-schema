@@ -84,7 +84,9 @@ class IfThenElseKeyword implements Keyword
         if ($value === true) {
             return null;
         } elseif ($value === false) {
-            return $this->error($schema, $context, $branch, "The data is never valid on '{$branch}' branch");
+            return $this->error($schema, $context, $branch, "The data is never valid on '@branch' branch", [
+                'branch' => $branch,
+            ]);
         }
 
         if (is_object($value) && !($value instanceof Schema)) {
@@ -92,7 +94,9 @@ class IfThenElseKeyword implements Keyword
         }
 
         if ($error = $value->validate($context)) {
-            return $this->error($schema, $context, $branch, "The data is not valid on '{$branch}' branch", [], $error);
+            return $this->error($schema, $context, $branch, "The data is not valid on '@branch' branch", [
+                'branch' => $branch,
+            ], $error);
         }
 
         return null;
