@@ -47,7 +47,7 @@ class MaximumKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'maximum', "Number must be lower than or equal to {$this->number}", [
+        return $this->error($schema, $context, 'maximum', "Number must be lower than or equal to @max", [
             'max' => $this->number,
         ]);
     }

@@ -43,7 +43,7 @@ class ErrorFormatterTest extends TestCase
     /**
      * @dataProvider validationsProvider
      */
-    public function testFormatter($schema, $data, $errors, $maxErrors = 1)
+    public function testFormatter($schema, $data, $errors, $maxErrors = 1, $name = null)
     {
         $this->validator->setMaxErrors($maxErrors);
 
@@ -58,23 +58,23 @@ class ErrorFormatterTest extends TestCase
         $this->assertInstanceOf(stdClass::class, $errors);
 
         if (property_exists($errors, 'nested')) {
-            $this->assertEquals($errors->nested, $this->formatter->formatNested($result, [$this, 'nestedCallback']));
+            $this->assertEquals($errors->nested, $this->formatter->formatNested($result, [$this, 'nestedCallback']), 'Nested format - ' . $name);
         }
 
         if (property_exists($errors, 'flat')) {
-            $this->assertEquals($errors->flat, $this->formatter->formatFlat($result, [$this, 'flatCallback']));
+            $this->assertEquals($errors->flat, $this->formatter->formatFlat($result, [$this, 'flatCallback']), 'Flat format - ' . $name);
         }
 
         if (property_exists($errors, 'keyed')) {
-            $this->assertEquals($errors->keyed, (object)$this->formatter->formatKeyed($result, [$this, 'keyedCallback']));
+            $this->assertEquals($errors->keyed, (object)$this->formatter->formatKeyed($result, [$this, 'keyedCallback']), 'Keyed format - ' . $name);
         }
 
         if (property_exists($errors, 'output')) {
-            $this->assertEquals($errors->output, Helper::convertAssocArrayToObject($this->formatter->formatOutput($result, 'detailed')));
+            $this->assertEquals($errors->output, Helper::convertAssocArrayToObject($this->formatter->formatOutput($result, 'detailed')), 'Output format - ' . $name);
         }
 
         if (property_exists($errors, 'custom')) {
-            $this->assertEquals($errors->custom, (object)$this->formatter->format($result));
+            $this->assertEquals($errors->custom, (object)$this->formatter->format($result), 'Custom format - ' . $name);
         }
     }
 
@@ -87,7 +87,7 @@ class ErrorFormatterTest extends TestCase
     {
         return (object)[
             'kwd' => $error->keyword(),
-            'msg' => $error->message(),
+            'msg' => $this->formatter->formatErrorMessage($error),
             'path' => $error->data()->fullPath(),
             'args' => (object)$error->args(),
             'sub' => $subErrors,
@@ -102,7 +102,7 @@ class ErrorFormatterTest extends TestCase
     {
         return (object)[
             'kwd' => $error->keyword(),
-            'msg' => $error->message(),
+            'msg' => $this->formatter->formatErrorMessage($error),
             'path' => $error->data()->fullPath(),
             'args' => (object)$error->args(),
         ];
@@ -116,7 +116,7 @@ class ErrorFormatterTest extends TestCase
     {
         return (object)[
             'kwd' => $error->keyword(),
-            'msg' => $error->message(),
+            'msg' => $this->formatter->formatErrorMessage($error),
             'path' => $error->data()->fullPath(),
             'args' => (object)$error->args(),
         ];
@@ -140,6 +140,7 @@ class ErrorFormatterTest extends TestCase
                     $test->data,
                     $test->errors,
                     $test->maxErrors ?? $maxErrors,
+                    $test->name ?? null,
                 ];
             }
         }

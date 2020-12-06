@@ -46,7 +46,7 @@ class PatternKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'pattern', "The string should match pattern: {$this->pattern}", [
+        return $this->error($schema, $context, 'pattern', "The string should match pattern: @pattern", [
             'pattern' => $this->pattern,
         ]);
     }

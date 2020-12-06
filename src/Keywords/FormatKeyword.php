@@ -66,7 +66,7 @@ class FormatKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'format', "The data must match the '{$this->name}' format", [
+        return $this->error($schema, $context, 'format', "The data must match the '@format' format", [
             'format' => $this->name,
             'type' => $type,
         ]);

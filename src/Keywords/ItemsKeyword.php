@@ -75,7 +75,7 @@ class ItemsKeyword implements Keyword
                 }
 
                 if ($this->value[$i] === false) {
-                    return $this->error($schema, $context, 'items', "Array item at index {$i} is not allowed", [
+                    return $this->error($schema, $context, 'items', "Array item at index @index is not allowed", [
                         'index' => $i,
                     ]);
                 }

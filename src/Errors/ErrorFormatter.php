@@ -213,7 +213,7 @@ class ErrorFormatter
     public function formatErrorMessage(ValidationError $error, ?string $message = null): string
     {
         $message ??= $error->message();
-        $args = $error->args();
+        $args = $this->getDefaultArgs($error) + $error->args();
 
         if (!$args) {
             return $message;
@@ -221,7 +221,7 @@ class ErrorFormatter
 
         return preg_replace_callback(
             '~@([a-z0-9\-_.:]+)~imu',
-            static function (array $m) {
+            static function (array $m) use ($args) {
                 if (!isset($args[$m[1]])) {
                     return $m[0];
                 }
@@ -229,13 +229,35 @@ class ErrorFormatter
                 $value = $args[$m[1]];
 
                 if (is_array($value)) {
-                    return implode('|', $value);
+                    return implode(', ', $value);
                 }
 
                 return (string) $value;
             },
             $message
         );
+    }
+
+    protected function getDefaultArgs(ValidationError $error): array
+    {
+        $data = $error->data();
+        $info = $error->schema()->info();
+
+        $path = $info->path();
+        $path[] = $error->keyword();
+
+        return [
+            'data:type' => $data->type(),
+            'data:value' => $data->value(),
+            'data:path' => JsonPointer::pathToString($data->fullPath()),
+
+            'schema:id' => $info->id(),
+            'schema:root' => $info->root(),
+            'schema:base' => $info->base(),
+            'schema:draft' => $info->draft(),
+            'schema:keyword' => $error->keyword(),
+            'schema:path' => JsonPointer::pathToString($path),
+        ];
     }
 
     /**

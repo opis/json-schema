@@ -73,7 +73,7 @@ class FiltersKeyword implements Keyword
                 continue;
             }
 
-            return $this->error($schema, $context, '$filters', "Filter '{$filter->name}' was not passed", [
+            return $this->error($schema, $context, '$filters', "Filter '@filter' (@type) was not passed", [
                 'filter' => $filter->name,
                 'type' => $type,
                 'args' => $args,

@@ -34,7 +34,7 @@
                 "errors": {
                     "nested": {
                         "kwd": "required",
-                        "msg": "The required properties are missing",
+                        "msg": "The required properties (a) are missing",
                         "path": [],
                         "args": {
                             "missing": [
@@ -46,7 +46,7 @@
                     "flat": [
                         {
                             "kwd": "required",
-                            "msg": "The required properties are missing",
+                            "msg": "The required properties (a) are missing",
                             "path": [],
                             "args": {
                                 "missing": [
@@ -59,7 +59,7 @@
                         "/": [
                             {
                                 "kwd": "required",
-                                "msg": "The required properties are missing",
+                                "msg": "The required properties (a) are missing",
                                 "path": [],
                                 "args": {
                                     "missing": [
@@ -81,7 +81,7 @@
                 "errors": {
                     "nested": {
                         "kwd": "required",
-                        "msg": "The required properties are missing",
+                        "msg": "The required properties (a, b) are missing",
                         "path": [],
                         "args": {
                             "missing": [
@@ -94,7 +94,7 @@
                     "flat": [
                         {
                             "kwd": "required",
-                            "msg": "The required properties are missing",
+                            "msg": "The required properties (a, b) are missing",
                             "path": [],
                             "args": {
                                 "missing": [
@@ -108,7 +108,7 @@
                         "/": [
                             {
                                 "kwd": "required",
-                                "msg": "The required properties are missing",
+                                "msg": "The required properties (a, b) are missing",
                                 "path": [],
                                 "args": {
                                     "missing": [
@@ -136,7 +136,7 @@
                         "sub": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string, null",
                                 "path": [
                                     "a"
                                 ],
@@ -160,7 +160,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (integer) must match the type: string, null",
                             "path": [
                                 "a"
                             ],
@@ -177,7 +177,7 @@
                         "/a": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string, null",
                                 "path": [
                                     "a"
                                 ],
@@ -211,7 +211,7 @@
                         "sub": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string, null",
                                 "path": [
                                     "a"
                                 ],
@@ -245,7 +245,7 @@
                                 "sub": [
                                     {
                                         "kwd": "type",
-                                        "msg": "The data must match the type",
+                                        "msg": "The data (integer) must match the type: string",
                                         "path": [
                                             "c",
                                             "a"
@@ -269,7 +269,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (integer) must match the type: string, null",
                             "path": [
                                 "a"
                             ],
@@ -301,7 +301,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (integer) must match the type: string",
                             "path": [
                                 "c",
                                 "a"
@@ -316,7 +316,7 @@
                         "/a": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string, null",
                                 "path": [
                                     "a"
                                 ],
@@ -344,7 +344,7 @@
                         "/c/a": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string",
                                 "path": [
                                     "c",
                                     "a"
@@ -383,7 +383,7 @@
                         "sub": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string, null",
                                 "path": ["a"],
                                 "args": {
                                     "expected": [
@@ -402,7 +402,7 @@
                                 "sub": [
                                     {
                                         "kwd": "type",
-                                        "msg": "The data must match the type",
+                                        "msg": "The data (integer) must match the type: string",
                                         "path": ["c", "a"],
                                         "args": {
                                             "expected": "string",
@@ -426,7 +426,7 @@
                                         "sub": [
                                             {
                                                 "kwd": "type",
-                                                "msg": "The data must match the type",
+                                                "msg": "The data (integer) must match the type: string, null",
                                                 "path": ["d", "a"],
                                                 "args": {
                                                     "expected": ["string", "null"],
@@ -451,7 +451,7 @@
                                                 "sub": [
                                                     {
                                                         "kwd": "type",
-                                                        "msg": "The data must match the type",
+                                                        "msg": "The data (null) must match the type: string",
                                                         "path": ["d", "c", "a"],
                                                         "args": {
                                                             "expected": "string",
@@ -476,7 +476,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (integer) must match the type: string, null",
                             "path": ["a"],
                             "args": {
                                 "expected": [
@@ -494,7 +494,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (integer) must match the type: string",
                             "path": ["c", "a"],
                             "args": {
                                 "expected": "string",
@@ -515,7 +515,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (integer) must match the type: string, null",
                             "path": ["d", "a"],
                             "args": {
                                 "expected": ["string", "null"],
@@ -538,7 +538,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (null) must match the type: string",
                             "path": ["d", "c", "a"],
                             "args": {
                                 "expected": "string",
@@ -550,7 +550,7 @@
                         "/a": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string, null",
                                 "path": ["a"],
                                 "args": {
                                     "expected": [
@@ -564,7 +564,7 @@
                         "/c/a": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string",
                                 "path": ["c", "a"],
                                 "args": {
                                     "expected": "string",
@@ -575,7 +575,7 @@
                         "/d/a": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string, null",
                                 "path": ["d", "a"],
                                 "args": {
                                     "expected": ["string", "null"],
@@ -596,7 +596,7 @@
                         "/d/c/a": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (null) must match the type: string",
                                 "path": ["d", "c", "a"],
                                 "args": {
                                     "expected": "string",

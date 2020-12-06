@@ -75,7 +75,7 @@
                 "errors": {
                     "nested": {
                         "kwd": "type",
-                        "msg": "The data must match the type",
+                        "msg": "The data (integer) must match the type: string",
                         "path": [],
                         "args": {
                             "expected": "string",
@@ -86,7 +86,7 @@
                     "flat": [
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (integer) must match the type: string",
                             "path": [],
                             "args": {
                                 "expected": "string",
@@ -98,7 +98,7 @@
                         "/": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string",
                                 "path": [],
                                 "args": {
                                     "expected": "string",

@@ -47,7 +47,7 @@ class MinimumKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'minimum', "Number must be greater than or equal to {$this->number}", [
+        return $this->error($schema, $context, 'minimum', "Number must be greater than or equal to @min", [
             'min' => $this->number,
         ]);
     }

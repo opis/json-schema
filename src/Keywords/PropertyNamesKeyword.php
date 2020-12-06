@@ -64,7 +64,7 @@ class PropertyNamesKeyword implements Keyword
 
         foreach ($props as $prop) {
             if ($error = $this->value->validate($context->newInstance($prop))) {
-                return $this->error($schema, $context, 'propertyNames', "Property {$prop} must match schema", [
+                return $this->error($schema, $context, 'propertyNames', "Property '@property' must match schema", [
                     'property' => $prop,
                 ], $error);
             }

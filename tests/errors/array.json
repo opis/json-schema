@@ -22,7 +22,7 @@
                         "sub": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (string) must match the type: integer",
                                 "path": [1],
                                 "args": {
                                     "expected": "integer",
@@ -41,7 +41,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (string) must match the type: integer",
                             "path": [1],
                             "args": {
                                 "expected": "integer",
@@ -53,7 +53,7 @@
                         "/1": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (string) must match the type: integer",
                                 "path": [1],
                                 "args": {
                                     "expected": "integer",
@@ -76,7 +76,7 @@
                         "sub": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (string) must match the type: integer",
                                 "path": [1],
                                 "args": {
                                     "expected": "integer",
@@ -86,7 +86,7 @@
                             },
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (string) must match the type: integer",
                                 "path": [2],
                                 "args": {
                                     "expected": "integer",
@@ -105,7 +105,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (string) must match the type: integer",
                             "path": [1],
                             "args": {
                                 "expected": "integer",
@@ -114,7 +114,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (string) must match the type: integer",
                             "path": [2],
                             "args": {
                                 "expected": "integer",
@@ -126,7 +126,7 @@
                         "/1": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (string) must match the type: integer",
                                 "path": [1],
                                 "args": {
                                     "expected": "integer",
@@ -137,7 +137,7 @@
                         "/2": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (string) must match the type: integer",
                                 "path": [2],
                                 "args": {
                                     "expected": "integer",
@@ -176,7 +176,7 @@
                         "sub": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string",
                                 "path": [1],
                                 "args": {
                                     "expected": "string",
@@ -186,7 +186,7 @@
                             },
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (string) must match the type: integer",
                                 "path": [2],
                                 "args": {
                                     "expected": "integer",
@@ -205,7 +205,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (integer) must match the type: string",
                             "path": [1],
                             "args": {
                                 "expected": "string",
@@ -214,7 +214,7 @@
                         },
                         {
                             "kwd": "type",
-                            "msg": "The data must match the type",
+                            "msg": "The data (string) must match the type: integer",
                             "path": [2],
                             "args": {
                                 "expected": "integer",
@@ -226,7 +226,7 @@
                         "/1": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (integer) must match the type: string",
                                 "path": [1],
                                 "args": {
                                     "expected": "string",
@@ -237,7 +237,7 @@
                         "/2": [
                             {
                                 "kwd": "type",
-                                "msg": "The data must match the type",
+                                "msg": "The data (string) must match the type: integer",
                                 "path": [2],
                                 "args": {
                                     "expected": "integer",
