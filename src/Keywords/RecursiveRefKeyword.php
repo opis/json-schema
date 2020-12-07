@@ -15,49 +15,43 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Schemas;
+namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Errors\ValidationError;
-use Opis\JsonSchema\{Exceptions\UnresolvedRefException, Schema, Uri, ValidationContext, Variables};
+use Opis\JsonSchema\Exceptions\UnresolvedRefException;
+use Opis\JsonSchema\{Schema, ValidationContext, Variables, Uri};
 
-class RecursiveRefSchema extends AbstractRefSchema
+class RecursiveRefKeyword extends AbstractRefKeyword
 {
     protected Uri $uri;
-
     /** @var bool|null|Schema */
     protected $resolved = false;
 
-    public function __construct(
-        SchemaInfo $info,
-        Uri $uri,
-        ?Variables $mapper,
-        ?Variables $globals,
-        ?array $slots = null
-    ) {
-        parent::__construct($info, $mapper, $globals, $slots);
+    public function __construct(Uri $uri, ?Variables $mapper, ?Variables $globals, ?array $slots = null, string $keyword = '$recursiveRef')
+    {
+        parent::__construct($mapper, $globals, $slots, $keyword);
         $this->uri = $uri;
     }
 
     /**
      * @inheritDoc
      */
-    public function validate(ValidationContext $context): ?ValidationError
+    public function doValidate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if ($this->resolved === false) {
             $this->resolved = $context->loader()->loadSchemaById($this->uri);
         }
 
         if ($this->resolved === null) {
-            throw new UnresolvedRefException((string)$this->uri, $this, $context);
+            throw new UnresolvedRefException((string)$this->uri, $schema, $context);
         }
 
-        $new_context = $this->createContext($context, $this->mapper, $this->globals, $this->slots);
+        $new_context = $this->createQuickContext($context, $schema);
 
         if (!$this->hasRecursiveAnchor($this->resolved)) {
+            $this->setLastRefSchema($this->resolved);
             return $this->resolved->validate($new_context);
         }
-
 
         $ok_sender = null;
 
@@ -76,8 +70,11 @@ class RecursiveRefSchema extends AbstractRefSchema
         } while ($ctx = $context->parent());
 
         if (!$ok_sender) {
+            $this->setLastRefSchema($this->resolved);
             return $this->resolved->validate($new_context);
         }
+
+        $this->setLastRefSchema($ok_sender);
 
         return $ok_sender->validate($new_context);
     }

@@ -1,6 +1,7 @@
 [
     {
         "schema": {
+            "$id": "http://example.com/error-formatter/object.json",
             "type": "object",
             "properties": {
                 "a": {
@@ -416,7 +417,10 @@
                                 "kwd": "$ref",
                                 "msg": "The data must match $ref",
                                 "path": ["d"],
-                                "args": {},
+                                "args": {
+                                    "keyword": "$ref",
+                                    "uri": "http://example.com/error-formatter/object.json#"
+                                },
                                 "sub": [
                                     {
                                         "kwd": "properties",
@@ -505,7 +509,10 @@
                             "kwd": "$ref",
                             "msg": "The data must match $ref",
                             "path": ["d"],
-                            "args": {}
+                            "args": {
+                                "keyword": "$ref",
+                                "uri": "http://example.com/error-formatter/object.json#"
+                            }
                         },
                         {
                             "kwd": "properties",

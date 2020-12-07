@@ -15,49 +15,40 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Schemas;
+namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{ValidationContext, Schema, Uri};
-use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\Variables;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\UnresolvedRefException;
+use Opis\JsonSchema\{JsonPointer, Schema, ValidationContext, Variables};
 
-class UriRefSchema extends AbstractRefSchema
+class PointerRefKeyword extends AbstractRefKeyword
 {
-
-    protected Uri $uri;
-
+    protected JsonPointer $pointer;
     /** @var bool|null|Schema */
     protected $resolved = false;
 
-    /**
-     * @param SchemaInfo $info
-     * @param Uri $uri
-     * @param Variables|null $mapper
-     * @param Variables|null $globals
-     * @param array|null $slots
-     */
-    public function __construct(SchemaInfo $info, Uri $uri, ?Variables $mapper,
-                                ?Variables $globals, ?array $slots = null)
-    {
-        parent::__construct($info, $mapper, $globals, $slots);
-        $this->uri = $uri;
+    public function __construct(
+        JsonPointer $pointer,
+        ?Variables $mapper,
+        ?Variables $globals,
+        ?array $slots = null,
+        string $keyword = '$ref'
+    ) {
+        parent::__construct($mapper, $globals, $slots, $keyword);
+        $this->pointer = $pointer;
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function validate(ValidationContext $context): ?ValidationError
+    protected function doValidate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if ($this->resolved === false) {
-            $this->resolved = $context->loader()->loadSchemaById($this->uri);
+            $info = $schema->info();
+            $this->resolved = $this->resolvePointer($context->loader(), $this->pointer, $info->idBaseRoot(), $info->path());
         }
 
         if ($this->resolved === null) {
-            throw new UnresolvedRefException((string)$this->uri, $this, $context);
+            throw new UnresolvedRefException((string)$this->pointer, $schema, $context);
         }
 
-        return $this->resolved->validate($this->createContext($context, $this->mapper, $this->globals, $this->slots));
+        return $this->resolved->validate($this->createQuickContext($context, $schema));
     }
 }

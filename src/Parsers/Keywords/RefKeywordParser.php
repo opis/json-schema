@@ -18,10 +18,9 @@
 namespace Opis\JsonSchema\Parsers\Keywords;
 
 use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\Keywords\{RefKeyword, RecursiveRefKeyword};
+use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri, UriTemplate};
 use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser, VariablesTrait};
-use Opis\JsonSchema\Schemas\{PointerRefSchema, RecursiveRefSchema, TemplateRefSchema, UriRefSchema};
-use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri, Variables, UriTemplate};
+use Opis\JsonSchema\Keywords\{PointerRefKeyword, RecursiveRefKeyword, TemplateRefKeyword, URIRefKeyword};
 
 class RefKeywordParser extends KeywordParser
 {
@@ -96,51 +95,13 @@ class RefKeywordParser extends KeywordParser
             $slots = $this->parsePassSlots($info, $parser);
         }
 
-        if (!$recursive) {
-            return new RefKeyword($this->parseRef($this->refInfo($info, $this->keyword), $parser, $ref, $mapper, $globals, $slots), false);
+        if ($recursive) {
+            return new RecursiveRefKeyword($info->idBaseRoot()->resolveRef($ref), $mapper, $globals, $slots, $this->recursiveRef);
         }
 
-        $schema = new RecursiveRefSchema($this->refInfo($info, $this->recursiveRef), $info->idBaseRoot()->resolveRef($ref), $mapper, $globals, $slots);
-
-        return new RefKeyword($schema, true);
-    }
-
-    /**
-     * @param SchemaInfo $info
-     * @param string $keyword
-     * @return SchemaInfo
-     */
-    protected function refInfo(SchemaInfo $info, string $keyword): SchemaInfo
-    {
-        $path = $info->path();
-        $path[] = $keyword;
-// TODO: fix this somehow
-        return new SchemaInfo($info->data(), null, $info->id() ?? $info->base(), $info->id() ?? $info->root(), $path, $info->draft());
-    }
-
-    /**
-     * @param SchemaInfo $info
-     * @param SchemaParser $parser
-     * @param string $ref
-     * @param Variables|null $mapper
-     * @param Variables|null $globals
-     * @param array|null $slots
-     * @return Schema|null
-     */
-    protected function parseRef(
-        SchemaInfo $info,
-        SchemaParser $parser,
-        string $ref,
-        ?Variables $mapper = null,
-        ?Variables $globals = null,
-        ?array $slots = null
-    ): ?Schema {
         if ($ref === '#') {
-            return new UriRefSchema($info, $info->idBaseRoot(), $mapper, $globals, $slots);
+            return new URIRefKeyword(Uri::merge('#', $info->idBaseRoot()), $mapper, $globals, $slots, $this->keyword);
         }
-
-        /** @var object $schema */
-        $schema = $info->data();
 
         if ($parser->option('allowTemplates') && UriTemplate::isTemplate($ref)) {
             $tpl = new UriTemplate($ref);
@@ -158,7 +119,7 @@ class RefKeywordParser extends KeywordParser
                     }
                 }
 
-                return new TemplateRefSchema($info, $tpl, $vars, $mapper, $globals, $slots);
+                return new TemplateRefKeyword($tpl, $vars, $mapper, $globals, $slots, $this->keyword);
             }
 
             unset($tpl);
@@ -166,10 +127,10 @@ class RefKeywordParser extends KeywordParser
 
         if ($ref[0] === '#') {
             if (($pointer = JsonPointer::parse(substr($ref, 1))) && $pointer->isAbsolute()) {
-                return new PointerRefSchema($info, $pointer, $mapper, $globals, $slots);
+                return new PointerRefKeyword($pointer, $mapper, $globals, $slots, $this->keyword);
             }
         } elseif (($pointer = JsonPointer::parse($ref)) && $pointer->isRelative()) {
-            return new PointerRefSchema($info, $pointer, $mapper, $globals, $slots);
+            return new PointerRefKeyword($pointer, $mapper, $globals, $slots, $this->keyword);
         }
 
         $ref = Uri::merge($ref, $info->idBaseRoot(), true);
@@ -179,7 +140,7 @@ class RefKeywordParser extends KeywordParser
                 $info);
         }
 
-        return new UriRefSchema($info, $ref, $mapper, $globals, $slots);
+        return new URIRefKeyword($ref, $mapper, $globals, $slots, $this->keyword);
     }
 
     /**
@@ -205,7 +166,7 @@ class RefKeywordParser extends KeywordParser
      * @param array $path
      * @return null
      */
-    protected function getSlotSchemas(SchemaInfo $info, SchemaParser $parser, object $slots, array $path)
+    protected function getSlotSchemas(SchemaInfo $info, SchemaParser $parser, object $slots, array $path): ?array
     {
         $keyword = null;
         if ($path) {

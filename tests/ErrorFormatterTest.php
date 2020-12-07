@@ -17,8 +17,8 @@
 
 namespace Opis\JsonSchema\Test;
 
-use Opis\JsonSchema\Helper;
 use stdClass;
+use Opis\JsonSchema\Helper;
 use Opis\JsonSchema\Validator;
 use PHPUnit\Framework\TestCase;
 use Opis\JsonSchema\Errors\ErrorFormatter;

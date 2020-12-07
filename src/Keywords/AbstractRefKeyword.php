@@ -15,37 +15,93 @@
  * limitations under the License.
  * ============================================================================ */
 
-namespace Opis\JsonSchema\Schemas;
+namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{ValidationContext, Schema, SchemaLoader, JsonPointer, Uri};
-use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\Variables;
+use Opis\JsonSchema\{Errors\ValidationError,
+    JsonPointer,
+    Keyword,
+    Schema,
+    SchemaLoader,
+    Uri,
+    ValidationContext,
+    Variables};
 
-abstract class AbstractRefSchema extends AbstractSchema
+abstract class AbstractRefKeyword implements Keyword
 {
+    use ErrorTrait;
 
+    protected string $keyword;
     protected ?Variables $mapper;
-
     protected ?Variables $globals;
-
     protected ?array $slots = null;
+    protected ?Uri $lastRefUri = null;
 
     /**
-     * @param SchemaInfo $info
      * @param Variables|null $mapper
      * @param Variables|null $globals
      * @param array|null $slots
+     * @param string $keyword
      */
-    public function __construct(SchemaInfo $info, ?Variables $mapper, ?Variables $globals, ?array $slots = null)
+    protected function __construct(?Variables $mapper, ?Variables $globals, ?array $slots = null, string $keyword = '$ref')
     {
-        parent::__construct($info);
         $this->mapper = $mapper;
         $this->globals = $globals;
         $this->slots = $slots;
+        $this->keyword = $keyword;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function validate(ValidationContext $context, Schema $schema): ?ValidationError
+    {
+        if ($error = $this->doValidate($context, $schema)) {
+            $uri = $this->lastRefUri;
+            $this->lastRefUri = null;
+
+            return $this->error($schema, $context, $this->keyword, 'The data must match @keyword', [
+                'keyword' => $this->keyword,
+                'uri' => (string) $uri,
+            ], $error);
+        }
+
+        $this->lastRefUri = null;
+
+        return null;
+    }
+
+
+    abstract protected function doValidate(ValidationContext $context, Schema $schema): ?ValidationError;
+
+    protected function setLastRefUri(?Uri $uri): void
+    {
+        $this->lastRefUri = $uri;
+    }
+
+    protected function setLastRefSchema(Schema $schema): void
+    {
+        $info = $schema->info();
+
+        if ($info->id()) {
+            $this->lastRefUri = $info->id();
+        } else {
+            $this->lastRefUri = Uri::merge(JsonPointer::pathToFragment($info->path()), $info->idBaseRoot());
+        }
     }
 
     /**
      * @param ValidationContext $context
+     * @param Schema $schema
+     * @return ValidationContext
+     */
+    protected function createQuickContext(ValidationContext $context, Schema $schema): ValidationContext
+    {
+        return $this->createContext($context, $schema, $this->mapper, $this->globals, $this->slots);
+    }
+
+    /**
+     * @param ValidationContext $context
+     * @param Schema $schema
      * @param null|Variables $mapper
      * @param null|Variables $globals
      * @param null|array $slots
@@ -53,6 +109,7 @@ abstract class AbstractRefSchema extends AbstractSchema
      */
     protected function createContext(
         ValidationContext $context,
+        Schema $schema,
         ?Variables $mapper = null,
         ?Variables $globals = null,
         ?array $slots = null
@@ -74,7 +131,7 @@ abstract class AbstractRefSchema extends AbstractSchema
             $data = $context->currentData();
         }
 
-        return $context->newInstance($data, $this, $globals, $slots);
+        return $context->newInstance($data, $schema, $globals, $slots);
     }
 
     /**
@@ -85,7 +142,7 @@ abstract class AbstractRefSchema extends AbstractSchema
      * @return null|Schema
      */
     protected function resolvePointer(SchemaLoader $repo, JsonPointer $pointer,
-                                      Uri $base, ?array $path = null): ?Schema
+        Uri $base, ?array $path = null): ?Schema
     {
         if ($pointer->isAbsolute()) {
             $path = (string)$pointer;
