@@ -56,7 +56,7 @@ class ContentSchemaKeyword implements Keyword
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
 
-        if ($error = $this->value->validate($context->newInstance($data))) {
+        if ($error = $this->value->validate($context->newInstance($data, $schema))) {
             return $this->error($schema, $context, 'contentSchema', "The JSON content must match schema", [], $error);
         }
 

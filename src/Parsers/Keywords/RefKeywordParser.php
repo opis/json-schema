@@ -17,16 +17,23 @@
 
 namespace Opis\JsonSchema\Parsers\Keywords;
 
-use Opis\JsonSchema\Keywords\RefKeyword;
-use Opis\JsonSchema\Variables;
 use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri, UriTemplate};
-use Opis\JsonSchema\Schemas\{PointerRefSchema, TemplateRefSchema, UriRefSchema};
+use Opis\JsonSchema\Keywords\{RefKeyword, RecursiveRefKeyword};
 use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser, VariablesTrait};
+use Opis\JsonSchema\Schemas\{PointerRefSchema, RecursiveRefSchema, TemplateRefSchema, UriRefSchema};
+use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri, Variables, UriTemplate};
 
 class RefKeywordParser extends KeywordParser
 {
     use VariablesTrait;
+
+    protected ?string $recursiveRef = null;
+
+    public function __construct(string $keyword, ?string $recursiveRef = null)
+    {
+        parent::__construct($keyword);
+        $this->recursiveRef = $recursiveRef;
+    }
 
     /**
      * @inheritDoc
@@ -41,15 +48,22 @@ class RefKeywordParser extends KeywordParser
      */
     public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
+        $recursive = false;
         $schema = $info->data();
 
-        if (!$this->keywordExists($schema)) {
+        if ($this->keywordExists($schema)) {
+            $ref = $this->keywordValue($schema);
+            if (!is_string($ref) || $ref === '') {
+                throw $this->keywordException('{keyword} must be a non-empty string', $info);
+            }
+        } elseif ($this->recursiveRef && $this->keywordExists($schema, $this->recursiveRef)) {
+            $ref = $this->keywordValue($schema, $this->recursiveRef);
+            if ($ref !== '#') {
+                $this->keywordException("{keyword} supports only '#' as value", $info, $this->recursiveRef);
+            }
+            $recursive = true;
+        } else {
             return null;
-        }
-
-        $ref = $this->keywordValue($schema);
-        if (!is_string($ref) || $ref === '') {
-            throw $this->keywordException('{keyword} must be a non-empty string', $info);
         }
 
         // Mappers
@@ -82,7 +96,26 @@ class RefKeywordParser extends KeywordParser
             $slots = $this->parsePassSlots($info, $parser);
         }
 
-        return new RefKeyword($this->parseRef($info, $parser, $ref, $mapper, $globals, $slots));
+        if (!$recursive) {
+            return new RefKeyword($this->parseRef($this->refInfo($info, $this->keyword), $parser, $ref, $mapper, $globals, $slots), false);
+        }
+
+        $schema = new RecursiveRefSchema($this->refInfo($info, $this->recursiveRef), $info->idBaseRoot()->resolveRef($ref), $mapper, $globals, $slots);
+
+        return new RefKeyword($schema, true);
+    }
+
+    /**
+     * @param SchemaInfo $info
+     * @param string $keyword
+     * @return SchemaInfo
+     */
+    protected function refInfo(SchemaInfo $info, string $keyword): SchemaInfo
+    {
+        $path = $info->path();
+        $path[] = $keyword;
+// TODO: fix this somehow
+        return new SchemaInfo($info->data(), null, $info->id() ?? $info->base(), $info->id() ?? $info->root(), $path, $info->draft());
     }
 
     /**
@@ -101,10 +134,9 @@ class RefKeywordParser extends KeywordParser
         ?Variables $mapper = null,
         ?Variables $globals = null,
         ?array $slots = null
-    ): ?Schema
-    {
+    ): ?Schema {
         if ($ref === '#') {
-            return new UriRefSchema($info, $info->id() ?? $info->base() ?? $info->root(), $mapper, $globals, $slots);
+            return new UriRefSchema($info, $info->idBaseRoot(), $mapper, $globals, $slots);
         }
 
         /** @var object $schema */
@@ -140,10 +172,11 @@ class RefKeywordParser extends KeywordParser
             return new PointerRefSchema($info, $pointer, $mapper, $globals, $slots);
         }
 
-        $ref = Uri::merge($ref, $info->id() ?? $info->base() ?? $info->root(), true);
+        $ref = Uri::merge($ref, $info->idBaseRoot(), true);
 
         if ($ref === null || !$ref->isAbsolute()) {
-            throw $this->keywordException('{keyword} must be a valid uri, uri-reference, uri-template or json-pointer', $info);
+            throw $this->keywordException('{keyword} must be a valid uri, uri-reference, uri-template or json-pointer',
+                $info);
         }
 
         return new UriRefSchema($info, $ref, $mapper, $globals, $slots);

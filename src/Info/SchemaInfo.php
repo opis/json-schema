@@ -90,4 +90,28 @@ class SchemaInfo
     {
         return $this->path;
     }
+
+    /**
+     * Returns first non-null property: id, base or root
+     * @return Uri|null
+     */
+    public function idBaseRoot(): ?Uri
+    {
+        return $this->id ?? $this->base ?? $this->root;
+    }
+
+    public function isBoolean(): bool
+    {
+        return is_bool($this->data);
+    }
+
+    public function isObject(): bool
+    {
+        return is_object($this->data);
+    }
+
+    public function isDocumentRoot(): bool
+    {
+        return $this->id && !$this->root && !$this->base;
+    }
 }

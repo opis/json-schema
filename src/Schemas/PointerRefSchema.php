@@ -52,7 +52,7 @@ class PointerRefSchema extends AbstractRefSchema
     {
         if ($this->resolved === false) {
             $this->resolved = $this->resolvePointer($context->loader(), $this->pointer,
-                $this->resolveBaseUri($this->info), $this->info->path());
+                $this->info->idBaseRoot(), $this->info->path());
         }
 
         if ($this->resolved === null) {

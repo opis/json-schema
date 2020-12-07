@@ -101,13 +101,6 @@ class ErrorFormatter
 
                     $info['valid'] = false;
 
-                    if ($subErrors) {
-                        $info['errors'] = $subErrors;
-                        if (!$isVerbose) {
-                            unset($info['error']);
-                        }
-                    }
-
                     if ($isVerbose) {
                         $id = $error->schema()->info();
                         $id = $id->root() ?? $id->id();
@@ -115,6 +108,13 @@ class ErrorFormatter
                             $id = rtrim($id, '#');
                         }
                         $info['absoluteKeywordLocation'] = $id . $info['keywordLocation'];
+                    }
+
+                    if ($subErrors) {
+                        $info['errors'] = $subErrors;
+                        if (!$isVerbose) {
+                            unset($info['error']);
+                        }
                     }
 
                     return $info;

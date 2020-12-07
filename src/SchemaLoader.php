@@ -158,16 +158,32 @@ class SchemaLoader
         if ($fragment === '') {
             return $this->resolve($uri);
         }
-        unset($fragment);
 
         $root = Uri::merge('#', $uri);
 
         // Check if already resolved
-        if ($this->checkExistingUri($root) === null) {
+        if (($schema = $this->checkExistingUri($root)) === null) {
             // Try to resolve
-            if ($this->resolve($root) === null) {
+            if (($schema = $this->resolve($root)) === null) {
                 // Schema not found
                 return null;
+            }
+        }
+
+        // Resolve json pointer
+        if ($fragment !== '' && $schema && $schema->info()->isObject() && JsonPointer::isAbsolutePointer($fragment)) {
+            $object = JsonPointer::parse($fragment)->data($schema->info()->data());
+            if (is_bool($object)) {
+                $schema = $this->loadBooleanSchema($object, $uri, $schema->info()->draft());
+            } elseif (is_object($object)) {
+                $schema = $this->loadObjectSchema($object, $uri, $schema->info()->draft());
+            } else {
+                $schema = null;
+            }
+            if ($schema) {
+                $key = $this->cacheKey((string) $uri);
+                $this->uriCache[$key] = $schema;
+                return $schema;
             }
         }
 
@@ -344,8 +360,8 @@ class SchemaLoader
         string $pointer
     )
     {
-        $id = $this->parser->parseSchemaId($data, $base) ?? $id;
         $draft = $this->parser->parseSchemaDraft($data) ?? $draft;
+        $id = $this->parser->parseSchemaId($data, $draft, $base) ?? $id;
 
         $lazy = new LazySchema(new SchemaInfo($data, $id, $base, $root, $path, $draft), $this->parser);
 

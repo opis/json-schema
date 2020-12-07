@@ -72,8 +72,7 @@ class SchemaExistsFilter implements Filter
 
         $info = $schema->info();
 
-        $id = $info->id() ?? $info->base() ?? $info->root();
-        $id = Uri::merge($ref, $id, true);
+        $id = Uri::merge($ref, $info->idBaseRoot(), true);
 
         if ($id === null) {
             return false;

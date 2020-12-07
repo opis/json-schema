@@ -74,7 +74,7 @@ abstract class AbstractRefSchema extends AbstractSchema
             $data = $context->currentData();
         }
 
-        return $context->newInstance($data, $globals, $slots);
+        return $context->newInstance($data, $this, $globals, $slots);
     }
 
     /**
@@ -103,14 +103,5 @@ abstract class AbstractRefSchema extends AbstractSchema
         }
 
         return $repo->loadSchemaById(Uri::merge('#' . $path, $base));
-    }
-
-    /**
-     * @param SchemaInfo $info
-     * @return Uri|null
-     */
-    protected function resolveBaseUri(SchemaInfo $info): ?Uri
-    {
-        return $info->id() ?? $info->base() ?? $info->root();
     }
 }

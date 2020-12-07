@@ -24,6 +24,16 @@ use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser};
 
 class ContainsKeywordParser extends KeywordParser
 {
+    protected ?string $minContains = null;
+    protected ?string $maxContains = null;
+
+    public function __construct(string $keyword, ?string $minContains = null, ?string $maxContains = null)
+    {
+        parent::__construct($keyword);
+        $this->minContains = $minContains;
+        $this->maxContains = $maxContains;
+    }
+
     /**
      * @inheritDoc
      */
@@ -49,6 +59,27 @@ class ContainsKeywordParser extends KeywordParser
             throw $this->keywordException("{keyword} must be a json schema (object or boolean)", $info);
         }
 
-        return new ContainsKeyword($value);
+        $min = $max = null;
+
+        if ($this->minContains && $this->keywordExists($schema, $this->minContains)) {
+            $min = $this->keywordValue($schema, $this->minContains);
+            if (!is_int($min) || $min < 0) {
+                throw $this->keywordException("{keyword} must be a non-negative integer", $info, $this->minContains);
+            }
+        }
+
+        if ($this->maxContains && $this->keywordExists($schema, $this->maxContains)) {
+            $max = $this->keywordValue($schema, $this->maxContains);
+            if (!is_int($max) || $max < 0) {
+                throw $this->keywordException("{keyword} must be a non-negative integer", $info, $this->maxContains);
+            }
+            if ($min !== null && $max < $min) {
+                throw $this->keywordException("{keyword} must be greater than {$this->minContains}", $info, $this->maxContains);
+            }
+        } elseif ($min === 0) {
+            return null;
+        }
+
+        return new ContainsKeyword($value, $min, $max);
     }
 }

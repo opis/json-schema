@@ -50,6 +50,11 @@ abstract class Draft extends Vocabulary
     abstract public function allowKeywordsAlongsideRef(): bool;
 
     /**
+     * @return bool
+     */
+    abstract public function supportsAnchorId(): bool;
+
+    /**
      * @return KeywordParser
      */
     abstract protected function getRefKeywordParser(): KeywordParser;

@@ -49,10 +49,10 @@ abstract class PragmaParser
     protected function pragmaExists(object $schema, ?string $pragma = null): bool
     {
         if ($schema instanceof SchemaInfo) {
-            $schema = $schema->data();
+            $schema = $schema->isObject() ? $schema->data() : null;
         }
 
-        return property_exists($schema, $pragma ?? $this->pragma);
+        return is_object($schema) && property_exists($schema, $pragma ?? $this->pragma);
     }
 
     /**
@@ -63,10 +63,10 @@ abstract class PragmaParser
     protected function pragmaValue(object $schema, ?string $pragma = null)
     {
         if ($schema instanceof SchemaInfo) {
-            $schema = $schema->data();
+            $schema = $schema->isObject() ? $schema->data() : null;
         }
 
-        return $schema->{$pragma ?? $this->pragma};
+        return is_object($schema) ? $schema->{$pragma ?? $this->pragma} : null;
     }
 
     /**

@@ -137,7 +137,7 @@ class Validator
             $slots = $this->parseSlots($slots);
         }
 
-        return new ValidationContext($data, $this->loader, null, $globals ?? [], $slots, $this->maxErrors);
+        return new ValidationContext($data, $this->loader, null, null, $globals ?? [], $slots, $this->maxErrors);
     }
 
     /**

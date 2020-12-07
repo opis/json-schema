@@ -47,6 +47,9 @@ class DependentRequiredKeyword implements Keyword
         $data = $context->currentData();
 
         foreach ($this->value as $name => $value) {
+            if (!property_exists($data, $name)) {
+                continue;
+            }
             foreach ($value as $prop) {
                 if (!property_exists($data, $prop)) {
                     return $this->error($schema, $context, 'dependentRequired',

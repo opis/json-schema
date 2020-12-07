@@ -51,7 +51,7 @@ class TemplateRefSchema extends AbstractRefSchema
         parent::__construct($info, $mapper, $globals, $slots);
         $this->template = $template;
         $this->vars = $vars;
-        $this->baseUri = $this->resolveBaseUri($info);
+        $this->baseUri = $info->idBaseRoot();
     }
 
     /**

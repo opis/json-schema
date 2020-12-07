@@ -17,30 +17,32 @@
 
 namespace Opis\JsonSchema\Test;
 
+use Throwable;
+use PHPUnit\Framework\TestCase;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\SchemaException;
 use Opis\JsonSchema\Resolvers\SchemaResolver;
 use Opis\JsonSchema\{Validator, SchemaLoader};
 use Opis\JsonSchema\Parsers\{Vocabulary, SchemaParser};
-use PHPUnit\Framework\TestCase;
-use Throwable;
 
 abstract class AbstractTest extends TestCase
 {
+    protected static ?Validator $validator = null;
 
-    protected static Validator $validator;
+    protected string $currentDraft = '';
 
-    /**
-     * @inheritDoc
-     */
-    public static function setUpBeforeClass(): void
+    protected static function validator(): Validator
     {
-        $resolver = new SchemaResolver();
-        $resolver->registerProtocolDir('file', '', __DIR__ . '/schemas');
+        if (self::$validator === null) {
+            $resolver = new SchemaResolver();
+            $resolver->registerProtocolDir('file', '', __DIR__ . '/schemas');
 
-        $parser = new SchemaParser(static::parserResolvers(), static::parserOptions(), static::parserVocabulary());
+            $parser = new SchemaParser(static::parserResolvers(), static::parserOptions(), static::parserVocabulary());
 
-        self::$validator = new Validator(new SchemaLoader($parser, $resolver));
+            self::$validator = new Validator(new SchemaLoader($parser, $resolver));
+        }
+
+        return self::$validator;
     }
 
     /**
@@ -68,26 +70,49 @@ abstract class AbstractTest extends TestCase
     }
 
     /**
-     * @dataProvider validationsProvider
+     * @dataProvider draftValidationsProvider
      */
-    public function testValidations(string $uri, $data, bool $valid, bool $expectException = false, array $globals = null, array $slots = null)
+    public function testValidations(string $uri, $data, bool $valid, bool $expectException = false, array $globals = null, array $slots = null, array $skip_drafts = null)
     {
+        $validator = self::validator();
+
+        if ($skip_drafts && in_array($validator->parser()->defaultDraftVersion(), $skip_drafts)) {
+            $this->assertTrue(true);
+            return;
+        }
+
         if ($expectException) {
             $result = null;
             try {
-                $result = self::$validator->uriValidation($data, $uri, $globals ?? [], $slots);
+                $result = $validator->uriValidation($data, $uri, $globals ?? [], $slots);
             } catch (Throwable $exception) {
                 $this->assertInstanceOf(SchemaException::class, $exception);
                 return;
             }
         } else {
-            $result = self::$validator->uriValidation($data, $uri, $globals ?? [], $slots);
+            $result = $validator->uriValidation($data, $uri, $globals ?? [], $slots);
         }
 
         if ($valid) {
             $this->assertNull($result);
         } else {
             $this->assertInstanceOf(ValidationError::class, $result);
+        }
+    }
+
+    public function draftValidationsProvider(): iterable
+    {
+        $data = $this->validationsProvider();
+
+        $validator = self::validator();
+
+        $drafts = $validator->parser()->supportedDrafts();
+
+        foreach ($drafts as $draft) {
+            $this->currentDraft = $draft;
+            $validator->loader()->clearCache();
+            $validator->parser()->setDefaultDraftVersion($draft);
+            yield from $data;
         }
     }
 

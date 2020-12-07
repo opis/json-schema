@@ -30,13 +30,19 @@ class ContainsKeyword implements Keyword
 
     /** @var bool|object */
     protected $value;
+    protected ?int $min = null;
+    protected ?int $max = null;
 
     /**
      * @param bool|object $value
+     * @param int|null $min
+     * @param int|null $max
      */
-    public function __construct($value)
+    public function __construct($value, ?int $min = null, ?int $max = null)
     {
         $this->value = $value;
+        $this->min = $min;
+        $this->max = $max;
     }
 
     /**
@@ -45,9 +51,23 @@ class ContainsKeyword implements Keyword
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $data = $context->currentData();
+        $count = count($data);
+
+        if ($this->min > $count) {
+            return $this->error($schema, $context, 'minContains', 'Array must have at least @min items', [
+                'min' => $this->min,
+                'count' => $count,
+            ]);
+        }
 
         if ($this->value === true) {
-            if ($data) {
+            if ($count) {
+                if ($this->max !== null && $count > $this->max) {
+                    return $this->error($schema, $context, 'maxContains', 'Array must have at most @max items', [
+                        'max' => $this->max,
+                        'count' => $count,
+                    ]);
+                }
                 return null;
             }
 
@@ -55,7 +75,7 @@ class ContainsKeyword implements Keyword
         }
 
         if ($this->value === false) {
-            return $this->error($schema, $context, 'contains', 'Array must be empty');
+            return $this->error($schema, $context, 'contains', 'Any array is invalid');
         }
 
         if (is_object($this->value) && !($this->value instanceof Schema)) {
@@ -63,6 +83,7 @@ class ContainsKeyword implements Keyword
         }
 
         $errors = [];
+        $valid = 0;
 
         foreach ($data as $key => $item) {
             $context->pushDataPath($key);
@@ -70,6 +91,15 @@ class ContainsKeyword implements Keyword
             $context->popDataPath();
 
             if ($error === null) {
+                $valid++;
+                if ($valid < $this->min) {
+                    // TODO: ...
+                    // next
+                    continue;
+                }
+                if ($this->max !== null && $valid > $this->max) {
+
+                }
                 return null;
             }
 

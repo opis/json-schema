@@ -37,6 +37,7 @@ class SchemaParser
 {
     /** @var string */
     protected const DRAFT_REGEX = '~^https?://json-schema\.org/draft-(\d[0-9-]*\d)/schema#?$~i';
+    protected const ANCHOR_REGEX = '/^[a-z][a-z0-9\\-.:_]*/i';
 
     /** @var array */
     protected const DEFAULT_OPTIONS = [
@@ -51,8 +52,9 @@ class SchemaParser
         'allowPragmas' => true,
 
         'allowDataKeyword' => true,
-        'allowKeywordsAlongsideRef' => true,
+        'allowKeywordsAlongsideRef' => false,
 
+        'decodeContent' => ['06', '07'],
         'defaultDraft' => '2019-09',
 
         'varRefKey' => '$ref',
@@ -271,16 +273,45 @@ class SchemaParser
 
     /**
      * @param object $schema
+     * @param string $draft
      * @param Uri|null $base
      * @return Uri|null
      */
-    public function parseSchemaId(object $schema, ?Uri $base = null): ?Uri
+    public function parseSchemaId(object $schema, string $draft, ?Uri $base = null): ?Uri
     {
         if (!property_exists($schema, '$id') || !is_string($schema->{'$id'})) {
+            $id = $this->parseAnchor($schema, $draft);
+            if ($id === null) {
+                return null;
+            }
+            $id = '#' . $id;
+        } else {
+            $id = $schema->{'$id'};
+        }
+
+        return Uri::merge($id, $base, true);
+    }
+
+    /**
+     * @param object $schema
+     * @param string $draft
+     * @return string|null
+     */
+    public function parseAnchor(object $schema, string $draft): ?string
+    {
+        if (!property_exists($schema, '$anchor') ||
+            !isset($this->drafts[$draft]) ||
+            !$this->drafts[$draft]->supportsAnchorId()) {
             return null;
         }
 
-        return Uri::merge($schema->{'$id'}, $base, true);
+        $anchor = $schema->{'$anchor'};
+
+        if (!is_string($anchor) || !preg_match(self::ANCHOR_REGEX, $anchor)) {
+            return null;
+        }
+
+        return $anchor;
     }
 
     /**
@@ -369,7 +400,7 @@ class SchemaParser
      */
     public function parseSchema(SchemaInfo $info): Schema
     {
-        if (is_bool($info->data())) {
+        if ($info->isBoolean()) {
             return new BooleanSchema($info);
         }
 
@@ -398,6 +429,14 @@ class SchemaParser
         $this->drafts[$draft->version()] = $draft;
 
         return $this;
+    }
+
+    /**
+     * @return string[]
+     */
+    public function supportedDrafts(): array
+    {
+        return array_keys($this->drafts);
     }
 
     /**

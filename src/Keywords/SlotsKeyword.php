@@ -43,7 +43,7 @@ class SlotsKeyword implements Keyword
      */
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
-        $newContext = $context->newInstance($context->currentData());
+        $newContext = $context->newInstance($context->currentData(), $schema);
 
         foreach ($this->slots as $name => $fallback) {
             $slot = $this->resolveSlotSchema($name, $context);

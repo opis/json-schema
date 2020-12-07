@@ -20,10 +20,12 @@ namespace Opis\JsonSchema\Parsers\Keywords;
 use Opis\JsonSchema\Keyword;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\Keywords\ContentMediaTypeKeyword;
-use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser};
+use Opis\JsonSchema\Parsers\{DraftOptionTrait, KeywordParser, SchemaParser};
 
 class ContentMediaTypeKeywordParser extends KeywordParser
 {
+    use DraftOptionTrait;
+
     /**
      * @inheritDoc
      */
@@ -37,6 +39,10 @@ class ContentMediaTypeKeywordParser extends KeywordParser
      */
     public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
+        if (!$this->optionAllowedForDraft('decodeContent', $info, $parser)) {
+            return null;
+        }
+
         $schema = $info->data();
 
         $resolver = $parser->getMediaTypeResolver();

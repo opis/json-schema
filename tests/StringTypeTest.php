@@ -53,26 +53,26 @@ class StringTypeTest extends AbstractTest
             ["{$schema}/pattern", "a b c", false],
 
             // encoding
-            ["{$schema}/encoding", base64_encode("test"), true],
-            ["{$schema}/encoding", "tes(t)", false],
+            ["{$schema}/encoding", base64_encode("test"), true, false, null, null, ['2019-09']],
+            ["{$schema}/encoding", "tes(t)", false, false, null, null, ['2019-09']],
 
             // media
-            ["{$schema}/media", '{"a": 1}', true],
-            ["{$schema}/media", '{"a": x}', false],
+            ["{$schema}/media", '{"a": 1}', true, false, null, null, ['2019-09']],
+            ["{$schema}/media", '{"a": x}', false, false, null, null, ['2019-09']],
 
             // enc + media
-            ["{$schema}/encoding-media", base64_encode('{"a": 1}'), true],
-            ["{$schema}/encoding-media", '{"a": 1}', false],
+            ["{$schema}/encoding-media", base64_encode('{"a": 1}'), true, false, null, null, ['2019-09']],
+            ["{$schema}/encoding-media", '{"a": 1}', false, false, null, null, ['2019-09']],
 
             // content
-            ["{$schema}/content", '[1, 2, 3, 4.0]', true],
-            ["{$schema}/content", '[1, null]', false],
-            ["{$schema}/content", 'abc', false],
+            ["{$schema}/content", '[1, 2, 3, 4.0]', true, false, null, null, ['2019-09']],
+            ["{$schema}/content", '[1, null]', false, false, null, null, ['2019-09']],
+            ["{$schema}/content", 'abc', false, false, null, null, ['2019-09']],
 
             // enc + content
-            ["{$schema}/encoding-content", base64_encode('[1, 2, 3, 4.0]'), true],
-            ["{$schema}/encoding-content", base64_encode('[1, null]'), false],
-            ["{$schema}/encoding-content", base64_encode('abc'), false],
+            ["{$schema}/encoding-content", base64_encode('[1, 2, 3, 4.0]'), true, false, null, null, ['2019-09']],
+            ["{$schema}/encoding-content", base64_encode('[1, null]'), false, false, null, null, ['2019-09']],
+            ["{$schema}/encoding-content", base64_encode('abc'), false, false, null, null, ['2019-09']],
         ];
     }
 }

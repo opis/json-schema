@@ -29,11 +29,6 @@ class Draft07 extends Draft06
         return '07';
     }
 
-    public function allowKeywordsAlongsideRef(): bool
-    {
-        return false;
-    }
-
     /**
      * @inheritDoc
      */

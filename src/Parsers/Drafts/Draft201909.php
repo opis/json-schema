@@ -77,9 +77,17 @@ class Draft201909 extends Draft
     /**
      * @inheritDoc
      */
+    public function supportsAnchorId(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function getRefKeywordParser(): KeywordParser
     {
-        return new RefKeywordParser('$ref');
+        return new RefKeywordParser('$ref', '$recursiveRef');
     }
 
     /**
@@ -88,6 +96,7 @@ class Draft201909 extends Draft
     protected function getKeywordParsers(): array
     {
         return [
+            // TODO: add $recursiveAnchor, $recursiveRef
             // Generic
             new TypeKeywordParser('type'),
             new ConstKeywordParser('const'),
@@ -110,14 +119,16 @@ class Draft201909 extends Draft
             new MultipleOfKeywordParser('multipleOf'),
 
             // Array
+            // TODO: add maxContains, minContains, unevaluatedItems
             new MinItemsKeywordParser('minItems'),
             new MaxItemsKeywordParser('maxItems'),
             new UniqueItemsKeywordParser('uniqueItems'),
-            new ContainsKeywordParser('contains'), // TODO: add maxContains, minContains
+            new ContainsKeywordParser('contains'),
             new ItemsKeywordParser('items'),
             new AdditionalItemsKeywordParser('additionalItems'),
 
             // Object
+            // TODO: add unevaluatedProperties
             new MinPropertiesKeywordParser('minProperties'),
             new MaxPropertiesKeywordParser('maxProperties'),
             new RequiredKeywordParser('required'),

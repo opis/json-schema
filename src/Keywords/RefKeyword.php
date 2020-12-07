@@ -25,13 +25,17 @@ class RefKeyword implements Keyword
     use ErrorTrait;
 
     protected Schema $ref;
+    protected bool $recursive;
+    protected ?string $id = null;
 
     /**
      * @param Schema $ref
+     * @param bool $recursive
      */
-    public function __construct(Schema $ref)
+    public function __construct(Schema $ref, bool $recursive = false)
     {
         $this->ref = $ref;
+        $this->recursive = $recursive;
     }
 
     /**
@@ -40,7 +44,8 @@ class RefKeyword implements Keyword
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         if ($error = $this->ref->validate($context)) {
-            return $this->error($schema, $context, '$ref', 'The data must match $ref', [], $error);
+            $kw = $this->recursive ? '$recursiveRef' : '$ref';
+            return $this->error($schema, $context, $kw, 'The data must match ' . $kw, [], $error);
         }
 
         return null;

@@ -34,6 +34,8 @@ class ValidationContext
 
     protected SchemaLoader $loader;
 
+    protected ?Schema $sender = null;
+
     /** @var object[]|null[]|null */
     protected ?array $shared = null;
 
@@ -50,6 +52,7 @@ class ValidationContext
      * @param $data
      * @param SchemaLoader $loader
      * @param null|ValidationContext $parent
+     * @param Schema|null $parent
      * @param array $globals
      * @param null|string[]|Schema[] $slots
      * @param int $max_errors
@@ -58,11 +61,13 @@ class ValidationContext
         $data,
         SchemaLoader $loader,
         ?ValidationContext $parent = null,
+        ?Schema $sender = null,
         array $globals = [],
         ?array $slots = null,
         int $max_errors = 1
     )
     {
+        $this->sender = $sender;
         $this->rootData = $data;
         $this->loader = $loader;
         $this->parent = $parent;
@@ -80,15 +85,21 @@ class ValidationContext
 
     /**
      * @param $data
+     * @param Schema|null $sender
      * @param array|null $globals
      * @param array|null $slots
      * @param int|null $max_errors
      * @return ValidationContext
      */
-    public function newInstance($data, ?array $globals = null, ?array $slots = null, ?int $max_errors = null): ValidationContext
+    public function newInstance($data, ?Schema $sender, ?array $globals = null, ?array $slots = null, ?int $max_errors = null): ValidationContext
     {
-        return new self($data, $this->loader, $this, $globals ?? $this->globals, $slots ?? $this->slots,
+        return new self($data, $this->loader, $this, $sender, $globals ?? $this->globals, $slots ?? $this->slots,
             $max_errors ?? $this->maxErrors);
+    }
+
+    public function sender(): ?Schema
+    {
+        return $this->sender;
     }
 
     /**

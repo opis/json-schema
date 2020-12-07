@@ -17,12 +17,13 @@
             <file>./tests/DataTest.php</file>
             <file>./tests/PragmaTest.php</file>
         </testsuite>
-        <testsuite name="Official">
-            <file>./tests/OfficialDraft7Test.php</file>
-            <file>./tests/OfficialDraft6Test.php</file>
-        </testsuite>
         <testsuite name="Errors">
             <file>./tests/ErrorFormatterTest.php</file>
+        </testsuite>
+        <testsuite name="Official">
+<!--            <file>./tests/OfficialDraft6Test.php</file>-->
+<!--            <file>./tests/OfficialDraft7Test.php</file>-->
+<!--            <file>./tests/OfficialDraft201909Test.php</file>-->
         </testsuite>
     </testsuites>
 </phpunit>

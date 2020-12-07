@@ -180,6 +180,20 @@
                     }
                 }
             },
+            "dep2": {
+                "type": "object",
+                "dependentRequired": {
+                    "a": ["b"],
+                    "c": ["d"]
+                },
+                "dependentSchemas": {
+                    "e": {
+                        "properties": {
+                            "a": {"type": "array"}
+                        }
+                    }
+                }
+            },
             "names": {
                 "type": "object",
                 "propertyNames": {

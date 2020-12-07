@@ -74,6 +74,14 @@ class Draft06 extends Draft
     /**
      * @inheritDoc
      */
+    public function supportsAnchorId(): bool
+    {
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function getRefKeywordParser(): KeywordParser
     {
         return new RefKeywordParser('$ref');

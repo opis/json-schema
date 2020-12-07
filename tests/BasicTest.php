@@ -63,22 +63,22 @@ class BasicTest extends AbstractTest
             ["{$schema}/cond/negation", "b", false],
 
             // if-then
-            ["{$schema}/cond/if-then", 10, true],
-            ["{$schema}/cond/if-then", 10.5, true],
-            ["{$schema}/cond/if-then", "str", true],
-            ["{$schema}/cond/if-then", 5, false],
+            ["{$schema}/cond/if-then", 10, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-then", 10.5, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-then", "str", true, false, null, null, ['06']],
+            ["{$schema}/cond/if-then", 5, false, false, null, null, ['06']],
 
             // if-else
-            ["{$schema}/cond/if-else", 10, true],
-            ["{$schema}/cond/if-else", 5, true],
-            ["{$schema}/cond/if-else", 5.8, true],
-            ["{$schema}/cond/if-else", "str", false],
+            ["{$schema}/cond/if-else", 10, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-else", 5, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-else", 5.8, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-else", "str", false, false, null, null, ['06']],
 
             // if-then-else
-            ["{$schema}/cond/if-then-else", 10, true],
-            ["{$schema}/cond/if-then-else", 5.8, true],
-            ["{$schema}/cond/if-then-else", 5, false],
-            ["{$schema}/cond/if-then-else", 3.2, false],
+            ["{$schema}/cond/if-then-else", 10, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-then-else", 5.8, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-then-else", 5, false, false, null, null, ['06']],
+            ["{$schema}/cond/if-then-else", 3.2, false, false, null, null, ['06']],
 
             // allOf
             ["{$schema}/cond/all", 1, true],
