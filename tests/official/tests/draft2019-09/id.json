@@ -1,6 +1,5 @@
 [
     {
-        "skip": true,
         "description": "Invalid use of fragments in location-independent $id",
         "schema": {"$ref": "https://json-schema.org/draft/2019-09/schema"},
         "tests": [
@@ -106,7 +105,6 @@
         ]
     },
     {
-        "skip": true,
         "description": "Valid use of empty fragments in location-independent $id",
         "comment": "These are allowed but discouraged",
         "schema": {
@@ -148,7 +146,6 @@
         ]
     },
     {
-        "skip": true,
         "description": "Unnormalized $ids are allowed but discouraged",
         "schema": {
             "$ref": "https://json-schema.org/draft/2019-09/schema"
