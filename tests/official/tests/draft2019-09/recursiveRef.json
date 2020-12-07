@@ -122,7 +122,6 @@
                 "valid": true
             },
             {
-                "skip": true,
                 "description": "two levels, properties match with inner definition",
                 "data": { "foo": { "bar": "hi" } },
                 "valid": true

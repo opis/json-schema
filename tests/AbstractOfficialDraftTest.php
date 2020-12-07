@@ -36,8 +36,8 @@ abstract class AbstractOfficialDraftTest extends TestCase
     {
         $resolver = new SchemaResolver();
 
-        $resolver->registerFile('http://json-schema.org/draft-06/schema#', __DIR__ . '/official/drafts/draft6.json');
-        $resolver->registerFile('http://json-schema.org/draft-07/schema#', __DIR__ . '/official/drafts/draft7.json');
+        $resolver->registerPrefix('http://json-schema.org/', __DIR__ . '/official/drafts');
+        $resolver->registerPrefix('https://json-schema.org/', __DIR__ . '/official/drafts');
         $resolver->registerPrefix('http://localhost:1234/', __DIR__ . '/official/remotes');
 
         self::$validator = new Validator(new SchemaLoader(new SchemaParser(), $resolver));
@@ -95,11 +95,17 @@ abstract class AbstractOfficialDraftTest extends TestCase
         $this->doValidation(...$args);
     }
 
-    // TODO:
-    public function TODO_testSelf()
+    public function testSelf()
     {
         $validator = self::$validator;
-        $uri = "http://json-schema.org/draft-{$this->getDraft()}/schema#";
+
+        $draft = $this->getDraft();
+
+        if (in_array($draft, ['06', '07'])) {
+            $uri = "http://json-schema.org/draft-{$draft}/schema#";
+        } else {
+            $uri = "https://json-schema.org/draft/{$draft}/schema#";
+        }
 
         $schema = $validator->loader()->loadSchemaById(Uri::parse($uri));
 
