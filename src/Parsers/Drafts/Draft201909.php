@@ -95,8 +95,8 @@ class Draft201909 extends Draft
      */
     protected function getKeywordParsers(): array
     {
+        // TODO: unevaluatedItems, unevaluatedProperties
         return [
-            // TODO: add $recursiveAnchor, $recursiveRef
             // Generic
             new TypeKeywordParser('type'),
             new ConstKeywordParser('const'),
@@ -119,16 +119,14 @@ class Draft201909 extends Draft
             new MultipleOfKeywordParser('multipleOf'),
 
             // Array
-            // TODO: add maxContains, minContains, unevaluatedItems
             new MinItemsKeywordParser('minItems'),
             new MaxItemsKeywordParser('maxItems'),
             new UniqueItemsKeywordParser('uniqueItems'),
-            new ContainsKeywordParser('contains'),
+            new ContainsKeywordParser('contains', 'minContains', 'maxContains'),
             new ItemsKeywordParser('items'),
             new AdditionalItemsKeywordParser('additionalItems'),
 
             // Object
-            // TODO: add unevaluatedProperties
             new MinPropertiesKeywordParser('minProperties'),
             new MaxPropertiesKeywordParser('maxProperties'),
             new RequiredKeywordParser('required'),

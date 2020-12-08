@@ -60,9 +60,11 @@ class ContainsKeyword implements Keyword
             ]);
         }
 
+        $isMaxNull = $this->max === null;
+
         if ($this->value === true) {
             if ($count) {
-                if ($this->max !== null && $count > $this->max) {
+                if (!$isMaxNull && $count > $this->max) {
                     return $this->error($schema, $context, 'maxContains', 'Array must have at most @max items', [
                         'max' => $this->max,
                         'count' => $count,
@@ -85,25 +87,52 @@ class ContainsKeyword implements Keyword
         $errors = [];
         $valid = 0;
 
+        $isMinNull = $this->min === null;
+
+        if ($isMaxNull && $isMinNull) {
+            foreach ($data as $key => $item) {
+                $context->pushDataPath($key);
+                $error = $this->value->validate($context);
+                $context->popDataPath();
+                if ($error) {
+                    $errors[] = $error;
+                } else {
+                    return null;
+                }
+            }
+
+            return $this->error($schema, $context, 'contains', 'At least one array item must match schema', [],
+                $errors);
+        }
+
         foreach ($data as $key => $item) {
             $context->pushDataPath($key);
             $error = $this->value->validate($context);
             $context->popDataPath();
 
-            if ($error === null) {
+            if ($error) {
+                $errors[] = $error;
+            } else {
                 $valid++;
-                if ($valid < $this->min) {
-                    // TODO: ...
-                    // next
-                    continue;
-                }
-                if ($this->max !== null && $valid > $this->max) {
-
-                }
-                return null;
             }
+        }
 
-            $errors[] = $error;
+        if (!$isMinNull && $valid < $this->min) {
+            return $this->error($schema, $context, 'minContains', 'At least @min array items must match schema', [
+                'min' => $this->min,
+                'count' => $valid,
+            ]);
+        }
+
+        if (!$isMaxNull && $valid > $this->max) {
+            return $this->error($schema, $context, 'minContains', 'At most @max array items must match schema', [
+                'max' => $this->max,
+                'count' => $valid,
+            ]);
+        }
+
+        if ($valid) {
+            return null;
         }
 
         return $this->error($schema, $context, 'contains', 'At least one array item must match schema', [],
