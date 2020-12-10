@@ -43,8 +43,15 @@ class ErrorFormatterTest extends TestCase
     /**
      * @dataProvider validationsProvider
      */
-    public function testFormatter($schema, $data, $errors, $maxErrors = 1, $name = null)
+    public function testFormatter($schema, $data, $errors, $maxErrors = 1, $name = null, $skipDraft = null)
     {
+        if ($skipDraft) {
+            $draft = $this->validator->parser()->defaultDraftVersion();
+            if (is_string($skipDraft) && $draft === $skipDraft || (is_array($skipDraft) && in_array($draft, $skipDraft))) {
+                $this->assertTrue(true);
+                return;
+            }
+        }
         $this->validator->setMaxErrors($maxErrors);
 
         $result = $this->validator->dataValidation($data, $schema);
@@ -134,6 +141,7 @@ class ErrorFormatterTest extends TestCase
 
         foreach ($data as $group) {
             $maxErrors = $group->maxErrors ?? 1;
+            $skipDraft = $group->skipDraft ?? null;
             foreach ($group->tests as $test) {
                 $list[] = [
                     $group->schema,
@@ -141,6 +149,7 @@ class ErrorFormatterTest extends TestCase
                     $test->errors,
                     $test->maxErrors ?? $maxErrors,
                     $test->name ?? null,
+                    $skipDraft,
                 ];
             }
         }

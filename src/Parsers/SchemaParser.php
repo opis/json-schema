@@ -29,7 +29,7 @@ use Opis\JsonSchema\Resolvers\{
     ContentMediaTypeResolver,
     ContentEncodingResolver
 };
-use Opis\JsonSchema\Parsers\Drafts\{Draft06, Draft07, Draft201909};
+use Opis\JsonSchema\Parsers\Drafts\{Draft06, Draft07, Draft201909, Draft202012};
 use Opis\JsonSchema\Exceptions\{ParseException, SchemaException};
 use Opis\JsonSchema\Info\SchemaInfo;
 
@@ -38,6 +38,7 @@ class SchemaParser
     /** @var string */
     protected const DRAFT_REGEX = '~^https?://json-schema\.org/draft-(\d[0-9-]*\d)/schema#?$~i';
     protected const ANCHOR_REGEX = '/^[a-z][a-z0-9\\-.:_]*/i';
+    protected const DEFAULT_DRAFT = '2019-09';
 
     /** @var array */
     protected const DEFAULT_OPTIONS = [
@@ -56,7 +57,7 @@ class SchemaParser
         'allowUnevaluated' => true,
 
         'decodeContent' => ['06', '07'],
-        'defaultDraft' => '2019-09',
+        'defaultDraft' => self::DEFAULT_DRAFT,
 
         'varRefKey' => '$ref',
         'varEachKey' => '$each',
@@ -104,6 +105,7 @@ class SchemaParser
             '06' => new Draft06($extraVocabulary),
             '07' => new Draft07($extraVocabulary),
             '2019-09' => new Draft201909($extraVocabulary),
+            '2020-12' => new Draft202012($extraVocabulary),
         ];
     }
 
@@ -247,7 +249,7 @@ class SchemaParser
      */
     public function defaultDraftVersion(): string
     {
-        return $this->option('defaultDraft', '2019-09');
+        return $this->option('defaultDraft', self::DEFAULT_DRAFT);
     }
 
     /**

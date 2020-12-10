@@ -62,19 +62,19 @@ class ArrayTypeTest extends AbstractTest
             ["{$schema}/items_object", ["a", 1, false], false],
 
             // items array
-            ["{$schema}/items_array", [], true],
-            ["{$schema}/items_array", [-3], true],
-            ["{$schema}/items_array", [-3, "ok"], true],
-            ["{$schema}/items_array", [-3, "ok", 4, "t"], true],
-            ["{$schema}/items_array", [-3.2, "ok", null, false, []], true],
-            ["{$schema}/items_array", ["a", 3], false],
+            ["{$schema}/items_array", [], true, false, null, null, ['2020-12']],
+            ["{$schema}/items_array", [-3], true, false, null, null, ['2020-12']],
+            ["{$schema}/items_array", [-3, "ok"], true, false, null, null, ['2020-12']],
+            ["{$schema}/items_array", [-3, "ok", 4, "t"], true, false, null, null, ['2020-12']],
+            ["{$schema}/items_array", [-3.2, "ok", null, false, []], true, false, null, null, ['2020-12']],
+            ["{$schema}/items_array", ["a", 3], false, false, null, null, ['2020-12']],
 
             // additional items
-            ["{$schema}/items_additional", [5.5], true],
-            ["{$schema}/items_additional", [-3, "ok"], true],
-            ["{$schema}/items_additional", [-3, "ok", null, null, null], true],
-            ["{$schema}/items_additional", [-3, "ok", 1, null], false],
-            ["{$schema}/items_additional", [-3, "ok", null, null, -3], false],
+            ["{$schema}/items_additional", [5.5], true, false, null, null, ['2020-12']],
+            ["{$schema}/items_additional", [-3, "ok"], true, false, null, null, ['2020-12']],
+            ["{$schema}/items_additional", [-3, "ok", null, null, null], true, false, null, null, ['2020-12']],
+            ["{$schema}/items_additional", [-3, "ok", 1, null], false, false, null, null, ['2020-12']],
+            ["{$schema}/items_additional", [-3, "ok", null, null, -3], false, false, null, null, ['2020-12']],
         ];
     }
 }

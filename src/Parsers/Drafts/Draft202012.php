@@ -58,16 +58,17 @@ use Opis\JsonSchema\Parsers\Keywords\{AdditionalItemsKeywordParser,
     TypeKeywordParser,
     UnevaluatedItemsKeywordParser,
     UnevaluatedPropertiesKeywordParser,
-    UniqueItemsKeywordParser};
+    UniqueItemsKeywordParser
+};
 
-class Draft201909 extends Draft
+class Draft202012 extends Draft
 {
     /**
      * @inheritDoc
      */
     public function version(): string
     {
-        return '2019-09';
+        return '2020-12';
     }
 
     public function allowKeywordsAlongsideRef(): bool
@@ -88,7 +89,7 @@ class Draft201909 extends Draft
      */
     protected function getRefKeywordParser(): KeywordParser
     {
-        return new RefKeywordParser('$ref', '$recursiveRef', '$recursiveAnchor', false);
+        return new RefKeywordParser('$ref', '$dynamicRef', '$dynamicAnchor', true);
     }
 
     /**
@@ -123,7 +124,8 @@ class Draft201909 extends Draft
             new MaxItemsKeywordParser('maxItems'),
             new UniqueItemsKeywordParser('uniqueItems'),
             new ContainsKeywordParser('contains', 'minContains', 'maxContains'),
-            new ItemsKeywordParser('items'),
+            new ItemsKeywordParser('items', ItemsKeywordParser::ONLY_SCHEMA),
+            new ItemsKeywordParser('prefixItems', ItemsKeywordParser::ONLY_ARRAY),
             new AdditionalItemsKeywordParser('additionalItems'),
 
             // Object

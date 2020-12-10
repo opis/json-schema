@@ -53,26 +53,26 @@ class StringTypeTest extends AbstractTest
             ["{$schema}/pattern", "a b c", false],
 
             // encoding
-            ["{$schema}/encoding", base64_encode("test"), true, false, null, null, ['2019-09']],
-            ["{$schema}/encoding", "tes(t)", false, false, null, null, ['2019-09']],
+            ["{$schema}/encoding", base64_encode("test"), true, false, null, null, ['2019-09','2020-12']],
+            ["{$schema}/encoding", "tes(t)", false, false, null, null, ['2019-09', '2020-12']],
 
             // media
-            ["{$schema}/media", '{"a": 1}', true, false, null, null, ['2019-09']],
-            ["{$schema}/media", '{"a": x}', false, false, null, null, ['2019-09']],
+            ["{$schema}/media", '{"a": 1}', true, false, null, null, ['2019-09', '2020-12']],
+            ["{$schema}/media", '{"a": x}', false, false, null, null, ['2019-09','2020-12']],
 
             // enc + media
-            ["{$schema}/encoding-media", base64_encode('{"a": 1}'), true, false, null, null, ['2019-09']],
-            ["{$schema}/encoding-media", '{"a": 1}', false, false, null, null, ['2019-09']],
+            ["{$schema}/encoding-media", base64_encode('{"a": 1}'), true, false, null, null, ['2019-09', '2020-12']],
+            ["{$schema}/encoding-media", '{"a": 1}', false, false, null, null, ['2019-09','2020-12']],
 
             // content
-//            ["{$schema}/content", '[1, 2, 3, 4.0]', true, false, null, null, ['2019-09']],
-//            ["{$schema}/content", '[1, null]', false, false, null, null, ['2019-09']],
-//            ["{$schema}/content", 'abc', false, false, null, null, ['2019-09']],
+//            ["{$schema}/content", '[1, 2, 3, 4.0]', true, false, null, null, ['2019-09', '2020-12']],
+//            ["{$schema}/content", '[1, null]', false, false, null, null, ['2019-09','2020-12']],
+//            ["{$schema}/content", 'abc', false, false, null, null, ['2019-09', '2020-12']],
 
             // enc + content
-//            ["{$schema}/encoding-content", base64_encode('[1, 2, 3, 4.0]'), true, false, null, null, ['2019-09']],
-//            ["{$schema}/encoding-content", base64_encode('[1, null]'), false, false, null, null, ['2019-09']],
-//            ["{$schema}/encoding-content", base64_encode('abc'), false, false, null, null, ['2019-09']],
+//            ["{$schema}/encoding-content", base64_encode('[1, 2, 3, 4.0]'), true, false, null, null, ['2019-09','2020-12']],
+//            ["{$schema}/encoding-content", base64_encode('[1, null]'), false, false, null, null, ['2019-09', '2020-12']],
+//            ["{$schema}/encoding-content", base64_encode('abc'), false, false, null, null, ['2019-09', '2020-12']],
         ];
     }
 }

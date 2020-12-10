@@ -26,11 +26,22 @@ class RecursiveRefKeyword extends AbstractRefKeyword
     protected Uri $uri;
     /** @var bool|null|Schema */
     protected $resolved = false;
+    protected string $anchor;
+    protected $anchorValue;
 
-    public function __construct(Uri $uri, ?Variables $mapper, ?Variables $globals, ?array $slots = null, string $keyword = '$recursiveRef')
-    {
+    public function __construct(
+        Uri $uri,
+        ?Variables $mapper,
+        ?Variables $globals,
+        ?array $slots = null,
+        string $keyword = '$recursiveRef',
+        string $anchor = '$recursiveAnchor',
+        $anchorValue = true
+    ) {
         parent::__construct($mapper, $globals, $slots, $keyword);
         $this->uri = $uri;
+        $this->anchor = $anchor;
+        $this->anchorValue = $anchorValue;
     }
 
     /**
@@ -118,10 +129,10 @@ class RecursiveRefKeyword extends AbstractRefKeyword
 
         $data = $info->data();
 
-        if (!property_exists($data, '$recursiveAnchor')) {
+        if (!property_exists($data, $this->anchor)) {
             return false;
         }
 
-        return $data->{'$recursiveAnchor'} === true;
+        return $data->{$this->anchor} === $this->anchorValue;
     }
 }

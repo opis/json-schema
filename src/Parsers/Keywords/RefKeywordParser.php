@@ -27,11 +27,19 @@ class RefKeywordParser extends KeywordParser
     use VariablesTrait;
 
     protected ?string $recursiveRef = null;
+    protected ?string $recursiveAnchor = null;
+    protected bool $dynamic = false;
 
-    public function __construct(string $keyword, ?string $recursiveRef = null)
-    {
+    public function __construct(
+        string $keyword,
+        ?string $recursiveRef = null,
+        ?string $recursiveAnchor = null,
+        bool $dynamic = false
+    ) {
         parent::__construct($keyword);
         $this->recursiveRef = $recursiveRef;
+        $this->recursiveAnchor = $recursiveAnchor;
+        $this->dynamic = $dynamic;
     }
 
     /**
@@ -57,7 +65,11 @@ class RefKeywordParser extends KeywordParser
             }
         } elseif ($this->recursiveRef && $this->keywordExists($schema, $this->recursiveRef)) {
             $ref = $this->keywordValue($schema, $this->recursiveRef);
-            if ($ref !== '#') {
+            if ($this->dynamic) {
+                if (!preg_match('/^#[a-z][a-z0-9\\-.:_]*/i', $ref)) {
+                    $this->keywordException("{keyword} value is malformed", $info, $this->recursiveRef);
+                }
+            } elseif ($ref !== '#') {
                 $this->keywordException("{keyword} supports only '#' as value", $info, $this->recursiveRef);
             }
             $recursive = true;
@@ -96,7 +108,13 @@ class RefKeywordParser extends KeywordParser
         }
 
         if ($recursive) {
-            return new RecursiveRefKeyword($info->idBaseRoot()->resolveRef($ref), $mapper, $globals, $slots, $this->recursiveRef);
+            $ref = $info->idBaseRoot()->resolveRef($ref);
+            if ($this->dynamic) {
+                return new RecursiveRefKeyword($ref, $mapper, $globals, $slots,
+                    $this->recursiveRef, $this->recursiveAnchor, $ref->fragment());
+            }
+            return new RecursiveRefKeyword($ref, $mapper, $globals, $slots,
+                $this->recursiveRef, $this->recursiveAnchor, true);
         }
 
         if ($ref === '#') {

@@ -24,6 +24,18 @@ use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser};
 
 class ItemsKeywordParser extends KeywordParser
 {
+    const ONLY_SCHEMA = 1;
+    const ONLY_ARRAY = 2;
+    const BOTH = 3;
+
+    protected int $mode;
+
+    public function __construct(string $keyword, int $mode = self::BOTH)
+    {
+        parent::__construct($keyword);
+        $this->mode = $mode;
+    }
+
     /**
      * @inheritDoc
      */
@@ -48,18 +60,24 @@ class ItemsKeywordParser extends KeywordParser
         $alwaysValid = false;
 
         if (is_bool($value)) {
+            if ($this->mode === self::ONLY_ARRAY) {
+                throw $this->keywordException("{keyword} must contain an array of json schemas", $info);
+            }
             if ($value) {
                 $alwaysValid = true;
             }
         } elseif (is_array($value)) {
+            if ($this->mode === self::ONLY_SCHEMA) {
+                throw $this->keywordException("{keyword} must contain a valid json schema", $info);
+            }
             $valid = 0;
-            foreach ($value as $v) {
+            foreach ($value as $index => $v) {
                 if (is_bool($v)) {
                     if ($v) {
                         $valid++;
                     }
                 } elseif (!is_object($v)) {
-                    throw $this->keywordException("{keyword} must contain an array of json schemas (objects or booleans)", $info);
+                    throw $this->keywordException("{keyword}[$index] must contain a valid json schema", $info);
                 } elseif (!count(get_object_vars($v))) {
                     $valid++;
                 }
@@ -68,11 +86,22 @@ class ItemsKeywordParser extends KeywordParser
                 $alwaysValid = true;
             }
         } elseif (!is_object($value)) {
-            throw $this->keywordException("{keyword} must be a json schema or an array of json schemas", $info);
-        } elseif (!count(get_object_vars($value))) {
-            $alwaysValid = true;
+            if ($this->mode === self::BOTH) {
+                throw $this->keywordException("{keyword} must be a json schema or an array of json schemas", $info);
+            } elseif ($this->mode === self::ONLY_ARRAY) {
+                throw $this->keywordException("{keyword} must contain an array of json schemas", $info);
+            } else {
+                throw $this->keywordException("{keyword} must contain a valid json schema", $info);
+            }
+        } else {
+            if ($this->mode === self::ONLY_ARRAY) {
+                throw $this->keywordException("{keyword} must contain an array of json schemas", $info);
+            }
+            if (!count(get_object_vars($value))) {
+                $alwaysValid = true;
+            }
         }
 
-        return new ItemsKeyword($value, $alwaysValid);
+        return new ItemsKeyword($value, $alwaysValid, $this->keyword);
     }
 }

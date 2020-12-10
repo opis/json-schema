@@ -33,12 +33,14 @@ class ItemsKeyword implements Keyword
 
     protected int $count = -1;
     protected bool $alwaysValid;
+    protected string $keyword;
 
     /**
      * @param bool|object|Schema|bool[]|object[]|Schema[] $value
      * @param bool $alwaysValid
+     * @param string $keyword
      */
-    public function __construct($value, bool $alwaysValid = false)
+    public function __construct($value, bool $alwaysValid = false, string $keyword = 'items')
     {
         $this->value = $value;
         $this->alwaysValid = $alwaysValid;
@@ -46,6 +48,8 @@ class ItemsKeyword implements Keyword
         if (is_array($value)) {
             $this->count = count($value);
         }
+
+        $this->keyword = $keyword;
     }
 
     /**
@@ -69,7 +73,7 @@ class ItemsKeyword implements Keyword
                 return null;
             }
 
-            return $this->error($schema, $context, 'items', 'Array must be empty');
+            return $this->error($schema, $context, $this->keyword, 'Array must be empty');
         }
 
         if ($this->count >= 0) {
@@ -86,7 +90,7 @@ class ItemsKeyword implements Keyword
 
                 if ($this->value[$i] === false) {
                     $context->addEvaluatedItems($evaluated);
-                    return $this->error($schema, $context, 'items', "Array item at index @index is not allowed", [
+                    return $this->error($schema, $context, $this->keyword, "Array item at index @index is not allowed", [
                         'index' => $i,
                     ]);
                 }
@@ -115,7 +119,7 @@ class ItemsKeyword implements Keyword
                 return null;
             }
 
-            return $this->error($schema, $context, 'items', 'Array items must match corresponding schemas', [],
+            return $this->error($schema, $context, $this->keyword, 'Array items must match corresponding schemas', [],
                 $errors);
         }
 
@@ -126,7 +130,7 @@ class ItemsKeyword implements Keyword
         $context->markAllAsEvaluatedItems();
 
         return $this->validateIterableData($schema, $this->value, $context, $this->indexes(0, $count),
-            'items', 'All array items must match schema');
+            $this->keyword, 'All array items must match schema');
     }
 
     /**

@@ -75,15 +75,15 @@ class ObjectTypeTest extends AbstractTest
             ["{$schema}/pattern-number", (object)["10.5" => 1], true],
 
             // dep
-            ["{$schema}/dep", (object)[], true, false, null, null, ['2019-09']],
-            ["{$schema}/dep", (object)['e' => 1, 'a' => [1, 2], 'b' => null], true, false, null, null, ['2019-09']],
-            ["{$schema}/dep", (object)['e' => 1, 'a' => [1, 2]], false, false, null, null, ['2019-09']],
-            ["{$schema}/dep", (object)['e' => 1, 'a' => 1, 'b' => 2], false, false, null, null, ['2019-09']],
-            ["{$schema}/dep", (object)['a' => 1, 'b' => 2], true, false, null, null, ['2019-09']],
-            ["{$schema}/dep", (object)['c' => 1, 'd' => 2], true, false, null, null, ['2019-09']],
-            ["{$schema}/dep", (object)['b' => 1, 'd' => 2], true, false, null, null, ['2019-09']],
-            ["{$schema}/dep", (object)['a' => 'str'], false, false, null, null, ['2019-09']],
-            ["{$schema}/dep", (object)['c' => 1], false, false, null, null, ['2019-09']],
+            ["{$schema}/dep", (object)[], true, false, null, null, ['2019-09', '2020-12']],
+            ["{$schema}/dep", (object)['e' => 1, 'a' => [1, 2], 'b' => null], true, false, null, null, ['2019-09', '2020-12']],
+            ["{$schema}/dep", (object)['e' => 1, 'a' => [1, 2]], false, false, null, null, ['2019-09', '2020-12']],
+            ["{$schema}/dep", (object)['e' => 1, 'a' => 1, 'b' => 2], false, false, null, null, ['2019-09', '2020-12']],
+            ["{$schema}/dep", (object)['a' => 1, 'b' => 2], true, false, null, null, ['2019-09', '2020-12']],
+            ["{$schema}/dep", (object)['c' => 1, 'd' => 2], true, false, null, null, ['2019-09', '2020-12']],
+            ["{$schema}/dep", (object)['b' => 1, 'd' => 2], true, false, null, null, ['2019-09', '2020-12']],
+            ["{$schema}/dep", (object)['a' => 'str'], false, false, null, null, ['2019-09', '2020-12']],
+            ["{$schema}/dep", (object)['c' => 1], false, false, null, null, ['2019-09', '2020-12']],
 
             //dep2
             ["{$schema}/dep2", (object)[], true, false, null, null, ['06', '07']],
