@@ -96,7 +96,6 @@ class Draft201909 extends Draft
      */
     protected function getKeywordParsers(): array
     {
-        // TODO: unevaluatedItems, unevaluatedProperties
         return [
             // Generic
             new TypeKeywordParser('type'),

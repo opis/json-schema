@@ -77,7 +77,6 @@ class PatternPropertiesKeyword implements Keyword
             $subErrors = $this->iterateAndValidate($value, $context, $this->matchedProperties($pattern, $props, $checked));
 
             if (!$subErrors->isEmpty()) {
-                // TODO: is this ok?
                 $context->addEvaluatedProperties(array_keys($checked));
                 return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '@pattern' must also match pattern's schema", [
                     'pattern' => $pattern,
