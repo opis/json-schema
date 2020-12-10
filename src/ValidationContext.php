@@ -367,9 +367,14 @@ class ValidationContext
      */
     public function pushSharedObject(Schema $schema): self
     {
+        $unevaluated = !in_array($schema->info()->draft(), ['06', '07']);
+        if ($unevaluated && ($parser = $this->loader->parser()) && !$parser->option('allowUnevaluated', true)) {
+            $unevaluated = false;
+        }
+
         $this->shared[] = [
             'schema' => $schema,
-            'unevaluated' => !in_array($schema->info()->draft(), ['06', '07']),
+            'unevaluated' => $unevaluated,
             'object' => null,
         ];
         $this->sharedIndex++;

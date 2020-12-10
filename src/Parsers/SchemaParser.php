@@ -53,6 +53,7 @@ class SchemaParser
 
         'allowDataKeyword' => true,
         'allowKeywordsAlongsideRef' => false,
+        'allowUnevaluated' => true,
 
         'decodeContent' => ['06', '07'],
         'defaultDraft' => '2019-09',
