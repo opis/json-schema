@@ -35,7 +35,7 @@ class Validator
      */
     public function __construct(?SchemaLoader $loader = null, int $max_errors = 1)
     {
-        $this->loader = $loader ?? new SchemaLoader(new SchemaParser());
+        $this->loader = $loader ?? new SchemaLoader(new SchemaParser(), new SchemaResolver(), true);
         $this->maxErrors = $max_errors;
     }
 
