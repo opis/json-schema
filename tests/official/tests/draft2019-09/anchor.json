@@ -24,7 +24,6 @@
         ]
     },
     {
-        "skip": true,
         "description": "Location-independent identifier with absolute URI",
         "schema": {
             "$ref": "http://localhost:1234/bar#foo",

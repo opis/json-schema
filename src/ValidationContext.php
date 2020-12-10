@@ -412,6 +412,11 @@ class ValidationContext
         return $this->shared[$this->sharedIndex]['object'] ??= (object)[];
     }
 
+    public function schema(): ?Schema
+    {
+        return $this->shared[$this->sharedIndex]['schema'] ?? null;
+    }
+
     public function trackUnevaluated(): bool
     {
         return $this->shared[$this->sharedIndex]['unevaluated'] ?? false;

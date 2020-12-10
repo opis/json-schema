@@ -287,6 +287,16 @@ class SchemaParser
             $id = '#' . $id;
         } else {
             $id = $schema->{'$id'};
+            if (is_string($id)) {
+                $anchor = $this->parseAnchor($schema, $draft);
+                if ($anchor !== null) {
+                    if ($pos = (strpos($id, '#')) !== false) {
+                        $id = substr($id, $pos + 1) . $anchor;
+                    } else {
+                        $id .= '#' . $anchor;
+                    }
+                }
+            }
         }
 
         return Uri::merge($id, $base, true);

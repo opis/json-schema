@@ -7,7 +7,6 @@
         },
         "tests": [
             {
-                "skip": true,
                 "description": "matches in Python, but should not in jsonschema",
                 "data": "abc\n",
                 "valid": false

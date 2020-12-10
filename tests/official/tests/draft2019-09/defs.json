@@ -11,7 +11,6 @@
         ]
     },
     {
-        "skip": true,
         "description": "invalid definition",
         "schema": {"$ref": "https://json-schema.org/draft/2019-09/schema"},
         "tests": [

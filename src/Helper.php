@@ -311,7 +311,7 @@ final class Helper
      */
     public static function patternToRegex(string $pattern): string
     {
-        return "\x07{$pattern}\x07u";
+        return "\x07{$pattern}\x07uD";
     }
 
     /**

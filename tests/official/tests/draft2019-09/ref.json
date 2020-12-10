@@ -384,7 +384,6 @@
         ]
     },
     {
-        "skip": true,
         "description": "ref creates new scope when adjacent to keywords",
         "schema": {
             "$defs": {

@@ -115,8 +115,6 @@
                 "valid": true
             },
             {
-                "skip": true,
-                "comment": "Why? { \"$ref\": \"#/$defs/myobject\" } doesn't have $recursiveAnchor",
                 "description": "integer now matches as a property value",
                 "data": { "foo": 1 },
                 "valid": true
@@ -127,7 +125,6 @@
                 "valid": true
             },
             {
-                "skip": true,
                 "description": "two levels, properties match with $recursiveRef",
                 "data": { "foo": { "bar": 1 } },
                 "valid": true

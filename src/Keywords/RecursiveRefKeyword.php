@@ -53,21 +53,7 @@ class RecursiveRefKeyword extends AbstractRefKeyword
             return $this->resolved->validate($new_context);
         }
 
-        $ok_sender = null;
-
-        $ctx = $context;
-
-        do {
-            $sender = $ctx->sender();
-            if (!$sender || !$this->hasRecursiveAnchor($sender)) {
-                break;
-            }
-            if ($sender->info()->id()) {
-                $ok_sender = $sender;
-            } else {
-                $ok_sender = $context->loader()->loadSchemaById($sender->info()->root());
-            }
-        } while ($ctx = $context->parent());
+        $ok_sender = $this->resolveSchema($context);
 
         if (!$ok_sender) {
             $this->setLastRefSchema($this->resolved);
@@ -77,6 +63,45 @@ class RecursiveRefKeyword extends AbstractRefKeyword
         $this->setLastRefSchema($ok_sender);
 
         return $ok_sender->validate($new_context);
+    }
+
+    protected function resolveSchema(ValidationContext $context): ?Schema
+    {
+        $ok = null;
+        $loader = $context->loader();
+
+        while ($context) {
+            $sender = $context->sender();
+
+            if (!$sender) {
+                break;
+            }
+
+            if (!$this->hasRecursiveAnchor($sender)) {
+                if ($sender->info()->id()) {
+                    // id without recursiveAnchor
+                    break;
+                }
+
+                $sender = $loader->loadSchemaById($sender->info()->root());
+                if (!$sender || !$this->hasRecursiveAnchor($sender)) {
+                    // root without recursiveAnchor
+                    break;
+                }
+            }
+
+            if ($sender->info()->id()) {
+                // id with recursiveAnchor
+                $ok = $sender;
+            } else {
+                // root with recursiveAnchor
+                $ok = $loader->loadSchemaById($sender->info()->root());
+            }
+
+            $context = $context->parent();
+        }
+
+        return $ok;
     }
 
     protected function hasRecursiveAnchor(?Schema $schema): bool
