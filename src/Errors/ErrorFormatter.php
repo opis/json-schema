@@ -24,8 +24,8 @@ class ErrorFormatter
     /**
      * @param ValidationError $error
      * @param bool $multiple True if the same data pointer can have multiple errors
-     * @param callable|null $formatter
-     * @param callable|null $key_formatter
+     * @param callable|null $formatter (ValidationError $error, ?string $message = null) => mixed
+     * @param callable|null $key_formatter (ValidationError $error) => string
      * @return array
      */
     public function format(
@@ -39,7 +39,7 @@ class ErrorFormatter
         }
 
         if (!$key_formatter) {
-            $key_formatter = JsonPointer::class . '::pathToString';
+            $key_formatter = [$this, 'formatErrorKey'];
         }
 
         $list = [];
@@ -51,7 +51,7 @@ class ErrorFormatter
 
         if ($multiple) {
             foreach ($this->getErrors($error) as $error => $message) {
-                $key = $key_formatter($error->data()->fullPath());
+                $key = $key_formatter($error);
 
                 if (!isset($list[$key])) {
                     $list[$key] = [];
@@ -127,7 +127,7 @@ class ErrorFormatter
 
     /**
      * @param ValidationError $error
-     * @param callable|null $formatter
+     * @param callable|null $formatter (ValidationError $error, ?array $formattedSubErrors) => mixed
      * @return mixed
      */
     public function formatNested(ValidationError $error, ?callable $formatter = null)
@@ -153,7 +153,7 @@ class ErrorFormatter
 
     /**
      * @param ValidationError $error
-     * @param callable|null $formatter
+     * @param callable|null $formatter (ValidationError $error) => mixed
      * @return array
      */
     public function formatFlat(ValidationError $error, ?callable $formatter = null): array
@@ -173,8 +173,8 @@ class ErrorFormatter
 
     /**
      * @param ValidationError $error
-     * @param callable|null $formatter
-     * @param callable|null $key_formatter
+     * @param callable|null $formatter (ValidationError $error) => mixed
+     * @param callable|null $key_formatter (ValidationError $error) => string
      * @return array
      */
     public function formatKeyed(
@@ -187,13 +187,13 @@ class ErrorFormatter
         }
 
         if (!$key_formatter) {
-            $key_formatter = JsonPointer::class . '::pathToString';
+            $key_formatter = [$this, 'formatErrorKey'];
         }
 
         $list = [];
 
         foreach ($this->getLeafErrors($error) as $error) {
-            $key = $key_formatter($error->data()->fullPath());
+            $key = $key_formatter($error);
 
             if (!isset($list[$key])) {
                 $list[$key] = [];
@@ -205,11 +205,6 @@ class ErrorFormatter
         return $list;
     }
 
-    /**
-     * @param ValidationError $error
-     * @param string|null $message
-     * @return string
-     */
     public function formatErrorMessage(ValidationError $error, ?string $message = null): string
     {
         $message ??= $error->message();
@@ -238,6 +233,11 @@ class ErrorFormatter
         );
     }
 
+    public function formatErrorKey(ValidationError $error): string
+    {
+        return JsonPointer::pathToString($error->data()->fullPath());
+    }
+
     protected function getDefaultArgs(ValidationError $error): array
     {
         $data = $error->data();
@@ -260,10 +260,6 @@ class ErrorFormatter
         ];
     }
 
-    /**
-     * @param ValidationError $error
-     * @return array
-     */
     protected function formatOutputError(ValidationError $error): array
     {
         $path = $error->schema()->info()->path();
@@ -279,7 +275,7 @@ class ErrorFormatter
 
     /**
      * @param ValidationError $error
-     * @param callable $formatter
+     * @param callable $formatter (ValidationError $error, ?array $formattedSubErrors) => mixed
      * @return mixed
      */
     protected function getNestedErrors(ValidationError $error, callable $formatter)
@@ -368,25 +364,26 @@ class ErrorFormatter
             return;
         }
 
-        if ($map) {
-            foreach ($subErrors as $subError) {
-                $path = $subError->data()->path();
-                if (count($path) !== 1) {
-                    yield from $this->getErrors($subError);
-                } else {
-                    $path = $path[0];
-                    if (isset($map->{$path})) {
-                        yield $subError => $map->{$path};
-                    } elseif (isset($map->{'*'})) {
-                        yield $subError => $map->{'*'};
-                    } else {
-                        yield from $this->getErrors($subError);
-                    }
-                }
-            }
-        } else {
+        if (!$map) {
             foreach ($subErrors as $subError) {
                 yield from $this->getErrors($subError);
+            }
+            return;
+        }
+
+        foreach ($subErrors as $subError) {
+            $path = $subError->data()->path();
+            if (count($path) !== 1) {
+                yield from $this->getErrors($subError);
+            } else {
+                $path = $path[0];
+                if (isset($map->{$path})) {
+                    yield $subError => $map->{$path};
+                } elseif (isset($map->{'*'})) {
+                    yield $subError => $map->{'*'};
+                } else {
+                    yield from $this->getErrors($subError);
+                }
             }
         }
     }
