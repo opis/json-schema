@@ -28,7 +28,7 @@ class NotKeyword implements Keyword
 {
     use ErrorTrait;
 
-    /** @var bool|object */
+    /** @var bool|object|Schema */
     protected $value;
 
     /**
@@ -55,10 +55,7 @@ class NotKeyword implements Keyword
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
 
-        $maxErrors = $context->maxErrors();
-        $context->setMaxErrors(1);
-        $error = $this->value->validate($context);
-        $context->setMaxErrors($maxErrors);
+        $error = $context->validateSchemaWithoutEvaluated($this->value, 1);
 
         if ($error) {
             return null;

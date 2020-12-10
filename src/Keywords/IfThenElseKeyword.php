@@ -64,7 +64,7 @@ class IfThenElseKeyword implements Keyword
             $this->if = $context->loader()->loadObjectSchema($this->if);
         }
 
-        if ($this->if->validate($context)) {
+        if ($context->validateSchemaWithoutEvaluated($this->if, null, true)) {
             return $this->validateBranch('else', $context, $schema);
         }
 

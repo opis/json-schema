@@ -53,24 +53,23 @@ class AllOfKeywordParser extends KeywordParser
             throw $this->keywordException("{keyword} must have at least one element", $info);
         }
 
-        $list = [];
+        $valid = 0;
+
         foreach ($value as $index => $item) {
             if ($item === false) {
                 throw $this->keywordException("{keyword} contains false schema", $info);
             }
             if ($item === true) {
+                $valid++;
                 continue;
             }
             if (!is_object($item)) {
                 throw $this->keywordException("{keyword}[{$index}] must be a json schema", $info);
+            } elseif (!count(get_object_vars($item))) {
+                $valid++;
             }
-            $list[] = $item;
         }
 
-        if (!$list) {
-            return null;
-        }
-
-        return new AllOfKeyword($list);
+        return $valid !== count($value) ? new AllOfKeyword($value) : null;
     }
 }

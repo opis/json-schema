@@ -63,7 +63,7 @@ class ObjectSchema extends AbstractSchema
      */
     public function validate(ValidationContext $context): ?ValidationError
     {
-        $context->pushSharedObject();
+        $context->pushSharedObject($this);
         $error = $this->keywordValidator ? $this->keywordValidator->validate($context) : $this->doValidate($context);
         $context->popSharedObject();
 

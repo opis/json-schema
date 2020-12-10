@@ -48,6 +48,8 @@ class AdditionalItemsKeyword implements Keyword
      */
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
+        $context->markAllAsEvaluatedItems();
+
         if ($this->value === true) {
             return null;
         }

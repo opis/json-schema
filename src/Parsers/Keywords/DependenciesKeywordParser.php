@@ -48,26 +48,27 @@ class DependenciesKeywordParser extends KeywordParser
             throw $this->keywordException("{keyword} must be an object", $info);
         }
 
-        $list = [];
-        foreach ($value as $name => $s) {
-            if ($s === true) {
-                continue;
-            }
-            if ($s === false || is_object($s)) {
-                $list[$name] = $s;
-                continue;
-            } elseif (!is_array($s)) {
+        $list = get_object_vars($value);
+
+        foreach ($list as $name => $s) {
+            if (is_array($s)) {
+                if (!$s) {
+                    unset($list[$name]);
+                    continue;
+                }
+                foreach ($s as $p) {
+                    if (!is_string($p)) {
+                        throw $this->keywordException("{keyword} must be an object containing json schemas or arrays of property names", $info);
+                    }
+                }
+                $list[$name] = array_unique($s);
+            } elseif (is_bool($s)) {
+                if ($s) {
+                    unset($list[$name]);
+                }
+            } elseif (!is_object($s)) {
                 throw $this->keywordException("{keyword} must be an object containing json schemas or arrays of property names", $info);
             }
-            if (!$s) {
-                continue;
-            }
-            foreach ($s as $p) {
-                if (!is_string($p)) {
-                    throw $this->keywordException("{keyword} must be an object containing json schemas or arrays of property names", $info);
-                }
-            }
-            $list[$name] = array_unique($s);
         }
 
         return $list ? new DependenciesKeyword($list) : null;

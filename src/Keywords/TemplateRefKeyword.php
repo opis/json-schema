@@ -68,7 +68,7 @@ class TemplateRefKeyword extends AbstractRefKeyword
             throw new UnresolvedRefException($ref, $schema, $context);
         }
 
-        return $schema->validate($this->createQuickContext($context, $schema));
+        return $schema->validate($this->createContext($context, $schema));
     }
 
     /**

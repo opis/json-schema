@@ -53,6 +53,8 @@ class ContainsKeyword implements Keyword
         $data = $context->currentData();
         $count = count($data);
 
+        $context->markAllAsEvaluatedItems();
+
         if ($this->min > $count) {
             return $this->error($schema, $context, 'minContains', 'Array must have at least @min items', [
                 'min' => $this->min,

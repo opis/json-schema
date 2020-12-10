@@ -26,6 +26,7 @@ use Opis\JsonSchema\Errors\ValidationError;
 
 class DependenciesKeyword implements Keyword
 {
+    use OfTrait;
     use ErrorTrait;
 
     /** @var array|object[]|string[][] */
@@ -45,6 +46,7 @@ class DependenciesKeyword implements Keyword
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $data = $context->currentData();
+        $object = $this->createArrayObject($context);
 
         foreach ($this->value as $name => $value) {
             if ($value === true || !property_exists($data, $name)) {
@@ -52,6 +54,7 @@ class DependenciesKeyword implements Keyword
             }
 
             if ($value === false) {
+                $this->addEvaluatedFromArrayObject($object, $context);
                 return $this->error($schema, $context, 'dependencies', "Property '@property' is not allowed", [
                     'property' => $name,
                 ]);
@@ -60,6 +63,7 @@ class DependenciesKeyword implements Keyword
             if (is_array($value)) {
                 foreach ($value as $prop) {
                     if (!property_exists($data, $prop)) {
+                        $this->addEvaluatedFromArrayObject($object, $context);
                         return $this->error($schema, $context, 'dependencies',
                             "Property '@missing' property is required by property '@property'", [
                                 'property' => $name,
@@ -75,13 +79,16 @@ class DependenciesKeyword implements Keyword
                 $value = $this->value[$name] = $context->loader()->loadObjectSchema($value);
             }
 
-            if ($error = $value->validate($context)) {
+            if ($error = $context->validateSchemaWithoutEvaluated($value, null, false, $object)) {
+                $this->addEvaluatedFromArrayObject($object, $context);
                 return $this->error($schema, $context, 'dependencies',
                     "The object must match dependency schema defined on property '@property'", [
                         'property' => $name,
                     ], $error);
             }
         }
+
+        $this->addEvaluatedFromArrayObject($object, $context);
 
         return null;
     }

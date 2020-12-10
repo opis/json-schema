@@ -27,7 +27,6 @@ use Opis\JsonSchema\Errors\ValidationError;
 class PropertyNamesKeyword implements Keyword
 {
     use ErrorTrait;
-    use PropertiesTrait;
 
     /** @var bool|object */
     protected $value;
@@ -49,7 +48,7 @@ class PropertyNamesKeyword implements Keyword
             return null;
         }
 
-        $props = $this->getObjectProperties($context);
+        $props = $context->getObjectProperties();
         if (!$props) {
             return null;
         }

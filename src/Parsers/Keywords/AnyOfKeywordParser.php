@@ -54,7 +54,7 @@ class AnyOfKeywordParser extends KeywordParser
         }
 
         $alwaysValid = false;
-        $list = [];
+
         foreach ($value as $index => $item) {
             if ($item === true) {
                 $alwaysValid = true;
@@ -65,18 +65,11 @@ class AnyOfKeywordParser extends KeywordParser
             }
             if (!is_object($item)) {
                 throw $this->keywordException("{keyword}[{$index}] must be a json schema", $info);
+            } elseif (!count(get_object_vars($item))) {
+                $alwaysValid = true;
             }
-            $list[] = $item;
         }
 
-        if ($alwaysValid) {
-            return null;
-        }
-
-        if (!$list) {
-            throw $this->keywordException("{keyword} must have at least one json schema", $info);
-        }
-
-        return new AnyOfKeyword($list);
+        return new AnyOfKeyword($value, $alwaysValid);
     }
 }

@@ -26,6 +26,7 @@ use Opis\JsonSchema\Errors\ValidationError;
 
 class OneOfKeyword implements Keyword
 {
+    use OfTrait;
     use ErrorTrait;
 
     /** @var bool[]|object[] */
@@ -46,6 +47,7 @@ class OneOfKeyword implements Keyword
     {
         $count = 0;
         $matchedIndex = -1;
+        $object = $this->createArrayObject($context);
 
         foreach ($this->value as $index => $value) {
             if ($value === false) {
@@ -54,6 +56,7 @@ class OneOfKeyword implements Keyword
 
             if ($value === true) {
                 if (++$count > 1) {
+                    $this->addEvaluatedFromArrayObject($object, $context);
                     return $this->error($schema, $context, 'oneOf', 'The data should match exactly one schema', [
                         'matched' => [$matchedIndex, $index],
                     ]);
@@ -67,8 +70,9 @@ class OneOfKeyword implements Keyword
                 $value = $this->value[$index] = $context->loader()->loadObjectSchema($value);
             }
 
-            if (!$value->validate($context)) {
+            if (!$context->validateSchemaWithoutEvaluated($value, null, false, $object)) {
                 if (++$count > 1) {
+                    $this->addEvaluatedFromArrayObject($object, $context);
                     return $this->error($schema, $context, 'oneOf', 'The data should match exactly one schema', [
                         'matched' => [$matchedIndex, $index],
                     ]);
@@ -76,6 +80,8 @@ class OneOfKeyword implements Keyword
                 $matchedIndex = $index;
             }
         }
+
+        $this->addEvaluatedFromArrayObject($object, $context);
 
         if ($count === 1) {
             return null;

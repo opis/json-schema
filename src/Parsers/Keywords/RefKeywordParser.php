@@ -39,7 +39,7 @@ class RefKeywordParser extends KeywordParser
      */
     public function type(): string
     {
-        return self::TYPE_APPEND;
+        return self::TYPE_AFTER_REF;
     }
 
     /**

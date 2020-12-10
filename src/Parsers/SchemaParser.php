@@ -550,6 +550,8 @@ class SchemaParser
         $after = [];
         /** @var Keyword[][] $types */
         $types = [];
+        /** @var Keywordp[] $ref */
+        $ref = [];
 
         if ($hasRef) {
             foreach ($parsers as $parser) {
@@ -557,6 +559,8 @@ class SchemaParser
 
                 if ($kType === KeywordParser::TYPE_APPEND) {
                     $container = &$append;
+                } elseif ($kType === KeywordParser::TYPE_AFTER_REF) {
+                    $container = &$ref;
                 } elseif ($kType === KeywordParser::TYPE_PREPEND) {
                     $container = &$prepend;
                 } else {
@@ -591,6 +595,9 @@ class SchemaParser
                     case KeywordParser::TYPE_AFTER:
                         $after[] = $keyword;
                         break;
+                    case KeywordParser::TYPE_AFTER_REF:
+                        $ref[] = $keyword;
+                        break;
                     default:
                         if (!isset($types[$kType])) {
                             $types[$kType] = [];
@@ -608,6 +615,11 @@ class SchemaParser
             $before = array_merge($prepend, $before);
         }
         unset($prepend);
+
+        if ($ref) {
+            $after = array_merge($after, $ref);
+        }
+        unset($ref);
 
         if ($append) {
             $after = array_merge($after, $append);

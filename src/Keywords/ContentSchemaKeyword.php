@@ -23,7 +23,6 @@ use Opis\JsonSchema\Errors\ValidationError;
 class ContentSchemaKeyword implements Keyword
 {
     use ErrorTrait;
-    use DecodedContentTrait;
 
     /** @var bool|object */
     protected $value;
@@ -41,7 +40,7 @@ class ContentSchemaKeyword implements Keyword
      */
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
-        $data = json_decode($this->getDecodedContent($context), false);
+        $data = json_decode($context->getDecodedContent(), false);
 
         if ($error = json_last_error() !== JSON_ERROR_NONE) {
             $message = json_last_error_msg();

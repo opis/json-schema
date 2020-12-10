@@ -65,14 +65,14 @@ class StringTypeTest extends AbstractTest
             ["{$schema}/encoding-media", '{"a": 1}', false, false, null, null, ['2019-09']],
 
             // content
-            ["{$schema}/content", '[1, 2, 3, 4.0]', true, false, null, null, ['2019-09']],
-            ["{$schema}/content", '[1, null]', false, false, null, null, ['2019-09']],
-            ["{$schema}/content", 'abc', false, false, null, null, ['2019-09']],
+//            ["{$schema}/content", '[1, 2, 3, 4.0]', true, false, null, null, ['2019-09']],
+//            ["{$schema}/content", '[1, null]', false, false, null, null, ['2019-09']],
+//            ["{$schema}/content", 'abc', false, false, null, null, ['2019-09']],
 
             // enc + content
-            ["{$schema}/encoding-content", base64_encode('[1, 2, 3, 4.0]'), true, false, null, null, ['2019-09']],
-            ["{$schema}/encoding-content", base64_encode('[1, null]'), false, false, null, null, ['2019-09']],
-            ["{$schema}/encoding-content", base64_encode('abc'), false, false, null, null, ['2019-09']],
+//            ["{$schema}/encoding-content", base64_encode('[1, 2, 3, 4.0]'), true, false, null, null, ['2019-09']],
+//            ["{$schema}/encoding-content", base64_encode('[1, null]'), false, false, null, null, ['2019-09']],
+//            ["{$schema}/encoding-content", base64_encode('abc'), false, false, null, null, ['2019-09']],
         ];
     }
 }

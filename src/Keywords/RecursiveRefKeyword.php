@@ -46,7 +46,7 @@ class RecursiveRefKeyword extends AbstractRefKeyword
             throw new UnresolvedRefException((string)$this->uri, $schema, $context);
         }
 
-        $new_context = $this->createQuickContext($context, $schema);
+        $new_context = $this->createContext($context, $schema);
 
         if (!$this->hasRecursiveAnchor($this->resolved)) {
             $this->setLastRefSchema($this->resolved);

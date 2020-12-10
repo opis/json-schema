@@ -26,10 +26,10 @@ use Opis\JsonSchema\Errors\ValidationError;
 
 class PropertiesKeyword implements Keyword
 {
-    use CheckedPropertiesTrait;
     use IterableDataValidationTrait;
 
     protected array $properties;
+    protected array $propertyKeys;
 
     /**
      * @param array $properties
@@ -37,6 +37,7 @@ class PropertiesKeyword implements Keyword
     public function __construct(array $properties)
     {
         $this->properties = $properties;
+        $this->propertyKeys = array_keys($properties);
     }
 
     /**
@@ -49,6 +50,8 @@ class PropertiesKeyword implements Keyword
         }
 
         $checked = [];
+        $evaluated = [];
+
         $data = $context->currentData();
 
         $errors = $this->errorContainer($context->maxErrors());
@@ -61,10 +64,12 @@ class PropertiesKeyword implements Keyword
             $checked[] = $name;
 
             if ($prop === true) {
+                $evaluated[] = $name;
                 continue;
             }
 
             if ($prop === false) {
+                $context->addEvaluatedProperties($evaluated);
                 return $this->error($schema, $context, 'properties', "Property '@property' is not allowed", [
                     'property' => $name,
                 ]);
@@ -83,17 +88,21 @@ class PropertiesKeyword implements Keyword
                 if ($errors->isFull()) {
                     break;
                 }
+            } else {
+                $evaluated[] = $name;
             }
         }
 
+        $context->addEvaluatedProperties($evaluated);
+
         if (!$errors->isEmpty()) {
-            return $this->error($schema, $context, 'properties', "The properties must match schema", [], $errors);
+            return $this->error($schema, $context, 'properties', "The properties must match schema: @properties", [
+                'properties' => array_values(array_diff($checked, $evaluated))
+            ], $errors);
         }
         unset($errors);
 
-        if ($checked) {
-            $this->addCheckedProperties($context, $checked);
-        }
+        $context->addCheckedProperties($checked);
 
         return null;
     }

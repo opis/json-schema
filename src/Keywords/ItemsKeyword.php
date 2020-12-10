@@ -32,13 +32,16 @@ class ItemsKeyword implements Keyword
     protected $value;
 
     protected int $count = -1;
+    protected bool $alwaysValid;
 
     /**
      * @param bool|object|Schema|bool[]|object[]|Schema[] $value
+     * @param bool $alwaysValid
      */
-    public function __construct($value)
+    public function __construct($value, bool $alwaysValid = false)
     {
         $this->value = $value;
+        $this->alwaysValid = $alwaysValid;
 
         if (is_array($value)) {
             $this->count = count($value);
@@ -50,7 +53,12 @@ class ItemsKeyword implements Keyword
      */
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
-        if ($this->value === true) {
+        if ($this->alwaysValid || $this->value === true) {
+            if ($this->count === -1) {
+                $context->markAllAsEvaluatedItems();
+            } else {
+                $context->markCountAsEvaluatedItems($this->count);
+            }
             return null;
         }
 
@@ -68,13 +76,16 @@ class ItemsKeyword implements Keyword
 
             $errors = $this->errorContainer($context->maxErrors());
             $max = min($count, $this->count);
+            $evaluated = [];
 
             for ($i = 0; $i < $max; $i++) {
                 if ($this->value[$i] === true) {
+                    $evaluated[] = $i;
                     continue;
                 }
 
                 if ($this->value[$i] === false) {
+                    $context->addEvaluatedItems($evaluated);
                     return $this->error($schema, $context, 'items', "Array item at index @index is not allowed", [
                         'index' => $i,
                     ]);
@@ -93,8 +104,12 @@ class ItemsKeyword implements Keyword
                     if ($errors->isFull()) {
                         break;
                     }
+                } else {
+                    $evaluated[] = $i;
                 }
             }
+
+            $context->addEvaluatedItems($evaluated);
 
             if ($errors->isEmpty()) {
                 return null;
@@ -107,6 +122,8 @@ class ItemsKeyword implements Keyword
         if (is_object($this->value) && !($this->value instanceof Schema)) {
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
+
+        $context->markAllAsEvaluatedItems();
 
         return $this->validateIterableData($schema, $this->value, $context, $this->indexes(0, $count),
             'items', 'All array items must match schema');

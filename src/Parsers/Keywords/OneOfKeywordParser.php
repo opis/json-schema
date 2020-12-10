@@ -53,35 +53,27 @@ class OneOfKeywordParser extends KeywordParser
             throw $this->keywordException("{keyword} must have at least one element", $info);
         }
 
-        $alwaysValid = 0;
-        $list = [];
+        $valid = 0;
+
         foreach ($value as $index => $item) {
             if ($item === false) {
                 continue;
             }
             if ($item === true) {
-                if (++$alwaysValid > 1) {
+                if (++$valid > 1) {
                     throw $this->keywordException("{keyword} contains multiple true values", $info);
                 }
                 continue;
             }
             if (!is_object($item)) {
                 throw $this->keywordException("{keyword}[{$index}] must be a json schema", $info);
+            } elseif (!count(get_object_vars($item))) {
+                if (++$valid > 1) {
+                    throw $this->keywordException("{keyword} contains multiple true values", $info);
+                }
             }
-            $list[] = $item;
         }
 
-        if ($alwaysValid) {
-            if (!$list) {
-                return null;
-            }
-            array_unshift($list, true);
-        }
-
-        if (!$list) {
-            throw $this->keywordException("{keyword} must have at least one json schema", $info);
-        }
-
-        return new OneOfKeyword($list);
+        return new OneOfKeyword($value);
     }
 }

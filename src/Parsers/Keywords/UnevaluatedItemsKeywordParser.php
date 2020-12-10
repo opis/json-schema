@@ -19,17 +19,17 @@ namespace Opis\JsonSchema\Parsers\Keywords;
 
 use Opis\JsonSchema\Keyword;
 use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\Keywords\DependentSchemasKeyword;
 use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser};
+use Opis\JsonSchema\Keywords\UnevaluatedItemsKeyword;
 
-class DependentSchemasKeywordParser extends KeywordParser
+class UnevaluatedItemsKeywordParser extends KeywordParser
 {
     /**
      * @inheritDoc
      */
     public function type(): string
     {
-        return self::TYPE_OBJECT;
+        return self::TYPE_AFTER_REF;
     }
 
     /**
@@ -43,31 +43,31 @@ class DependentSchemasKeywordParser extends KeywordParser
             return null;
         }
 
-        $value = $this->keywordValue($schema);
-        if (!is_object($value)) {
-            throw $this->keywordException("{keyword} must be an object", $info);
-        }
-
-        $valid = 0;
-        $total = 0;
-
-        foreach ($value as $name => $s) {
-            $total++;
-            if (is_bool($s)) {
-                if ($s) {
-                    $valid++;
-                }
-            } elseif (!is_object($s)) {
-                throw $this->keywordException("{keyword} must be an object containing json schemas", $info);
-            } elseif (!count(get_object_vars($s))) {
-                $valid++;
-            }
-        }
-
-        if (!$total) {
+        if (!$this->makesSense($schema)) {
             return null;
         }
 
-        return $valid !== $total ? new DependentSchemasKeyword($value) : null;
+        $value = $this->keywordValue($schema);
+
+        if (!is_bool($value) && !is_object($value)) {
+            throw $this->keywordException("{keyword} must be a json schema (object or boolean)", $info);
+        }
+
+        return new UnevaluatedItemsKeyword($value);
+    }
+
+    protected function makesSense(object $schema): bool
+    {
+        if (property_exists($schema, 'additionalItems')) {
+            return false;
+        }
+//        if (property_exists($schema, 'contains')) {
+//            return false;
+//        }
+        if (property_exists($schema, 'items') && !is_array($schema->items)) {
+            return false;
+        }
+
+        return true;
     }
 }

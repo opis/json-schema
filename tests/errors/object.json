@@ -131,9 +131,11 @@
                 "errors": {
                     "nested": {
                         "kwd": "properties",
-                        "msg": "The properties must match schema",
+                        "msg": "The properties must match schema: a",
                         "path": [],
-                        "args": {},
+                        "args": {
+                            "properties": ["a"]
+                        },
                         "sub": [
                             {
                                 "kwd": "type",
@@ -155,9 +157,11 @@
                     "flat": [
                         {
                             "kwd": "properties",
-                            "msg": "The properties must match schema",
+                            "msg": "The properties must match schema: a",
                             "path": [],
-                            "args": {}
+                            "args": {
+                                "properties": ["a"]
+                            }
                         },
                         {
                             "kwd": "type",
@@ -206,9 +210,11 @@
                 "errors": {
                     "nested": {
                         "kwd": "properties",
-                        "msg": "The properties must match schema",
+                        "msg": "The properties must match schema: a, b, c",
                         "path": [],
-                        "args": {},
+                        "args": {
+                            "properties": ["a", "b", "c"]
+                        },
                         "sub": [
                             {
                                 "kwd": "type",
@@ -238,11 +244,13 @@
                             },
                             {
                                 "kwd": "properties",
-                                "msg": "The properties must match schema",
+                                "msg": "The properties must match schema: a",
                                 "path": [
                                     "c"
                                 ],
-                                "args": {},
+                                "args": {
+                                    "properties": ["a"]
+                                },
                                 "sub": [
                                     {
                                         "kwd": "type",
@@ -264,9 +272,11 @@
                     "flat": [
                         {
                             "kwd": "properties",
-                            "msg": "The properties must match schema",
+                            "msg": "The properties must match schema: a, b, c",
                             "path": [],
-                            "args": {}
+                            "args": {
+                                "properties": ["a", "b", "c"]
+                            }
                         },
                         {
                             "kwd": "type",
@@ -294,11 +304,13 @@
                         },
                         {
                             "kwd": "properties",
-                            "msg": "The properties must match schema",
+                            "msg": "The properties must match schema: a",
                             "path": [
                                 "c"
                             ],
-                            "args": {}
+                            "args": {
+                                "properties": ["a"]
+                            }
                         },
                         {
                             "kwd": "type",
@@ -378,9 +390,11 @@
                 "errors": {
                     "nested": {
                         "kwd": "properties",
-                        "msg": "The properties must match schema",
+                        "msg": "The properties must match schema: a, c, d",
                         "path": [],
-                        "args": {},
+                        "args": {
+                            "properties": ["a", "c", "d"]
+                        },
                         "sub": [
                             {
                                 "kwd": "type",
@@ -397,9 +411,11 @@
                             },
                             {
                                 "kwd": "properties",
-                                "msg": "The properties must match schema",
+                                "msg": "The properties must match schema: a",
                                 "path": ["c"],
-                                "args": {},
+                                "args": {
+                                    "properties": ["a"]
+                                },
                                 "sub": [
                                     {
                                         "kwd": "type",
@@ -424,9 +440,11 @@
                                 "sub": [
                                     {
                                         "kwd": "properties",
-                                        "msg": "The properties must match schema",
+                                        "msg": "The properties must match schema: a, b, c",
                                         "path": ["d"],
-                                        "args": {},
+                                        "args": {
+                                            "properties": ["a", "b", "c"]
+                                        },
                                         "sub": [
                                             {
                                                 "kwd": "type",
@@ -449,9 +467,11 @@
                                             },
                                             {
                                                 "kwd": "properties",
-                                                "msg": "The properties must match schema",
+                                                "msg": "The properties must match schema: a",
                                                 "path": ["d", "c"],
-                                                "args": {},
+                                                "args": {
+                                                    "properties": ["a"]
+                                                },
                                                 "sub": [
                                                     {
                                                         "kwd": "type",
@@ -474,9 +494,11 @@
                     "flat": [
                         {
                             "kwd": "properties",
-                            "msg": "The properties must match schema",
+                            "msg": "The properties must match schema: a, c, d",
                             "path": [],
-                            "args": {}
+                            "args": {
+                                "properties": ["a", "c", "d"]
+                            }
                         },
                         {
                             "kwd": "type",
@@ -492,9 +514,11 @@
                         },
                         {
                             "kwd": "properties",
-                            "msg": "The properties must match schema",
+                            "msg": "The properties must match schema: a",
                             "path": ["c"],
-                            "args": {}
+                            "args": {
+                                "properties": ["a"]
+                            }
                         },
                         {
                             "kwd": "type",
@@ -516,9 +540,11 @@
                         },
                         {
                             "kwd": "properties",
-                            "msg": "The properties must match schema",
+                            "msg": "The properties must match schema: a, b, c",
                             "path": ["d"],
-                            "args": {}
+                            "args": {
+                                "properties": ["a", "b", "c"]
+                            }
                         },
                         {
                             "kwd": "type",
@@ -539,9 +565,11 @@
                         },
                         {
                             "kwd": "properties",
-                            "msg": "The properties must match schema",
+                            "msg": "The properties must match schema: a",
                             "path": ["d", "c"],
-                            "args": {}
+                            "args": {
+                                "properties": ["a"]
+                            }
                         },
                         {
                             "kwd": "type",

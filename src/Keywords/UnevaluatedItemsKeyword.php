@@ -17,23 +17,15 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Opis\JsonSchema\{
-    ValidationContext,
-    Keyword,
-    Schema
-};
 use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\{Keyword, Schema, ValidationContext};
 
-class AdditionalPropertiesKeyword implements Keyword
+class UnevaluatedItemsKeyword implements Keyword
 {
     use IterableDataValidationTrait;
 
-    /** @var bool|object|Schema */
     protected $value;
 
-    /**
-     * @param bool|object|Schema $value
-     */
     public function __construct($value)
     {
         $this->value = $value;
@@ -44,22 +36,22 @@ class AdditionalPropertiesKeyword implements Keyword
      */
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
-        $context->markAllAsEvaluatedProperties();
+        $unevaluated = $context->getUnevaluatedItems();
+
+        if (!$unevaluated) {
+            return null;
+        }
+
+        $context->addEvaluatedItems($unevaluated);
 
         if ($this->value === true) {
             return null;
         }
 
-        $props = $context->getUncheckedProperties();
-
-        if (!$props) {
-            return null;
-        }
-
         if ($this->value === false) {
-            return $this->error($schema, $context,
-                'additionalProperties', 'Additional object properties are not allowed: @properties', [
-                    'properties' => $props
+            return $this->error($schema, $context, 'unevaluatedItems',
+                'Unevaluated array items are not allowed: @indexes', [
+                    'indexes' => $unevaluated,
                 ]);
         }
 
@@ -67,9 +59,9 @@ class AdditionalPropertiesKeyword implements Keyword
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
 
-        return $this->validateIterableData($schema, $this->value, $context, $props,
-            'additionalProperties', 'All additional object properties must match schema: @properties', [
-                'properties' => $props
+        return $this->validateIterableData($schema, $this->value, $context, $unevaluated,
+            'unevaluatedItems', 'All unevaluated array items must match schema: @indexes', [
+                'indexes' => $unevaluated,
             ]);
     }
 }

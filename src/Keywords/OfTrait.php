@@ -17,25 +17,29 @@
 
 namespace Opis\JsonSchema\Keywords;
 
+use ArrayObject;
 use Opis\JsonSchema\ValidationContext;
 
-trait PropertiesTrait
+trait OfTrait
 {
-    /**
-     * @param ValidationContext $context
-     * @return array
-     */
-    protected function getObjectProperties(ValidationContext $context): array
+    protected function createArrayObject(ValidationContext $context): ?ArrayObject
     {
-        $shared = $context->sharedObject();
-        if (isset($shared->objectProperties)) {
-            return $shared->objectProperties;
-        }
-        $list = array_keys(get_object_vars($context->currentData()));
-        if ($shared) {
-            $shared->objectProperties = $list;
+        return $context->trackUnevaluated() ? new ArrayObject() : null;
+    }
+
+    protected function addEvaluatedFromArrayObject(?ArrayObject $object, ValidationContext $context): void
+    {
+        if (!$object || !$object->count()) {
+            return;
         }
 
-        return $list;
+        foreach ($object as $value) {
+            if (isset($value['properties'])) {
+                $context->addEvaluatedProperties($value['properties']);
+            }
+            if (isset($value['items'])) {
+                $context->addEvaluatedItems($value['items']);
+            }
+        }
     }
 }

@@ -27,7 +27,6 @@ use Opis\JsonSchema\Errors\ValidationError;
 class MaxPropertiesKeywords implements Keyword
 {
     use ErrorTrait;
-    use PropertiesTrait;
 
     protected int $count;
 
@@ -44,7 +43,7 @@ class MaxPropertiesKeywords implements Keyword
      */
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
-        $count = count($this->getObjectProperties($context));
+        $count = count($context->getObjectProperties());
 
         if ($count <= $this->count) {
             return null;

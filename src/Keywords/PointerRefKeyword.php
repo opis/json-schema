@@ -49,6 +49,6 @@ class PointerRefKeyword extends AbstractRefKeyword
             throw new UnresolvedRefException((string)$this->pointer, $schema, $context);
         }
 
-        return $this->resolved->validate($this->createQuickContext($context, $schema));
+        return $this->resolved->validate($this->createContext($context, $schema));
     }
 }

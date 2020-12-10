@@ -26,6 +26,7 @@ use Opis\JsonSchema\Errors\ValidationError;
 
 class AllOfKeyword implements Keyword
 {
+    use OfTrait;
     use ErrorTrait;
 
     /** @var bool[]|object[] */
@@ -44,12 +45,15 @@ class AllOfKeyword implements Keyword
      */
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
+        $object = $this->createArrayObject($context);
+
         foreach ($this->value as $index => $value) {
             if ($value === true) {
                 continue;
             }
 
             if ($value === false) {
+                $this->addEvaluatedFromArrayObject($object, $context);
                 return $this->error($schema, $context, 'allOf', 'The data should match all schemas', [
                     'index' => $index,
                 ]);
@@ -59,12 +63,15 @@ class AllOfKeyword implements Keyword
                 $value = $this->value[$index] = $context->loader()->loadObjectSchema($value);
             }
 
-            if ($error = $value->validate($context)) {
+            if ($error = $context->validateSchemaWithoutEvaluated($value, null, false, $object)) {
+                $this->addEvaluatedFromArrayObject($object, $context);
                 return $this->error($schema, $context, 'allOf', 'The data should match all schemas', [
                     'index' => $index,
                 ], $error);
             }
         }
+
+        $this->addEvaluatedFromArrayObject($object, $context);
 
         return null;
     }

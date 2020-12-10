@@ -94,44 +94,9 @@ abstract class AbstractRefKeyword implements Keyword
      * @param Schema $schema
      * @return ValidationContext
      */
-    protected function createQuickContext(ValidationContext $context, Schema $schema): ValidationContext
+    protected function createContext(ValidationContext $context, Schema $schema): ValidationContext
     {
-        return $this->createContext($context, $schema, $this->mapper, $this->globals, $this->slots);
-    }
-
-    /**
-     * @param ValidationContext $context
-     * @param Schema $schema
-     * @param null|Variables $mapper
-     * @param null|Variables $globals
-     * @param null|array $slots
-     * @return ValidationContext
-     */
-    protected function createContext(
-        ValidationContext $context,
-        Schema $schema,
-        ?Variables $mapper = null,
-        ?Variables $globals = null,
-        ?array $slots = null
-    ): ValidationContext
-    {
-        if ($globals) {
-            $globals = $globals->resolve($context->rootData(), $context->currentDataPath());
-            if (!is_array($globals)) {
-                $globals = (array)$globals;
-            }
-            $globals += $context->globals();
-        } else {
-            $globals = $context->globals();
-        }
-
-        if ($mapper) {
-            $data = $mapper->resolve($context->rootData(), $context->currentDataPath());
-        } else {
-            $data = $context->currentData();
-        }
-
-        return $context->newInstance($data, $schema, $globals, $slots);
+        return $context->create($schema, $this->mapper, $this->globals, $this->slots);
     }
 
     /**

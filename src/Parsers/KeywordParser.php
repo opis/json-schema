@@ -27,6 +27,8 @@ abstract class KeywordParser
     const TYPE_AFTER = '_after';
     const TYPE_APPEND = '_append';
 
+    const TYPE_AFTER_REF = '_after_ref';
+
     const TYPE_STRING = 'string';
     const TYPE_NUMBER = 'number';
     const TYPE_ARRAY = 'array';
@@ -47,4 +49,14 @@ abstract class KeywordParser
      * @return Keyword|null
      */
     abstract public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword;
+
+    /**
+     * @param SchemaInfo $info
+     * @return bool
+     */
+    protected function trackEvaluated(SchemaInfo $info): bool
+    {
+        $draft = $info->draft();
+        return $draft !== '06' && $draft !== '07';
+    }
 }

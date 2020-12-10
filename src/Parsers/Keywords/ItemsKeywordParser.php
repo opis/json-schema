@@ -45,20 +45,34 @@ class ItemsKeywordParser extends KeywordParser
 
         $value = $this->keywordValue($schema);
 
+        $alwaysValid = false;
+
         if (is_bool($value)) {
             if ($value) {
-                return null;
+                $alwaysValid = true;
             }
         } elseif (is_array($value)) {
+            $valid = 0;
             foreach ($value as $v) {
-                if (!is_bool($v) && !is_object($v)) {
+                if (is_bool($v)) {
+                    if ($v) {
+                        $valid++;
+                    }
+                } elseif (!is_object($v)) {
                     throw $this->keywordException("{keyword} must contain an array of json schemas (objects or booleans)", $info);
+                } elseif (!count(get_object_vars($v))) {
+                    $valid++;
                 }
+            }
+            if ($valid === count($value)) {
+                $alwaysValid = true;
             }
         } elseif (!is_object($value)) {
             throw $this->keywordException("{keyword} must be a json schema or an array of json schemas", $info);
+        } elseif (!count(get_object_vars($value))) {
+            $alwaysValid = true;
         }
 
-        return new ItemsKeyword($value);
+        return new ItemsKeyword($value, $alwaysValid);
     }
 }

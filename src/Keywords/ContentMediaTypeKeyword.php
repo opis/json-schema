@@ -29,7 +29,6 @@ use Opis\JsonSchema\Resolvers\ContentMediaTypeResolver;
 class ContentMediaTypeKeyword implements Keyword
 {
     use ErrorTrait;
-    use DecodedContentTrait;
 
     protected string $name;
 
@@ -57,7 +56,7 @@ class ContentMediaTypeKeyword implements Keyword
         $media = $this->resolver->resolve($this->name);
 
         if ($media !== null) {
-            $data = $this->getDecodedContent($context);
+            $data = $context->getDecodedContent();
             $ok = $media instanceof ContentMediaType
                 ? $media->validate($data, $this->name)
                 : $media($data, $this->name);

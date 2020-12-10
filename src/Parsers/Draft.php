@@ -34,7 +34,7 @@ abstract class Draft extends Vocabulary
             $pragmas = array_merge($pragmas, $extraVocabulary->pragmas());
         }
 
-        $keywords[] = $this->getRefKeywordParser();
+        array_unshift($keywords, $this->getRefKeywordParser());
 
         parent::__construct($keywords, $keywordValidators, $pragmas);
     }

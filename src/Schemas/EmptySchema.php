@@ -44,7 +44,7 @@ final class EmptySchema extends AbstractSchema
             return null;
         }
 
-        $context->pushSharedObject();
+        $context->pushSharedObject($this);
         $error = $this->keywordValidator->validate($context);
         $context->popSharedObject();
 

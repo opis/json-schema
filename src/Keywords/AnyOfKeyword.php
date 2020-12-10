@@ -26,17 +26,20 @@ use Opis\JsonSchema\Errors\ValidationError;
 
 class AnyOfKeyword implements Keyword
 {
+    use OfTrait;
     use ErrorTrait;
 
     /** @var bool[]|object[] */
     protected array $value;
+    protected bool $alwaysValid;
 
     /**
      * @param bool[]|object[] $value
      */
-    public function __construct(array $value)
+    public function __construct(array $value, bool $alwaysValid = false)
     {
         $this->value = $value;
+        $this->alwaysValid = $alwaysValid;
     }
 
     /**
@@ -44,10 +47,20 @@ class AnyOfKeyword implements Keyword
      */
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
+        $object = $this->createArrayObject($context);
+        if ($this->alwaysValid && !$object) {
+            return null;
+        }
+
         $errors = [];
+        $ok = false;
 
         foreach ($this->value as $index => $value) {
             if ($value === true) {
+                $ok = true;
+                if ($object) {
+                    continue;
+                }
                 return null;
             }
 
@@ -59,11 +72,20 @@ class AnyOfKeyword implements Keyword
                 $value = $this->value[$index] = $context->loader()->loadObjectSchema($value);
             }
 
-            if ($error = $value->validate($context)) {
+            if ($error = $context->validateSchemaWithoutEvaluated($value, null, false, $object)) {
                 $errors[] = $error;
                 continue;
             }
 
+            if (!$object) {
+                return null;
+            }
+            $ok = true;
+        }
+
+        $this->addEvaluatedFromArrayObject($object, $context);
+
+        if ($ok) {
             return null;
         }
 

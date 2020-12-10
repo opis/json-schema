@@ -27,7 +27,6 @@ use Opis\JsonSchema\Errors\ValidationError;
 class MaxLengthKeyword implements Keyword
 {
     use ErrorTrait;
-    use StrLengthTrait;
 
     protected int $length;
 
@@ -48,7 +47,7 @@ class MaxLengthKeyword implements Keyword
             return null;
         }
 
-        $length = $this->getStrLength($context);
+        $length = $context->getStringLength();
 
         if ($length <= $this->length) {
             return null;

@@ -18,13 +18,11 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Traversable;
-use Opis\JsonSchema\{Helper, ValidationContext, Keyword, Schema};
 use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\{Helper, ValidationContext, Keyword, Schema};
 
 class PatternPropertiesKeyword implements Keyword
 {
-    use PropertiesTrait;
-    use CheckedPropertiesTrait;
     use IterableDataValidationTrait;
 
     /** @var bool[]|object[] */
@@ -43,7 +41,7 @@ class PatternPropertiesKeyword implements Keyword
      */
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
-        $props = $this->getObjectProperties($context);
+        $props = $context->getObjectProperties();
 
         if (!$props) {
             return null;
@@ -61,6 +59,7 @@ class PatternPropertiesKeyword implements Keyword
                 $list = iterator_to_array($this->matchedProperties($pattern, $props, $checked));
 
                 if ($list) {
+                    $context->addEvaluatedProperties(array_diff(array_keys($checked), $list));
                     return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '@pattern' are not allowed", [
                         'pattern' => $pattern,
                         'forbidden' => $list,
@@ -78,6 +77,8 @@ class PatternPropertiesKeyword implements Keyword
             $subErrors = $this->iterateAndValidate($value, $context, $this->matchedProperties($pattern, $props, $checked));
 
             if (!$subErrors->isEmpty()) {
+                // TODO: is this ok?
+                $context->addEvaluatedProperties(array_keys($checked));
                 return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '@pattern' must also match pattern's schema", [
                     'pattern' => $pattern,
                 ], $subErrors);
@@ -87,7 +88,9 @@ class PatternPropertiesKeyword implements Keyword
         }
 
         if ($checked) {
-            $this->addCheckedProperties($context, array_keys($checked));
+            $checked = array_keys($checked);
+            $context->addCheckedProperties($checked);
+            $context->addEvaluatedProperties($checked);
         }
 
         return null;

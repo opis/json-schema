@@ -50,6 +50,6 @@ class URIRefKeyword extends AbstractRefKeyword
 
         $this->setLastRefSchema($this->resolved);
 
-        return $this->resolved->validate($this->createQuickContext($context, $schema));
+        return $this->resolved->validate($this->createContext($context, $schema));
     }
 }

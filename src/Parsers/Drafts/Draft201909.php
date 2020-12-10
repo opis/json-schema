@@ -19,8 +19,7 @@ namespace Opis\JsonSchema\Parsers\Drafts;
 
 use Opis\JsonSchema\Parsers\Draft;
 use Opis\JsonSchema\Parsers\KeywordParser;
-use Opis\JsonSchema\Parsers\Keywords\{
-    AdditionalItemsKeywordParser,
+use Opis\JsonSchema\Parsers\Keywords\{AdditionalItemsKeywordParser,
     AdditionalPropertiesKeywordParser,
     AllOfKeywordParser,
     AnyOfKeywordParser,
@@ -30,6 +29,7 @@ use Opis\JsonSchema\Parsers\Keywords\{
     ContentMediaTypeKeywordParser,
     ContentSchemaKeywordParser,
     DefaultKeywordParser,
+    DependenciesKeywordParser,
     DependentRequiredKeywordParser,
     DependentSchemasKeywordParser,
     EnumKeywordParser,
@@ -56,8 +56,9 @@ use Opis\JsonSchema\Parsers\Keywords\{
     RefKeywordParser,
     RequiredKeywordParser,
     TypeKeywordParser,
-    UniqueItemsKeywordParser
-};
+    UnevaluatedItemsKeywordParser,
+    UnevaluatedPropertiesKeywordParser,
+    UniqueItemsKeywordParser};
 
 class Draft201909 extends Draft
 {
@@ -130,6 +131,7 @@ class Draft201909 extends Draft
             new MinPropertiesKeywordParser('minProperties'),
             new MaxPropertiesKeywordParser('maxProperties'),
             new RequiredKeywordParser('required'),
+            new DependenciesKeywordParser('dependencies'), // draft-07 compatibility
             new DependentRequiredKeywordParser('dependentRequired'),
             new DependentSchemasKeywordParser('dependentSchemas'),
             new PropertyNamesKeywordParser('propertyNames'),
@@ -138,11 +140,15 @@ class Draft201909 extends Draft
             new AdditionalPropertiesKeywordParser('additionalProperties'),
 
             // Conditionals
-            new NotKeywordParser('not'),
+            new IfThenElseKeywordParser('if', 'then', 'else'),
             new AnyOfKeywordParser('anyOf'),
             new AllOfKeywordParser('allOf'),
             new OneOfKeywordParser('oneOf'),
-            new IfThenElseKeywordParser('if', 'then', 'else'),
+            new NotKeywordParser('not'),
+
+            // Unevaluated
+            new UnevaluatedPropertiesKeywordParser('unevaluatedProperties'),
+            new UnevaluatedItemsKeywordParser('unevaluatedItems'),
 
             // Optional
             new DefaultKeywordParser('default'),

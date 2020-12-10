@@ -45,11 +45,7 @@ class AdditionalPropertiesKeywordParser extends KeywordParser
 
         $value = $this->keywordValue($schema);
 
-        if (is_bool($value)) {
-            if ($value) {
-                return null;
-            }
-        } elseif (!is_object($value)) {
+        if (!is_bool($value) && !is_object($value)) {
             throw $this->keywordException("{keyword} must be a json schema (object or boolean)", $info);
         }
 

@@ -25,7 +25,6 @@ use Opis\JsonSchema\Exceptions\UnresolvedContentEncodingException;
 class ContentEncodingKeyword implements Keyword
 {
     use ErrorTrait;
-    use DecodedContentTrait;
 
     protected string $name;
 
@@ -71,7 +70,7 @@ class ContentEncodingKeyword implements Keyword
             ]);
         }
 
-        $this->setDecodedContent($context, $result);
+        $context->setDecodedContent($result);
 
         return null;
     }
