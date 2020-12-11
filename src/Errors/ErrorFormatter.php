@@ -23,7 +23,7 @@ class ErrorFormatter
 {
     /**
      * @param ValidationError $error
-     * @param bool $multiple True if the same data pointer can have multiple errors
+     * @param bool $multiple True if the same key can have multiple errors
      * @param callable|null $formatter (ValidationError $error, ?string $message = null) => mixed
      * @param callable|null $key_formatter (ValidationError $error) => string
      * @return array
