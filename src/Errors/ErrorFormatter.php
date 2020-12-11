@@ -24,8 +24,8 @@ class ErrorFormatter
     /**
      * @param ValidationError $error
      * @param bool $multiple True if the same key can have multiple errors
-     * @param callable|null $formatter (ValidationError $error, ?string $message = null) => mixed
-     * @param callable|null $key_formatter (ValidationError $error) => string
+     * @param ?callable(ValidationError,?string=null):mixed $formatter
+     * @param ?callable(ValidationError):string $key_formatter
      * @return array
      */
     public function format(
@@ -73,7 +73,7 @@ class ErrorFormatter
 
     /**
      * @param ValidationError|null $error
-     * @param string|callable $mode One of: flag, basic, detailed or verbose
+     * @param string $mode One of: flag, basic, detailed or verbose
      * @return array
      */
     public function formatOutput(?ValidationError $error, string $mode = "flag"): array
@@ -127,7 +127,7 @@ class ErrorFormatter
 
     /**
      * @param ValidationError $error
-     * @param callable|null $formatter (ValidationError $error, ?array $formattedSubErrors) => mixed
+     * @param ?callable(ValidationError,?array):mixed $formatter
      * @return mixed
      */
     public function formatNested(ValidationError $error, ?callable $formatter = null)
@@ -137,7 +137,7 @@ class ErrorFormatter
                 $ret = [
                     'message' => $this->formatErrorMessage($error),
                     'keyword' => $error->keyword(),
-                    'path' => JsonPointer::pathToString($error->data()->fullPath()),
+                    'path' => $this->formatErrorKey($error),
                 ];
 
                 if ($subErrors) {
@@ -153,7 +153,7 @@ class ErrorFormatter
 
     /**
      * @param ValidationError $error
-     * @param callable|null $formatter (ValidationError $error) => mixed
+     * @param ?callable(ValidationError):mixed $formatter
      * @return array
      */
     public function formatFlat(ValidationError $error, ?callable $formatter = null): array
@@ -173,8 +173,8 @@ class ErrorFormatter
 
     /**
      * @param ValidationError $error
-     * @param callable|null $formatter (ValidationError $error) => mixed
-     * @param callable|null $key_formatter (ValidationError $error) => string
+     * @param ?callable(ValidationError):mixed $formatter
+     * @param ?callable(ValidationError):string $key_formatter
      * @return array
      */
     public function formatKeyed(
@@ -205,6 +205,11 @@ class ErrorFormatter
         return $list;
     }
 
+    /**
+     * @param ValidationError $error
+     * @param string|null $message The message to use, if null $error->message() is used
+     * @return string
+     */
     public function formatErrorMessage(ValidationError $error, ?string $message = null): string
     {
         $message ??= $error->message();
@@ -275,7 +280,7 @@ class ErrorFormatter
 
     /**
      * @param ValidationError $error
-     * @param callable $formatter (ValidationError $error, ?array $formattedSubErrors) => mixed
+     * @param callable(ValidationError,?array):mixed $formatter
      * @return mixed
      */
     protected function getNestedErrors(ValidationError $error, callable $formatter)
