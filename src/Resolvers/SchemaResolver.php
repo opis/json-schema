@@ -207,7 +207,7 @@ class SchemaResolver
         if ($dir === null) {
             unset($this->dirs[$scheme][$host]);
         } else {
-            $this->dirs[$scheme][$host] = rtrim($dir, DIRECTORY_SEPARATOR);
+            $this->dirs[$scheme][$host] = rtrim($dir, '/');
         }
 
         return $this;
@@ -235,7 +235,7 @@ class SchemaResolver
      */
     public function registerPrefix(string $prefix, string $dir): self
     {
-        $this->prefixes[$prefix] = rtrim($dir, DIRECTORY_SEPARATOR);
+        $this->prefixes[$prefix] = rtrim($dir, '/');
 
         // Sort
         uksort($this->prefixes, [$this, 'sortPrefixKeys']);
@@ -315,7 +315,7 @@ class SchemaResolver
         if (isset($this->dirs[$scheme])) {
             $host = (string)$uri->host();
             if (isset($this->dirs[$scheme][$host])) {
-                return $this->dirs[$scheme][$host] . DIRECTORY_SEPARATOR . ltrim($uri->path(), DIRECTORY_SEPARATOR);
+                return $this->dirs[$scheme][$host] . '/' . ltrim($uri->path(), '/');
             }
             unset($host);
         }
@@ -330,7 +330,7 @@ class SchemaResolver
                 }
                 $path = Uri::parseComponents($path);
                 if ($path && isset($path['path'])) {
-                    $path = $dir . DIRECTORY_SEPARATOR . ltrim($path['path'], DIRECTORY_SEPARATOR);
+                    $path = $dir . '/' . ltrim($path['path'], '/');
                     break;
                 }
                 $path = null;

@@ -18,14 +18,14 @@
 namespace Opis\JsonSchema\Resolvers;
 
 use Opis\JsonSchema\{Helper, Filter};
-use Opis\JsonSchema\Filters\{
+use Opis\JsonSchema\Filters\{CommonFilters,
     DataExistsFilter,
+    DateTimeFilters,
     FilterExistsFilter,
     FormatExistsFilter,
     SchemaExistsFilter,
     SlotExistsFilter,
-    VarExistsFilter
-};
+    GlobalVarExistsFilter};
 
 class FilterResolver
 {
@@ -49,13 +49,34 @@ class FilterResolver
         $this->separator = $ns_separator;
         $this->defaultNS = $default_ns;
 
-        $this->registerMultipleTypes('schema_exists', new SchemaExistsFilter());
-        $this->registerMultipleTypes('data_exists', new DataExistsFilter());
-        $this->registerMultipleTypes('var_exists', new VarExistsFilter());
-        $this->registerMultipleTypes('slot_exists', new SlotExistsFilter());
-        $this->registerMultipleTypes('filter_exists', new FilterExistsFilter());
-        $this->registerMultipleTypes('format_exists', new FormatExistsFilter());
+        $this->registerDefaultFilters();
     }
+
+    /**
+     * You can override this to add/remove default filters
+     */
+    protected function registerDefaultFilters(): void
+    {
+        $this->registerMultipleTypes("schema-exists", new SchemaExistsFilter());
+        $this->registerMultipleTypes("data-exists", new DataExistsFilter());
+        $this->registerMultipleTypes("global-exists", new GlobalVarExistsFilter());
+        $this->registerMultipleTypes("slot-exists", new SlotExistsFilter());
+        $this->registerMultipleTypes("filter-exists", new FilterExistsFilter());
+        $this->registerMultipleTypes("format-exists", new FormatExistsFilter());
+
+        $cls = DateTimeFilters::class . "::";
+        $this->registerCallable("string", "min-date", $cls . "MinDate");
+        $this->registerCallable("string", "max-date", $cls . "MaxDate");
+        $this->registerCallable("string", "min-time", $cls . "MinTime");
+        $this->registerCallable("string", "max-time", $cls . "MaxTime");
+        $this->registerCallable("string", "min-datetime", $cls . "MinDateTime");
+        $this->registerCallable("string", "max-datetime", $cls . "MaxDateTime");
+
+        $cls = CommonFilters::class . "::";
+        $this->registerCallable("string", "regex", $cls . "Regex");
+        $this->registerMultipleTypes("equals", $cls . "Equals");
+    }
+
 
     /**
      * @param string $name
