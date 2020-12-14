@@ -20,12 +20,14 @@ namespace Opis\JsonSchema;
 final class JsonPointer
 {
     /** @var string */
-    protected const PATTERN = '~^(?<level>0|[1-9][0-9]*)?(?<pointer>(?:/[^/#]*)*)(?<fragment>#)?$~';
+    protected const PATTERN = '~^(?:(?<level>0|[1-9][0-9]*)(?<shift>(?:\+|-)(?:0|[1-9][0-9]*))?)?(?<pointer>(?:/[^/#]*)*)(?<fragment>#)?$~';
 
     /** @var string */
     protected const UNESCAPED = '/~([^01]|$)/';
 
     protected int $level = -1;
+
+    protected int $shift = 0;
 
     protected bool $fragment = false;
 
@@ -34,40 +36,32 @@ final class JsonPointer
 
     protected ?string $str = null;
 
-    /**
-     * @param array $path
-     * @param int $level
-     * @param bool $fragment
-     */
-    public function __construct(array $path, int $level = -1, bool $fragment = false)
+    final protected function __construct(array $path, int $level = -1, int $shift = 0, bool $fragment = false)
     {
         $this->path = $path;
         $this->level = $level < 0 ? -1 : $level;
+        $this->shift = $shift;
         $this->fragment = $level >= 0 && $fragment;
     }
 
-    /**
-     * @return bool
-     */
     public function isRelative(): bool
     {
         return $this->level >= 0;
     }
 
-    /**
-     * @return bool
-     */
     public function isAbsolute(): bool
     {
         return $this->level < 0;
     }
 
-    /**
-     * @return int
-     */
     public function level(): int
     {
         return $this->level;
+    }
+
+    public function shift(): int
+    {
+        return $this->shift;
     }
 
     /**
@@ -94,6 +88,14 @@ final class JsonPointer
         if ($this->str === null) {
             if ($this->level >= 0) {
                 $this->str = (string)$this->level;
+
+                if ($this->shift !== 0) {
+                    if ($this->shift > 0) {
+                        $this->str .= '+';
+                    }
+                    $this->str .= $this->shift;
+                }
+
                 if ($this->path) {
                     $this->str .= '/';
                     $this->str .= implode('/', self::encodePath($this->path));
@@ -117,12 +119,18 @@ final class JsonPointer
      * @param null $default
      * @return mixed
      */
-    public function data($data, array $path = null, $default = null)
+    public function data($data, ?array $path = null, $default = null)
     {
-        if ($this->level < 0 || !$path) {
-            $path = $this->path;
-        } else {
+        if ($this->level < 0) {
+            return self::getData($data, $this->path, false, $default);
+        }
+
+        if ($path !== null) {
             $path = $this->absolutePath($path);
+        }
+
+        if ($path === null) {
+            return $default;
         }
 
         return self::getData($data, $path, $this->fragment, $default);
@@ -140,32 +148,59 @@ final class JsonPointer
         }
 
         if ($this->level === 0) {
-            if ($this->path) {
-                return array_merge($path, $this->path);
+            if ($this->shift && !$this->handleShift($path)) {
+                return null;
             }
-
-            return $path;
+            return $this->path ? array_merge($path, $this->path) : $path;
         }
 
         $count = count($path);
         if ($count === $this->level) {
+            if ($this->shift) {
+                return null;
+            }
             return $this->path;
         }
 
         if ($count > $this->level) {
-            $path = array_slice($path, 0, $count - $this->level);
+            $count -= $this->level;
 
-            return array_merge($path, $this->path);
+            /** @var array $path */
+            $path = array_slice($path, 0, $count);
+
+            if ($this->shift && !$this->handleShift($path, $count)) {
+                return null;
+            }
+
+            return $this->path ? array_merge($path, $this->path) : $path;
         }
 
         return null;
     }
 
-    /**
-     * @param string $pointer
-     * @param bool $decode
-     * @return null|JsonPointer
-     */
+    protected function handleShift(array &$path, ?int $count = null): bool
+    {
+        if (!$path) {
+            return false;
+        }
+
+        $count ??= count($path);
+
+        $last = $path[$count - 1];
+
+        if (is_string($last) && preg_match('/^[1-9]\d*$/', $last)) {
+            $last = (int) $last;
+        }
+
+        if (!is_int($last)) {
+            return false;
+        }
+
+        $path[$count - 1] = $last + $this->shift;
+
+        return true;
+    }
+
     public static function parse(string $pointer, bool $decode = true): ?self
     {
         if ($pointer === '' || !preg_match(self::PATTERN, $pointer, $m)) {
@@ -184,6 +219,11 @@ final class JsonPointer
         $level = isset($m['level']) && $m['level'] !== ''
             ? (int)$m['level']
             : -1;
+
+        $shift = 0;
+        if ($level >= 0 && isset($m['shift']) && $m['shift'] !== '') {
+            $shift = (int) $m['shift'];
+        }
 
         $fragment = isset($m['fragment']) && $m['fragment'] === '#';
         unset($m);
@@ -205,7 +245,7 @@ final class JsonPointer
             }
         }
 
-        return new self($pointer ?? [], $level, $fragment);
+        return new self($pointer ?? [], $level, $shift, $fragment);
     }
 
     /**
@@ -215,7 +255,7 @@ final class JsonPointer
      * @param null $default
      * @return mixed
      */
-    public static function getData($data, array $path = null, bool $fragment = false, $default = null)
+    public static function getData($data, ?array $path = null, bool $fragment = false, $default = null)
     {
         if ($path === null) {
             return $default;
@@ -356,5 +396,15 @@ final class JsonPointer
         }
 
         return !preg_match(self::UNESCAPED, $m['pointer']);
+    }
+
+    public static function createAbsolute(array $path): self
+    {
+        return new self($path, -1, 0, false);
+    }
+
+    public static function createRelative(int $level, array $path = [], int $shift = 0, bool $fragment = false): self
+    {
+        return new self($path, $level, $shift, $fragment);
     }
 }
