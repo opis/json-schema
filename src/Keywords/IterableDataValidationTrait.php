@@ -17,6 +17,7 @@
 
 namespace Opis\JsonSchema\Keywords;
 
+use ArrayObject;
 use Opis\JsonSchema\{ValidationContext, Schema};
 use Opis\JsonSchema\Errors\{ValidationError, ErrorContainer};
 
@@ -37,10 +38,15 @@ trait IterableDataValidationTrait
      * @param Schema $schema
      * @param ValidationContext $context
      * @param iterable $iterator
+     * @param ArrayObject|null $keys
      * @return ErrorContainer
      */
-    protected function iterateAndValidate(Schema $schema, ValidationContext $context, iterable $iterator): ErrorContainer
-    {
+    protected function iterateAndValidate(
+        Schema $schema,
+        ValidationContext $context,
+        iterable $iterator,
+        ?ArrayObject $keys = null
+    ): ErrorContainer {
         $container = $this->errorContainer($context->maxErrors());
 
         foreach ($iterator as $key) {
@@ -48,7 +54,13 @@ trait IterableDataValidationTrait
             $error = $schema->validate($context);
             $context->popDataPath();
 
-            if ($error && $container->add($error)->isFull()) {
+            if ($keys) {
+                if ($error) {
+                    $container->add($error);
+                } else {
+                    $keys[] = $key;
+                }
+            } elseif ($error && $container->add($error)->isFull()) {
                 break;
             }
         }
@@ -64,6 +76,7 @@ trait IterableDataValidationTrait
      * @param string $keyword
      * @param string $message
      * @param array $args
+     * @param ArrayObject|null $visited_keys
      * @return ValidationError|null
      */
     protected function validateIterableData(
@@ -73,10 +86,10 @@ trait IterableDataValidationTrait
         iterable $iterator,
         string $keyword,
         string $message,
-        array $args = []
-    ): ?ValidationError
-    {
-        $errors = $this->iterateAndValidate($schema, $context, $iterator);
+        array $args = [],
+        ?ArrayObject $visited_keys = null
+    ): ?ValidationError {
+        $errors = $this->iterateAndValidate($schema, $context, $iterator, $visited_keys);
 
         if ($errors->isEmpty()) {
             return null;

@@ -22,6 +22,7 @@ use Opis\JsonSchema\{Keyword, Schema, ValidationContext};
 
 class UnevaluatedItemsKeyword implements Keyword
 {
+    use OfTrait;
     use IterableDataValidationTrait;
 
     protected $value;
@@ -42,9 +43,8 @@ class UnevaluatedItemsKeyword implements Keyword
             return null;
         }
 
-        $context->addEvaluatedItems($unevaluated);
-
         if ($this->value === true) {
+            $context->addEvaluatedItems($unevaluated);
             return null;
         }
 
@@ -59,9 +59,17 @@ class UnevaluatedItemsKeyword implements Keyword
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
 
-        return $this->validateIterableData($schema, $this->value, $context, $unevaluated,
+        $object = $this->createArrayObject($context);
+
+        $error = $this->validateIterableData($schema, $this->value, $context, $unevaluated,
             'unevaluatedItems', 'All unevaluated array items must match schema: @indexes', [
                 'indexes' => $unevaluated,
-            ]);
+            ], $object);
+
+        if ($object && $object->count()) {
+            $context->addEvaluatedItems($object->getArrayCopy());
+        }
+
+        return $error;
     }
 }

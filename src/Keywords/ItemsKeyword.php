@@ -26,6 +26,7 @@ use Opis\JsonSchema\Errors\ValidationError;
 
 class ItemsKeyword implements Keyword
 {
+    use OfTrait;
     use IterableDataValidationTrait;
 
     /** @var bool|object|Schema|bool[]|object[]|Schema[] */
@@ -127,10 +128,16 @@ class ItemsKeyword implements Keyword
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
 
-        $context->markAllAsEvaluatedItems();
+        $object = $this->createArrayObject($context);
 
-        return $this->validateIterableData($schema, $this->value, $context, $this->indexes(0, $count),
-            $this->keyword, 'All array items must match schema');
+        $error = $this->validateIterableData($schema, $this->value, $context, $this->indexes(0, $count),
+            $this->keyword, 'All array items must match schema', [], $object);
+
+        if ($object && $object->count()) {
+            $context->addEvaluatedItems($object->getArrayCopy());
+        }
+
+        return $error;
     }
 
     /**

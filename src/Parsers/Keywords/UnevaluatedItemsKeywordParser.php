@@ -43,9 +43,9 @@ class UnevaluatedItemsKeywordParser extends KeywordParser
             return null;
         }
 
-        if (!$this->makesSense($schema)) {
-            return null;
-        }
+//        if (!$this->makesSense($schema)) {
+//            return null;
+//        }
 
         $value = $this->keywordValue($schema);
 

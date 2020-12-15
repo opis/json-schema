@@ -59,7 +59,9 @@ class PatternPropertiesKeyword implements Keyword
                 $list = iterator_to_array($this->matchedProperties($pattern, $props, $checked));
 
                 if ($list) {
-                    $context->addEvaluatedProperties(array_diff(array_keys($checked), $list));
+                    if ($context->trackUnevaluated()) {
+                        $context->addEvaluatedProperties(array_diff(array_keys($checked), $list));
+                    }
                     return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '@pattern' are not allowed", [
                         'pattern' => $pattern,
                         'forbidden' => $list,
@@ -77,7 +79,9 @@ class PatternPropertiesKeyword implements Keyword
             $subErrors = $this->iterateAndValidate($value, $context, $this->matchedProperties($pattern, $props, $checked));
 
             if (!$subErrors->isEmpty()) {
-                $context->addEvaluatedProperties(array_keys($checked));
+                if ($context->trackUnevaluated()) {
+                    $context->addEvaluatedProperties(array_keys($checked));
+                }
                 return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '@pattern' must also match pattern's schema", [
                     'pattern' => $pattern,
                 ], $subErrors);

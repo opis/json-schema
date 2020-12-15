@@ -26,6 +26,7 @@ use Opis\JsonSchema\Errors\ValidationError;
 
 class AdditionalPropertiesKeyword implements Keyword
 {
+    use OfTrait;
     use IterableDataValidationTrait;
 
     /** @var bool|object|Schema */
@@ -44,9 +45,8 @@ class AdditionalPropertiesKeyword implements Keyword
      */
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
-        $context->markAllAsEvaluatedProperties();
-
         if ($this->value === true) {
+            $context->markAllAsEvaluatedProperties();
             return null;
         }
 
@@ -67,9 +67,17 @@ class AdditionalPropertiesKeyword implements Keyword
             $this->value = $context->loader()->loadObjectSchema($this->value);
         }
 
-        return $this->validateIterableData($schema, $this->value, $context, $props,
+        $object = $this->createArrayObject($context);
+
+        $error = $this->validateIterableData($schema, $this->value, $context, $props,
             'additionalProperties', 'All additional object properties must match schema: @properties', [
                 'properties' => $props
-            ]);
+            ], $object);
+
+        if ($object && $object->count()) {
+            $context->addEvaluatedProperties($object->getArrayCopy());
+        }
+
+        return $error;
     }
 }
