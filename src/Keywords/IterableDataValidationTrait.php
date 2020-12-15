@@ -49,12 +49,12 @@ trait IterableDataValidationTrait
     ): ErrorContainer {
         $container = $this->errorContainer($context->maxErrors());
 
-        foreach ($iterator as $key) {
-            $context->pushDataPath($key);
-            $error = $schema->validate($context);
-            $context->popDataPath();
+        if ($keys) {
+            foreach ($iterator as $key) {
+                $context->pushDataPath($key);
+                $error = $schema->validate($context);
+                $context->popDataPath();
 
-            if ($keys) {
                 if ($error) {
                     if (!$container->isFull()) {
                         $container->add($error);
@@ -62,8 +62,16 @@ trait IterableDataValidationTrait
                 } else {
                     $keys[] = $key;
                 }
-            } elseif ($error && $container->add($error)->isFull()) {
-                break;
+            }
+        } else {
+            foreach ($iterator as $key) {
+                $context->pushDataPath($key);
+                $error = $schema->validate($context);
+                $context->popDataPath();
+
+                if ($error && $container->add($error)->isFull()) {
+                    break;
+                }
             }
         }
 
