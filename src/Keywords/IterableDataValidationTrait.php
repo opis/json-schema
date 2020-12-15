@@ -56,7 +56,9 @@ trait IterableDataValidationTrait
 
             if ($keys) {
                 if ($error) {
-                    $container->add($error);
+                    if (!$container->isFull()) {
+                        $container->add($error);
+                    }
                 } else {
                     $keys[] = $key;
                 }

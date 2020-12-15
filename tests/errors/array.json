@@ -93,16 +93,6 @@
                                     "type": "string"
                                 },
                                 "sub": []
-                            },
-                            {
-                                "kwd": "type",
-                                "msg": "The data (string) must match the type: integer",
-                                "path": [3],
-                                "args": {
-                                    "expected": "integer",
-                                    "type": "string"
-                                },
-                                "sub": []
                             }
                         ]
                     },
@@ -130,15 +120,6 @@
                                 "expected": "integer",
                                 "type": "string"
                             }
-                        },
-                        {
-                            "kwd": "type",
-                            "msg": "The data (string) must match the type: integer",
-                            "path": [3],
-                            "args": {
-                                "expected": "integer",
-                                "type": "string"
-                            }
                         }
                     ],
                     "keyed": {
@@ -158,17 +139,6 @@
                                 "kwd": "type",
                                 "msg": "The data (string) must match the type: integer",
                                 "path": [2],
-                                "args": {
-                                    "expected": "integer",
-                                    "type": "string"
-                                }
-                            }
-                        ],
-                        "/3": [
-                            {
-                                "kwd": "type",
-                                "msg": "The data (string) must match the type: integer",
-                                "path": [3],
                                 "args": {
                                     "expected": "integer",
                                     "type": "string"
