@@ -40,7 +40,7 @@ class UnevaluatedPropertiesKeywordParser extends KeywordParser
     {
         $schema = $info->data();
 
-        if (!$this->keywordExists($schema)) {
+        if (!$this->keywordExists($schema) || !$parser->option('allowUnevaluated')) {
             return null;
         }
 
