@@ -124,8 +124,8 @@ class Draft202012 extends Draft
             new MaxItemsKeywordParser('maxItems'),
             new UniqueItemsKeywordParser('uniqueItems'),
             new ContainsKeywordParser('contains', 'minContains', 'maxContains'),
-            new ItemsKeywordParser('items', ItemsKeywordParser::ONLY_SCHEMA),
             new ItemsKeywordParser('prefixItems', ItemsKeywordParser::ONLY_ARRAY),
+            new ItemsKeywordParser('items', ItemsKeywordParser::ONLY_SCHEMA, 'prefixItems'),
             new AdditionalItemsKeywordParser('additionalItems'),
 
             // Object

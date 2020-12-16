@@ -35,13 +35,15 @@ class ItemsKeyword implements Keyword
     protected int $count = -1;
     protected bool $alwaysValid;
     protected string $keyword;
+    protected int $startIndex;
 
     /**
      * @param bool|object|Schema|bool[]|object[]|Schema[] $value
      * @param bool $alwaysValid
      * @param string $keyword
+     * @param int $startIndex
      */
-    public function __construct($value, bool $alwaysValid = false, string $keyword = 'items')
+    public function __construct($value, bool $alwaysValid = false, string $keyword = 'items', int $startIndex = 0)
     {
         $this->value = $value;
         $this->alwaysValid = $alwaysValid;
@@ -51,6 +53,7 @@ class ItemsKeyword implements Keyword
         }
 
         $this->keyword = $keyword;
+        $this->startIndex = $startIndex;
     }
 
     /**
@@ -83,7 +86,7 @@ class ItemsKeyword implements Keyword
             $max = min($count, $this->count);
             $evaluated = [];
 
-            for ($i = 0; $i < $max; $i++) {
+            for ($i = $this->startIndex; $i < $max; $i++) {
                 if ($this->value[$i] === true) {
                     $evaluated[] = $i;
                     continue;
@@ -130,7 +133,7 @@ class ItemsKeyword implements Keyword
 
         $object = $this->createArrayObject($context);
 
-        $error = $this->validateIterableData($schema, $this->value, $context, $this->indexes(0, $count),
+        $error = $this->validateIterableData($schema, $this->value, $context, $this->indexes($this->startIndex, $count),
             $this->keyword, 'All array items must match schema', [], $object);
 
         if ($object && $object->count()) {

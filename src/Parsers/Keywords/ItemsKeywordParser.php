@@ -29,11 +29,13 @@ class ItemsKeywordParser extends KeywordParser
     const BOTH = 3;
 
     protected int $mode;
+    protected ?string $startIndexKeyword;
 
-    public function __construct(string $keyword, int $mode = self::BOTH)
+    public function __construct(string $keyword, int $mode = self::BOTH, ?string $startIndexKeyword = null)
     {
         parent::__construct($keyword);
         $this->mode = $mode;
+        $this->startIndexKeyword = $startIndexKeyword;
     }
 
     /**
@@ -102,6 +104,14 @@ class ItemsKeywordParser extends KeywordParser
             }
         }
 
-        return new ItemsKeyword($value, $alwaysValid, $this->keyword);
+        $startIndex = 0;
+        if ($this->startIndexKeyword !== null && $this->keywordExists($schema, $this->startIndexKeyword)) {
+            $start = $this->keywordValue($schema, $this->startIndexKeyword);
+            if (is_array($start)) {
+                $startIndex = count($start);
+            }
+        }
+
+        return new ItemsKeyword($value, $alwaysValid, $this->keyword, $startIndex);
     }
 }
