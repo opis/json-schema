@@ -17,7 +17,8 @@
 
 namespace Opis\JsonSchema\Filters;
 
-use Opis\JsonSchema\{ValidationContext, Filter, Schema, Uri, UriTemplate};
+use Opis\Uri\UriTemplate;
+use Opis\JsonSchema\{ValidationContext, Filter, Schema, Uri};
 use Opis\JsonSchema\Variables\VariablesContainer;
 
 class SchemaExistsFilter implements Filter

@@ -17,9 +17,10 @@
 
 namespace Opis\JsonSchema\Keywords;
 
+use Opis\Uri\UriTemplate;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\UnresolvedRefException;
-use Opis\JsonSchema\{JsonPointer, Schema, SchemaLoader, Uri, UriTemplate, ValidationContext, Variables};
+use Opis\JsonSchema\{JsonPointer, Schema, SchemaLoader, Uri, ValidationContext, Variables};
 
 class TemplateRefKeyword extends AbstractRefKeyword
 {

@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema;
 
-use Opis\Utils\Uri as BaseUri;
+use Opis\Uri\Uri as BaseUri;
 
 class Uri extends BaseUri
 {

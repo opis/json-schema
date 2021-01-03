@@ -298,10 +298,10 @@ final class JsonPointer
         $path = str_replace('/', '~1', $path);
 
         if (is_array($path)) {
-            return array_map(Uri::class . '::percentEncoded', $path);
+            return array_map('rawurlencode', $path);
         }
 
-        return Uri::percentEncoded($path);
+        return rawurlencode($path);
     }
 
     /**

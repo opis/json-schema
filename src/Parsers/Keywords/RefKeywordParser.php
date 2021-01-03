@@ -17,8 +17,9 @@
 
 namespace Opis\JsonSchema\Parsers\Keywords;
 
+use Opis\Uri\UriTemplate;
 use Opis\JsonSchema\Info\SchemaInfo;
-use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri, UriTemplate};
+use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri};
 use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser, VariablesTrait};
 use Opis\JsonSchema\Keywords\{PointerRefKeyword, RecursiveRefKeyword, TemplateRefKeyword, URIRefKeyword};
 

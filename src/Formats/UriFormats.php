@@ -17,7 +17,8 @@
 
 namespace Opis\JsonSchema\Formats;
 
-use Opis\JsonSchema\{Uri, UriTemplate};
+use Opis\JsonSchema\Uri;
+use Opis\Uri\UriTemplate;
 
 class UriFormats
 {

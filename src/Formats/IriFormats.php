@@ -17,11 +17,13 @@
 
 namespace Opis\JsonSchema\Formats;
 
+use Throwable;
 use Opis\JsonSchema\Uri;
-use Opis\String\Exception\UnicodeException;
 
 class IriFormats
 {
+    private const SKIP = [0x23, 0x26, 0x2F, 0x3A, 0x3D, 0x3F, 0x40, 0x5B, 0x5C, 0x5D];
+
     /** @var bool|null|callable */
     private static $idn = false;
 
@@ -36,8 +38,8 @@ class IriFormats
         }
 
         try {
-            $components = Uri::parseComponents(Uri::percentEncoded($value), true, true);
-        } catch (UnicodeException $e) {
+            $components = Uri::parseComponents(Uri::encodeComponent($value, self::SKIP), true, true);
+        } catch (Throwable $e) {
             return false;
         }
 
@@ -55,8 +57,8 @@ class IriFormats
         }
 
         try {
-            return Uri::parseComponents(Uri::percentEncoded($value), true, true) !== null;
-        } catch (UnicodeException $e) {
+            return Uri::parseComponents(Uri::encodeComponent($value, self::SKIP), true, true) !== null;
+        } catch (Throwable $e) {
             return false;
         }
     }

@@ -24,7 +24,7 @@
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
         "opis/string": "2020.x-dev",
-        "opis/utils": "2020.x-dev"
+        "opis/uri": "2021.x-dev"
     },
     "require-dev": {
         "ext-bcmath": "*",
