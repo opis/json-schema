@@ -24,14 +24,13 @@ class Uri extends BaseUri
     /**
      * @var bool Set this to true and the qs will always be sorted
      */
-    protected static bool $normalizeQueryString = false;
+    protected static bool $useNormalizedComponents = false;
 
     public function __construct(array $components)
     {
-        if (static::$normalizeQueryString && isset($components['query']) && $components['query'] !== '') {
-            $components['query'] = static::normalizeQueryString($components['query']);
+        if (static::$useNormalizedComponents) {
+            $components = self::normalizeComponents($components);
         }
-
         parent::__construct($components);
     }
 
@@ -79,8 +78,8 @@ class Uri extends BaseUri
     /**
      * @param bool $value
      */
-    public static function useNormalizedQueryString(bool $value): void
+    public static function useNormalizedComponents(bool $value): void
     {
-        self::$normalizeQueryString = $value;
+        self::$useNormalizedComponents = $value;
     }
 }
