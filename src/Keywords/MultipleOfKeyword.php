@@ -48,7 +48,7 @@ class MultipleOfKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'multipleOf', "Number must be a multiple of @divisor", [
+        return $this->error($schema, $context, 'multipleOf', "Number must be a multiple of {divisor}", [
             'divisor' => $this->number,
         ]);
     }

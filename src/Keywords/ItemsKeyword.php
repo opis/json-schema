@@ -94,7 +94,7 @@ class ItemsKeyword implements Keyword
 
                 if ($this->value[$i] === false) {
                     $context->addEvaluatedItems($evaluated);
-                    return $this->error($schema, $context, $this->keyword, "Array item at index @index is not allowed", [
+                    return $this->error($schema, $context, $this->keyword, "Array item at index {index} is not allowed", [
                         'index' => $i,
                     ]);
                 }

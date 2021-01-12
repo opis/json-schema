@@ -51,7 +51,7 @@ class UnevaluatedPropertiesKeyword implements Keyword
 
         if ($this->value === false) {
             return $this->error($schema, $context, 'unevaluatedProperties',
-                'Unevaluated object properties not allowed: @properties', [
+                'Unevaluated object properties not allowed: {properties}', [
                     'properties' => $unevaluated,
                 ]);
         }
@@ -63,7 +63,7 @@ class UnevaluatedPropertiesKeyword implements Keyword
         $object = $this->createArrayObject($context);
 
         $error = $this->validateIterableData($schema, $this->value, $context, $unevaluated,
-            'unevaluatedProperties', 'All unevaluated object properties must match schema: @properties', [
+            'unevaluatedProperties', 'All unevaluated object properties must match schema: {properties}', [
                 'properties' => $unevaluated,
             ], $object);
 

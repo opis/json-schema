@@ -220,7 +220,7 @@ class ErrorFormatter
         }
 
         return preg_replace_callback(
-            '~@([a-z0-9\-_.:]+)~imu',
+            '~{([^}]+)}~imu',
             static function (array $m) use ($args) {
                 if (!isset($args[$m[1]])) {
                     return $m[0];

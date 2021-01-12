@@ -53,7 +53,7 @@ class MinLengthKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'minLength', "Minimum string length is @min, found @length", [
+        return $this->error($schema, $context, 'minLength', "Minimum string length is {min}, found {length}", [
             'min' => $this->length,
             'length' => $length,
         ]);

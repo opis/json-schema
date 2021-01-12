@@ -50,7 +50,7 @@ class MaxItemsKeyword implements Keyword
         }
 
         return $this->error($schema, $context, "maxItems",
-            "Array should have at most @max items, @count found", [
+            "Array should have at most {max} items, {count} found", [
                 'max' => $this->count,
                 'count' => $count,
             ]);

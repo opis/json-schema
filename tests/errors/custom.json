@@ -1,7 +1,7 @@
 [
   {
     "schema": {
-      "$error": "Should be @const",
+      "$error": "Should be {const}",
       "const": 1
     },
     "tests": [
@@ -18,8 +18,8 @@
   {
     "schema": {
       "$error": {
-        "type": "Only @expected, not @type",
-        "required": "Missing: @missing",
+        "type": "Only {expected}, not {type}",
+        "required": "Missing: {missing}",
         "properties": {
           "b": "B should be valid"
         },

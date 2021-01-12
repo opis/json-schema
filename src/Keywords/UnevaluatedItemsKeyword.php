@@ -50,7 +50,7 @@ class UnevaluatedItemsKeyword implements Keyword
 
         if ($this->value === false) {
             return $this->error($schema, $context, 'unevaluatedItems',
-                'Unevaluated array items are not allowed: @indexes', [
+                'Unevaluated array items are not allowed: {indexes}', [
                     'indexes' => $unevaluated,
                 ]);
         }
@@ -62,7 +62,7 @@ class UnevaluatedItemsKeyword implements Keyword
         $object = $this->createArrayObject($context);
 
         $error = $this->validateIterableData($schema, $this->value, $context, $unevaluated,
-            'unevaluatedItems', 'All unevaluated array items must match schema: @indexes', [
+            'unevaluatedItems', 'All unevaluated array items must match schema: {indexes}', [
                 'indexes' => $unevaluated,
             ], $object);
 

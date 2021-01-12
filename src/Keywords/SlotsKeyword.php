@@ -60,7 +60,7 @@ class SlotsKeyword implements Keyword
                 }
 
                 if ($fallback === false) {
-                    return $this->error($schema, $context, '$slots', "Required slot '@slot' is missing", [
+                    return $this->error($schema, $context, '$slots', "Required slot '{slot}' is missing", [
                         'slot' => $name,
                     ]);
                 }
@@ -76,7 +76,7 @@ class SlotsKeyword implements Keyword
             }
 
             if ($error = $slot->validate($newContext)) {
-                return $this->error($schema, $context,'$slots', "Schema for slot '@slot' was not matched", [
+                return $this->error($schema, $context,'$slots', "Schema for slot '{slot}' was not matched", [
                     'slot' => $name,
                 ], $error);
             }

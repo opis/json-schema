@@ -50,7 +50,7 @@ class MinItemsKeyword implements Keyword
         }
 
         return $this->error($schema, $context, "minItems",
-            "Array should have at least @min items, @count found", [
+            "Array should have at least {min} items, {count} found", [
                 'min' => $this->count,
                 'count' => $count,
             ]);

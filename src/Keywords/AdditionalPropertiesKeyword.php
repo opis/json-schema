@@ -58,7 +58,7 @@ class AdditionalPropertiesKeyword implements Keyword
 
         if ($this->value === false) {
             return $this->error($schema, $context,
-                'additionalProperties', 'Additional object properties are not allowed: @properties', [
+                'additionalProperties', 'Additional object properties are not allowed: {properties}', [
                     'properties' => $props
                 ]);
         }
@@ -70,7 +70,7 @@ class AdditionalPropertiesKeyword implements Keyword
         $object = $this->createArrayObject($context);
 
         $error = $this->validateIterableData($schema, $this->value, $context, $props,
-            'additionalProperties', 'All additional object properties must match schema: @properties', [
+            'additionalProperties', 'All additional object properties must match schema: {properties}', [
                 'properties' => $props
             ], $object);
 

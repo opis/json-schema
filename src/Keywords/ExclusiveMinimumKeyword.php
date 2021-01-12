@@ -43,7 +43,7 @@ class ExclusiveMinimumKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'exclusiveMinimum', "Number must be greater than @min", [
+        return $this->error($schema, $context, 'exclusiveMinimum', "Number must be greater than {min}", [
             'min' => $this->number,
         ]);
     }

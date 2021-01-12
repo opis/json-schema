@@ -50,7 +50,7 @@ class MaxPropertiesKeywords implements Keyword
         }
 
         return $this->error($schema, $context, 'maxProperties',
-            "Object must have at most @max properties, @count found", [
+            "Object must have at most {max} properties, {count} found", [
                 'max' => $this->count,
                 'count' => $count,
             ]);

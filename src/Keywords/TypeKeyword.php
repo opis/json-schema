@@ -50,7 +50,7 @@ class TypeKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'type', 'The data (@type) must match the type: @expected', [
+        return $this->error($schema, $context, 'type', 'The data ({type}) must match the type: {expected}', [
             'expected' => $this->type,
             'type' => $type,
         ]);

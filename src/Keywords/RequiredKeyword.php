@@ -61,7 +61,7 @@ class RequiredKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'required', 'The required properties (@missing) are missing', [
+        return $this->error($schema, $context, 'required', 'The required properties ({missing}) are missing', [
             'missing' => $list,
         ]);
     }

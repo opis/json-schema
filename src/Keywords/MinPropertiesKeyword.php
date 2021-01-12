@@ -50,7 +50,7 @@ class MinPropertiesKeyword implements Keyword
         }
 
         return $this->error($schema, $context, 'minProperties',
-            "Object must have at least @min properties, @count found", [
+            "Object must have at least {min} properties, {count} found", [
                 'min' => $this->count,
                 'count' => $count,
             ]);

@@ -53,7 +53,7 @@ class MaxLengthKeyword implements Keyword
             return null;
         }
 
-        return $this->error($schema, $context, 'maxLength', "Maximum string length is @max, found @length",
+        return $this->error($schema, $context, 'maxLength', "Maximum string length is {max}, found {length}",
             [
                 'max' => $this->length,
                 'length' => $length,

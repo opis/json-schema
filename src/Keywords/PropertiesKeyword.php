@@ -70,7 +70,7 @@ class PropertiesKeyword implements Keyword
 
             if ($prop === false) {
                 $context->addEvaluatedProperties($evaluated);
-                return $this->error($schema, $context, 'properties', "Property '@property' is not allowed", [
+                return $this->error($schema, $context, 'properties', "Property '{property}' is not allowed", [
                     'property' => $name,
                 ]);
             }
@@ -96,7 +96,7 @@ class PropertiesKeyword implements Keyword
         $context->addEvaluatedProperties($evaluated);
 
         if (!$errors->isEmpty()) {
-            return $this->error($schema, $context, 'properties', "The properties must match schema: @properties", [
+            return $this->error($schema, $context, 'properties', "The properties must match schema: {properties}", [
                 'properties' => array_values(array_diff($checked, $evaluated))
             ], $errors);
         }

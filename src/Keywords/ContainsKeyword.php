@@ -56,7 +56,7 @@ class ContainsKeyword implements Keyword
         $context->markAllAsEvaluatedItems();
 
         if ($this->min > $count) {
-            return $this->error($schema, $context, 'minContains', 'Array must have at least @min items', [
+            return $this->error($schema, $context, 'minContains', 'Array must have at least {min} items', [
                 'min' => $this->min,
                 'count' => $count,
             ]);
@@ -67,7 +67,7 @@ class ContainsKeyword implements Keyword
         if ($this->value === true) {
             if ($count) {
                 if (!$isMaxNull && $count > $this->max) {
-                    return $this->error($schema, $context, 'maxContains', 'Array must have at most @max items', [
+                    return $this->error($schema, $context, 'maxContains', 'Array must have at most {max} items', [
                         'max' => $this->max,
                         'count' => $count,
                     ]);
@@ -120,14 +120,14 @@ class ContainsKeyword implements Keyword
         }
 
         if (!$isMinNull && $valid < $this->min) {
-            return $this->error($schema, $context, 'minContains', 'At least @min array items must match schema', [
+            return $this->error($schema, $context, 'minContains', 'At least {min} array items must match schema', [
                 'min' => $this->min,
                 'count' => $valid,
             ]);
         }
 
         if (!$isMaxNull && $valid > $this->max) {
-            return $this->error($schema, $context, 'minContains', 'At most @max array items must match schema', [
+            return $this->error($schema, $context, 'minContains', 'At most {max} array items must match schema', [
                 'max' => $this->max,
                 'count' => $valid,
             ]);

@@ -62,7 +62,7 @@ class PatternPropertiesKeyword implements Keyword
                     if ($context->trackUnevaluated()) {
                         $context->addEvaluatedProperties(array_diff(array_keys($checked), $list));
                     }
-                    return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '@pattern' are not allowed", [
+                    return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '{pattern}' are not allowed", [
                         'pattern' => $pattern,
                         'forbidden' => $list,
                     ]);
@@ -82,7 +82,7 @@ class PatternPropertiesKeyword implements Keyword
                 if ($context->trackUnevaluated()) {
                     $context->addEvaluatedProperties(array_keys($checked));
                 }
-                return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '@pattern' must also match pattern's schema", [
+                return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '{pattern}' must also match pattern's schema", [
                     'pattern' => $pattern,
                 ], $subErrors);
             }

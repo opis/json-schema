@@ -59,7 +59,7 @@ abstract class AbstractRefKeyword implements Keyword
             $uri = $this->lastRefUri;
             $this->lastRefUri = null;
 
-            return $this->error($schema, $context, $this->keyword, 'The data must match @keyword', [
+            return $this->error($schema, $context, $this->keyword, 'The data must match {keyword}', [
                 'keyword' => $this->keyword,
                 'uri' => (string) $uri,
             ], $error);

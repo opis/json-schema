@@ -65,7 +65,7 @@ class ContentEncodingKeyword implements Keyword
             : ($this->encoding)($context->currentData(), $this->name);
 
         if ($result === null) {
-            return $this->error($schema, $context, 'contentEncoding', "The value must be encoded as '@encoding'", [
+            return $this->error($schema, $context, 'contentEncoding', "The value must be encoded as '{encoding}'", [
                 'encoding' => $this->name,
             ]);
         }

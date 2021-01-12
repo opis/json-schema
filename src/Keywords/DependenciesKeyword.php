@@ -55,7 +55,7 @@ class DependenciesKeyword implements Keyword
 
             if ($value === false) {
                 $this->addEvaluatedFromArrayObject($object, $context);
-                return $this->error($schema, $context, 'dependencies', "Property '@property' is not allowed", [
+                return $this->error($schema, $context, 'dependencies', "Property '{property}' is not allowed", [
                     'property' => $name,
                 ]);
             }
@@ -65,7 +65,7 @@ class DependenciesKeyword implements Keyword
                     if (!property_exists($data, $prop)) {
                         $this->addEvaluatedFromArrayObject($object, $context);
                         return $this->error($schema, $context, 'dependencies',
-                            "Property '@missing' property is required by property '@property'", [
+                            "Property '{missing}' property is required by property '{property}'", [
                                 'property' => $name,
                                 'missing' => $prop,
                             ]);
@@ -82,7 +82,7 @@ class DependenciesKeyword implements Keyword
             if ($error = $context->validateSchemaWithoutEvaluated($value, null, false, $object)) {
                 $this->addEvaluatedFromArrayObject($object, $context);
                 return $this->error($schema, $context, 'dependencies',
-                    "The object must match dependency schema defined on property '@property'", [
+                    "The object must match dependency schema defined on property '{property}'", [
                         'property' => $name,
                     ], $error);
             }
