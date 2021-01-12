@@ -334,26 +334,36 @@ class ErrorFormatter
         $map = null;
         $pMap = null;
 
-        if (is_object($data) && isset($data->{'$error'})) {
-            $map = $data->{'$error'};
-
-            if (is_string($map)) {
-                // We have an global error
-                yield $error => $map;
-                return;
+        if (is_object($data)) {
+            if ($error->keyword() === '$filters') {
+                if (($args = $error->args()) && isset($args['args']['$error'])) {
+                    yield $error => $args['args']['$error'];
+                    return;
+                }
+                unset($args);
             }
 
-            if (is_object($map)) {
-                if (isset($map->{$error->keyword()})) {
-                    $pMap = $map->{'*'} ?? null;
-                    $map = $map->{$error->keyword()};
-                    if (is_string($map)) {
-                        yield $error => $map;
+            if (isset($data->{'$error'})) {
+                $map = $data->{'$error'};
+
+                if (is_string($map)) {
+                    // We have an global error
+                    yield $error => $map;
+                    return;
+                }
+
+                if (is_object($map)) {
+                    if (isset($map->{$error->keyword()})) {
+                        $pMap = $map->{'*'} ?? null;
+                        $map = $map->{$error->keyword()};
+                        if (is_string($map)) {
+                            yield $error => $map;
+                            return;
+                        }
+                    } elseif (isset($map->{'*'})) {
+                        yield $error => $map->{'*'};
                         return;
                     }
-                } elseif (isset($map->{'*'})) {
-                    yield $error => $map->{'*'};
-                    return;
                 }
             }
         }

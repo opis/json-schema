@@ -115,5 +115,45 @@
         }
       }
     ]
+  },
+  {
+    "schema": {
+      "$error": {
+        "$filters": "Something went wrong"
+      },
+      "$filters": [
+        {
+          "$func": "max-date",
+          "$vars": {
+            "value": "1969-12-31"
+          },
+          "$error": "Unix era not allowed"
+        },
+        {
+          "$func": "min-date",
+          "$vars": {
+            "value": "1960-01-01"
+          }
+        }
+      ]
+    },
+    "tests": [
+      {
+        "data": "1970-01-01",
+        "errors": {
+          "custom": {
+            "/": ["Unix era not allowed"]
+          }
+        }
+      },
+      {
+        "data": "1950-01-01",
+        "errors": {
+          "custom": {
+            "/": ["Something went wrong"]
+          }
+        }
+      }
+    ]
   }
 ]
