@@ -37,6 +37,26 @@ final class DateTimeFilters
         return self::CreateDate($date, $tz, false) <= self::CreateDate($max, $tz, false);
     }
 
+    public static function NotDate(string $date, array $args): bool
+    {
+        $not = $args['value'];
+        $tz = $args['timezone'] ?? null;
+
+        if (!is_array($not)) {
+            $not = [$not];
+        }
+
+        $date = self::CreateDate($date, $tz, false);
+
+        foreach ($not as $d) {
+            if ($date == self::CreateDate($d, $tz, false)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static function MinDateTime(string $date, array $args): bool
     {
         $min = $args['value'];

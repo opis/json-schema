@@ -67,6 +67,7 @@ class FilterResolver
         $cls = DateTimeFilters::class . "::";
         $this->registerCallable("string", "min-date", $cls . "MinDate");
         $this->registerCallable("string", "max-date", $cls . "MaxDate");
+        $this->registerCallable("string", "not-date", $cls . "NotDate");
         $this->registerCallable("string", "min-time", $cls . "MinTime");
         $this->registerCallable("string", "max-time", $cls . "MaxTime");
         $this->registerCallable("string", "min-datetime", $cls . "MinDateTime");
