@@ -335,12 +335,34 @@ class ErrorFormatter
         $pMap = null;
 
         if (is_object($data)) {
-            if ($error->keyword() === '$filters') {
-                if (($args = $error->args()) && isset($args['args']['$error'])) {
-                    yield $error => $args['args']['$error'];
-                    return;
-                }
-                unset($args);
+            switch ($error->keyword()) {
+                case 'required':
+                    if (isset($data->{'$error'}->required) && is_object($data->{'$error'}->required)) {
+                        $e = $data->{'$error'}->required;
+                        $found = false;
+                        foreach ($error->args()['missing'] as $prop) {
+                            if (isset($e->{$prop})) {
+                                yield $error => $e->{$prop};
+                                $found = true;
+                            }
+                        }
+                        if ($found) {
+                            return;
+                        }
+                        if (isset($e->{'*'})) {
+                            yield $error => $e->{'*'};
+                            return;
+                        }
+                        unset($e, $found, $prop);
+                    }
+                    break;
+                case '$filters':
+                    if (($args = $error->args()) && isset($args['args']['$error'])) {
+                        yield $error => $args['args']['$error'];
+                        return;
+                    }
+                    unset($args);
+                    break;
             }
 
             if (isset($data->{'$error'})) {

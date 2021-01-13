@@ -155,5 +155,34 @@
         }
       }
     ]
+  },
+  {
+    "schema": {
+      "$error": {
+        "required": {
+          "x": "Missing x",
+          "*": "Missing important property"
+        }
+      },
+      "required": ["x", "y"]
+    },
+    "tests": [
+      {
+        "data": {"y":  2},
+        "errors": {
+          "custom": {
+            "/": ["Missing x"]
+          }
+        }
+      },
+      {
+        "data": {"x":  2},
+        "errors": {
+          "custom": {
+            "/": ["Missing important property"]
+          }
+        }
+      }
+    ]
   }
 ]
