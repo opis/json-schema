@@ -27,20 +27,11 @@ class RefKeywordParser extends KeywordParser
 {
     use VariablesTrait;
 
-    protected ?string $recursiveRef = null;
-    protected ?string $recursiveAnchor = null;
-    protected bool $dynamic = false;
+    protected ?array $variations = null;
 
-    public function __construct(
-        string $keyword,
-        ?string $recursiveRef = null,
-        ?string $recursiveAnchor = null,
-        bool $dynamic = false
-    ) {
+    public function __construct(string $keyword, ?array $variations = null) {
         parent::__construct($keyword);
-        $this->recursiveRef = $recursiveRef;
-        $this->recursiveAnchor = $recursiveAnchor;
-        $this->dynamic = $dynamic;
+        $this->variations = $variations;
     }
 
     /**
@@ -56,24 +47,36 @@ class RefKeywordParser extends KeywordParser
      */
     public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
+        $ref = null;
         $recursive = false;
         $schema = $info->data();
+        $variation = null;
 
         if ($this->keywordExists($schema)) {
             $ref = $this->keywordValue($schema);
             if (!is_string($ref) || $ref === '') {
                 throw $this->keywordException('{keyword} must be a non-empty string', $info);
             }
-        } elseif ($this->recursiveRef && $this->keywordExists($schema, $this->recursiveRef)) {
-            $ref = $this->keywordValue($schema, $this->recursiveRef);
-            if ($this->dynamic) {
-                if (!preg_match('/^#[a-z][a-z0-9\\-.:_]*/i', $ref)) {
-                    $this->keywordException("{keyword} value is malformed", $info, $this->recursiveRef);
+        } elseif ($this->variations) {
+            foreach ($this->variations as $v) {
+                if (!$this->keywordExists($schema, $v['ref'])) {
+                    continue;
                 }
-            } elseif ($ref !== '#') {
-                $this->keywordException("{keyword} supports only '#' as value", $info, $this->recursiveRef);
+                $ref = $this->keywordValue($schema, $v['ref']);
+                if ($v['fragment']) {
+                    if (!preg_match('/^#[a-z][a-z0-9\\-.:_]*/i', $ref)) {
+                        $this->keywordException("{keyword} value is malformed", $info, $v['ref']);
+                    }
+                } elseif ($ref !== '#') {
+                    $this->keywordException("{keyword} supports only '#' as value", $info, $v['ref']);
+                }
+                $variation = $v;
+                $recursive = true;
+                break;
             }
-            $recursive = true;
+            if (!$recursive) {
+                return null;
+            }
         } else {
             return null;
         }
@@ -110,12 +113,12 @@ class RefKeywordParser extends KeywordParser
 
         if ($recursive) {
             $ref = $info->idBaseRoot()->resolveRef($ref);
-            if ($this->dynamic) {
-                return new RecursiveRefKeyword($ref, $mapper, $globals, $slots,
-                    $this->recursiveRef, $this->recursiveAnchor, $ref->fragment());
+            if ($variation['fragment']) {
+                return new RecursiveRefKeyword($ref->resolveRef('#'), $mapper, $globals, $slots,
+                    $variation['ref'], $variation['anchor'], $ref->fragment());
             }
             return new RecursiveRefKeyword($ref, $mapper, $globals, $slots,
-                $this->recursiveRef, $this->recursiveAnchor, true);
+                $variation['ref'], $variation['anchor'], true);
         }
 
         if ($ref === '#') {

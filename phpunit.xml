@@ -24,7 +24,7 @@
             <file>./tests/OfficialDraft6Test.php</file>
             <file>./tests/OfficialDraft7Test.php</file>
             <file>./tests/OfficialDraft201909Test.php</file>
-<!--            <file>./tests/OfficialDraft202012Test.php</file>-->
+            <file>./tests/OfficialDraft202012Test.php</file>
         </testsuite>
     </testsuites>
 </phpunit>

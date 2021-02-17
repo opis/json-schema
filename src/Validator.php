@@ -24,9 +24,7 @@ use Opis\JsonSchema\Parsers\SchemaParser;
 
 class Validator
 {
-
     protected SchemaLoader $loader;
-
     protected int $maxErrors = 1;
 
     /**
@@ -37,6 +35,41 @@ class Validator
     {
         $this->loader = $loader ?? new SchemaLoader(new SchemaParser(), new SchemaResolver(), true);
         $this->maxErrors = $max_errors;
+    }
+
+    /**
+     * @param $data
+     * @param bool|string|Uri|Schema|object $schema
+     * @param array|null $globals
+     * @param array|null $slots
+     * @return ValidationResult
+     */
+    public function validate($data, $schema, ?array $globals = null, ?array $slots = null): ValidationResult
+    {
+        if (is_string($schema)) {
+            if ($uri = Uri::parse($schema, true)) {
+                $schema = $uri;
+            } else {
+                $schema = json_decode($schema, false);
+            }
+        }
+
+        $error = null;
+        if (is_bool($schema)) {
+            $error = $this->dataValidation($data, $schema, $globals, $slots);
+        } elseif (is_object($schema)) {
+            if ($schema instanceof Uri) {
+                $error = $this->uriValidation($data, $schema, $globals, $slots);
+            } elseif ($schema instanceof Schema) {
+                $error = $this->schemaValidation($data, $schema, $globals, $slots);
+            } else {
+                $error = $this->dataValidation($data, $schema, $globals, $slots);
+            }
+        } else {
+            throw new RuntimeException("Invalid schema provided");
+        }
+
+        return new ValidationResult($error);
     }
 
     /**

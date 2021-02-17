@@ -26,9 +26,8 @@
         },
         "dependentSchemas": {
             "type": "object",
-            "additionalProperties": {
-                "$dynamicRef": "#meta"
-            }
+            "additionalProperties": { "$dynamicRef": "#meta" },
+            "default": {}
         },
         "propertyNames": { "$dynamicRef": "#meta" },
         "if": { "$dynamicRef": "#meta" },

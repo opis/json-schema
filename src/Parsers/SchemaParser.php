@@ -35,10 +35,9 @@ use Opis\JsonSchema\Info\SchemaInfo;
 
 class SchemaParser
 {
-    /** @var string */
-    protected const DRAFT_REGEX = '~^https?://json-schema\.org/draft-(\d[0-9-]*\d)/schema#?$~i';
+    protected const DRAFT_REGEX = '~^https?://json-schema\.org/draft(?:/|-)(\d[0-9-]*\d)/schema#?$~i';
     protected const ANCHOR_REGEX = '/^[a-z][a-z0-9\\-.:_]*/i';
-    protected const DEFAULT_DRAFT = '2019-09';
+    protected const DEFAULT_DRAFT = '2020-12';
 
     /** @var array */
     protected const DEFAULT_OPTIONS = [

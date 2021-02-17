@@ -89,7 +89,10 @@ class Draft202012 extends Draft
      */
     protected function getRefKeywordParser(): KeywordParser
     {
-        return new RefKeywordParser('$ref', '$dynamicRef', '$dynamicAnchor', true);
+        return new RefKeywordParser('$ref', [
+            ['ref' => '$dynamicRef', 'anchor' => '$dynamicAnchor', 'fragment' => true],
+            ['ref' => '$recursiveRef', 'anchor' => '$recursiveAnchor', 'fragment' => false],
+        ]);
     }
 
     /**

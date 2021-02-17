@@ -79,22 +79,6 @@ abstract class AbstractOfficialDraftTest extends TestCase
         }
     }
 
-    /**
-     * @dataProvider basicDataProvider
-     */
-    public function testBasic(...$args)
-    {
-        $this->doValidation(...$args);
-    }
-
-    /**
-     * @dataProvider optionalDataProvider
-     */
-    public function testOptional(...$args)
-    {
-        $this->doValidation(...$args);
-    }
-
     public function testSelf()
     {
         $validator = self::$validator;
@@ -114,6 +98,22 @@ abstract class AbstractOfficialDraftTest extends TestCase
         $data = $schema->info()->data();
 
         $this->assertNull($validator->schemaValidation($data, $schema));
+    }
+
+    /**
+     * @dataProvider basicDataProvider
+     */
+    public function testBasic(...$args)
+    {
+        $this->doValidation(...$args);
+    }
+
+    /**
+     * @dataProvider optionalDataProvider
+     */
+    public function testOptional(...$args)
+    {
+        $this->doValidation(...$args);
     }
 
     protected function getData($dir)
