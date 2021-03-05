@@ -72,6 +72,11 @@ class ItemsKeyword implements Keyword
 
         $count = count($context->currentData());
 
+        if ($this->startIndex >= $count) {
+            // Already validated by other keyword
+            return null;
+        }
+
         if ($this->value === false) {
             if ($count === 0) {
                 return null;
