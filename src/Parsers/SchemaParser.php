@@ -275,33 +275,15 @@ class SchemaParser
 
     /**
      * @param object $schema
-     * @param string $draft
-     * @param Uri|null $base
-     * @return Uri|null
+     * @return string|null
      */
-    public function parseSchemaId(object $schema, string $draft, ?Uri $base = null): ?Uri
+    public function parseId(object $schema): ?string
     {
-        if (!property_exists($schema, '$id') || !is_string($schema->{'$id'})) {
-            $id = $this->parseAnchor($schema, $draft);
-            if ($id === null) {
-                return null;
-            }
-            $id = '#' . $id;
-        } else {
-            $id = $schema->{'$id'};
-            if (is_string($id)) {
-                $anchor = $this->parseAnchor($schema, $draft);
-                if ($anchor !== null) {
-                    if ($pos = (strpos($id, '#')) !== false) {
-                        $id = substr($id, $pos + 1) . $anchor;
-                    } else {
-                        $id .= '#' . $anchor;
-                    }
-                }
-            }
+        if (property_exists($schema, '$id') && is_string($schema->{'$id'})) {
+            return $schema->{'$id'};
         }
 
-        return Uri::merge($id, $base, true);
+        return null;
     }
 
     /**
@@ -562,7 +544,7 @@ class SchemaParser
         $after = [];
         /** @var Keyword[][] $types */
         $types = [];
-        /** @var Keywordp[] $ref */
+        /** @var Keyword[] $ref */
         $ref = [];
 
         if ($hasRef) {

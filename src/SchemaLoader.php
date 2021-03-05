@@ -360,8 +360,15 @@ class SchemaLoader
         string $pointer
     )
     {
+        $schema_id = $this->parser->parseId($data);
+        $schema_anchor = $this->parser->parseAnchor($data, $draft);
         $draft = $this->parser->parseSchemaDraft($data) ?? $draft;
-        $id = $this->parser->parseSchemaId($data, $draft, $base) ?? $id;
+
+        if ($schema_id !== null) {
+            $id = Uri::merge($schema_id, $base, true);
+        } elseif ($schema_anchor !== null) {
+            $id = Uri::merge('#' . $schema_anchor, $base, true);
+        }
 
         $lazy = new LazySchema(new SchemaInfo($data, $id, $base, $root, $path, $draft), $this->parser);
 
@@ -369,6 +376,16 @@ class SchemaLoader
             $key = $this->cacheKey((string)$id);
             if (isset($this->uriCache[$key])) {
                 throw new DuplicateSchemaIdException($id, $data);
+            }
+            $this->uriCache[$key] = $lazy;
+        }
+
+        // When $id and $anchor are both present add a reference to the same lazy object
+        if ($schema_id !== null && $schema_anchor !== null) {
+            $anchor_id = Uri::merge('#' . $schema_anchor, $id, true);
+            $key = $this->cacheKey((string)$anchor_id);
+            if (isset($this->uriCache[$key])) {
+                throw new DuplicateSchemaIdException($anchor_id, $data);
             }
             $this->uriCache[$key] = $lazy;
         }
