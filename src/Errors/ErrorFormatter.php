@@ -49,19 +49,15 @@ class ErrorFormatter
          * @var string $message
          */
 
-        if ($multiple) {
-            foreach ($this->getErrors($error) as $error => $message) {
-                $key = $key_formatter($error);
+        foreach ($this->getErrors($error) as $error => $message) {
+            $key = $key_formatter($error);
 
+            if ($multiple) {
                 if (!isset($list[$key])) {
                     $list[$key] = [];
                 }
-
                 $list[$key][] = $formatter($error, $message);
-            }
-        } else {
-            foreach ($this->getErrors($error) as $error => $message) {
-                $key = $key_formatter($error->data()->fullPath());
+            } else {
                 if (!isset($list[$key])) {
                     $list[$key] = $formatter($error, $message);
                 }
