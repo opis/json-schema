@@ -62,14 +62,14 @@ class TemplateRefKeyword extends AbstractRefKeyword
             $this->cached[$key] = $this->resolveRef($ref, $context->loader(), $schema);
         }
 
-        $schema = $this->cached[$key];
+        $resolved = $this->cached[$key];
         unset($key);
 
-        if (!$schema) {
+        if (!$resolved) {
             throw new UnresolvedRefException($ref, $schema, $context);
         }
 
-        return $schema->validate($this->createContext($context, $schema));
+        return $resolved->validate($this->createContext($context, $schema));
     }
 
     /**
