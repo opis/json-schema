@@ -107,8 +107,8 @@ class RefKeywordParser extends KeywordParser
 
         // Pass slots
         $slots = null;
-        if ($parser->option('allowSlots') && property_exists($schema, '$pass')) {
-            $slots = $this->parsePassSlots($info, $parser);
+        if ($parser->option('allowSlots') && property_exists($schema, '$inject')) {
+            $slots = $this->parseInjectedSlots($info, $parser, '$inject');
         }
 
         if ($recursive) {
@@ -168,17 +168,18 @@ class RefKeywordParser extends KeywordParser
     /**
      * @param SchemaInfo $info
      * @param SchemaParser $parser
+     * @param string $keyword
      * @return string[]|object[]|Schema[]
      */
-    protected function parsePassSlots(SchemaInfo $info, SchemaParser $parser): ?array
+    protected function parseInjectedSlots(SchemaInfo $info, SchemaParser $parser, string $keyword): ?array
     {
         $schema = $info->data();
 
-        if (!is_object($schema->{'$pass'})) {
-            throw $this->keywordException('$pass keyword value must be an object', $info, '$pass');
+        if (!is_object($schema->{$keyword})) {
+            throw $this->keywordException('{keyword} keyword value must be an object', $info, $keyword);
         }
 
-        return $this->getSlotSchemas($info, $parser, $schema->{'$pass'}, ['$pass']);
+        return $this->getSlotSchemas($info, $parser, $schema->{$keyword}, [$keyword]);
     }
 
     /**

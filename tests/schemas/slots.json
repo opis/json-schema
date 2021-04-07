@@ -23,7 +23,7 @@
     "example-user": {
       "$id": "#example-user",
       "$ref": "#user",
-      "$pass": {
+      "$inject": {
         "extraEmailValidation": {
           "pattern": "@example\\.com$"
         },

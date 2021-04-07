@@ -40,7 +40,7 @@ class SlotTest extends AbstractTest
             ["{$schema}#user", (object)['email' => 'a@other.example.com', 'friend' => 'any'], false, false, null, ['extraEmailValidation' => true, 'self' => (object)['type' => 'number']]],
 
             ["{$schema}#user", (object)['email' => 'a@example.com', 'friend' => (object)['email' => 'b@example.com']], true, false, null, [
-                'extraEmailValidation' => $schema . '#/definitions/example-user/$slots/extraEmailValidation',
+                'extraEmailValidation' => $schema . '#/definitions/example-user/$inject/extraEmailValidation',
                 'self' => "{$schema}#user",
             ]],
 
@@ -50,7 +50,7 @@ class SlotTest extends AbstractTest
             ]],
 
             ["{$schema}#user", (object)['email' => 'a@example.test', 'friend' => (object)['email' => 'b@example.com']], false, false, null, [
-                'extraEmailValidation' => $schema . '#/definitions/example-user/%24pass/extraEmailValidation',
+                'extraEmailValidation' => $schema . '#/definitions/example-user/$inject/extraEmailValidation',
                 'self' => "{$schema}#user",
             ]],
 
