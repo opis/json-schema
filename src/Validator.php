@@ -18,9 +18,9 @@
 namespace Opis\JsonSchema;
 
 use InvalidArgumentException, RuntimeException;
+use Opis\JsonSchema\Parsers\SchemaParser;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Resolvers\{SchemaResolver};
-use Opis\JsonSchema\Parsers\SchemaParser;
 
 class Validator
 {
@@ -66,7 +66,7 @@ class Validator
                 $error = $this->dataValidation($data, $schema, $globals, $slots);
             }
         } else {
-            throw new RuntimeException("Invalid schema provided");
+            throw new InvalidArgumentException("Invalid schema");
         }
 
         return new ValidationResult($error);

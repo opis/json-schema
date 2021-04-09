@@ -18,7 +18,7 @@
 namespace Opis\JsonSchema\Keywords;
 
 use Opis\JsonSchema\Errors\ValidationError;
-use Opis\JsonSchema\Exceptions\UnresolvedRefException;
+use Opis\JsonSchema\Exceptions\UnresolvedReferenceException;
 use Opis\JsonSchema\{Schema, Uri, ValidationContext, Variables};
 
 class URIRefKeyword extends AbstractRefKeyword
@@ -45,7 +45,7 @@ class URIRefKeyword extends AbstractRefKeyword
         }
 
         if ($this->resolved === null) {
-            throw new UnresolvedRefException((string)$this->uri, $schema, $context);
+            throw new UnresolvedReferenceException((string)$this->uri, $schema, $context);
         }
 
         $this->setLastRefSchema($this->resolved);

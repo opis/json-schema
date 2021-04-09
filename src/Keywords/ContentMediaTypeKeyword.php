@@ -25,12 +25,16 @@ use Opis\JsonSchema\{
 };
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Resolvers\ContentMediaTypeResolver;
+use Opis\JsonSchema\Exceptions\UnresolvedContentMediaTypeException;
 
 class ContentMediaTypeKeyword implements Keyword
 {
     use ErrorTrait;
 
     protected string $name;
+
+    /** @var bool|callable|ContentMediaType|null */
+    protected $media = false;
 
     protected ?ContentMediaTypeResolver $resolver;
 
@@ -53,18 +57,24 @@ class ContentMediaTypeKeyword implements Keyword
             return null;
         }
 
-        $media = $this->resolver->resolve($this->name);
-
-        if ($media !== null) {
-            $data = $context->getDecodedContent();
-            $ok = $media instanceof ContentMediaType
-                ? $media->validate($data, $this->name)
-                : $media($data, $this->name);
-            if ($ok) {
-                return null;
-            }
-            unset($data);
+        if ($this->media === false) {
+            $this->media = $this->resolver->resolve($this->name);
         }
+
+        if ($this->media === null) {
+            throw new UnresolvedContentMediaTypeException($this->name, $schema, $context);
+        }
+
+        $data = $context->getDecodedContent();
+
+        $ok = $this->media instanceof ContentMediaType
+            ? $this->media->validate($data, $this->name)
+            : ($this->media)($data, $this->name);
+        if ($ok) {
+            return null;
+        }
+
+        unset($data);
 
         return $this->error($schema, $context, 'contentMediaType', "The media type of the data must be '{media}'", [
             'media' => $this->name,

@@ -19,7 +19,7 @@ namespace Opis\JsonSchema\Keywords;
 
 use Opis\Uri\UriTemplate;
 use Opis\JsonSchema\Errors\ValidationError;
-use Opis\JsonSchema\Exceptions\UnresolvedRefException;
+use Opis\JsonSchema\Exceptions\UnresolvedReferenceException;
 use Opis\JsonSchema\{JsonPointer, Schema, SchemaLoader, Uri, ValidationContext, Variables};
 
 class TemplateRefKeyword extends AbstractRefKeyword
@@ -66,7 +66,7 @@ class TemplateRefKeyword extends AbstractRefKeyword
         unset($key);
 
         if (!$resolved) {
-            throw new UnresolvedRefException($ref, $schema, $context);
+            throw new UnresolvedReferenceException($ref, $schema, $context);
         }
 
         return $resolved->validate($this->createContext($context, $schema));

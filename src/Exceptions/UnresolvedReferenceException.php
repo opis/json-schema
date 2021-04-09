@@ -19,7 +19,7 @@ namespace Opis\JsonSchema\Exceptions;
 
 use Opis\JsonSchema\{ValidationContext, Schema};
 
-class UnresolvedRefException extends UnresolvedException
+class UnresolvedReferenceException extends UnresolvedException
 {
 
     protected string $ref;
@@ -31,7 +31,7 @@ class UnresolvedRefException extends UnresolvedException
      */
     public function __construct(string $ref, Schema $schema, ValidationContext $context)
     {
-        parent::__construct("Unresolved \$ref: {$ref}", $schema, $context);
+        parent::__construct("Unresolved reference: {$ref}", $schema, $context);
         $this->ref = $ref;
     }
 

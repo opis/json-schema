@@ -19,26 +19,26 @@ namespace Opis\JsonSchema\Exceptions;
 
 use Opis\JsonSchema\{ValidationContext, Schema};
 
-class UnresolvedContentEncodingException extends UnresolvedException
+class UnresolvedContentMediaTypeException extends UnresolvedException
 {
-    protected string $encoding;
+    protected string $media;
 
     /**
-     * @param string $encoding
+     * @param string $media
      * @param Schema $schema
      * @param ValidationContext $context
      */
-    public function __construct(string $encoding, Schema $schema, ValidationContext $context)
+    public function __construct(string $media, Schema $schema, ValidationContext $context)
     {
-        parent::__construct("Cannot resolve '{$encoding}' content encoding", $schema, $context);
-        $this->encoding = $encoding;
+        parent::__construct("Cannot resolve '{$media}' content media type", $schema, $context);
+        $this->media = $media;
     }
 
     /**
      * @return string
      */
-    public function getContentEncoding(): string
+    public function getContentMediaType(): string
     {
-        return $this->encoding;
+        return $this->media;
     }
 }

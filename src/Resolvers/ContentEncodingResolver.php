@@ -24,10 +24,14 @@ class ContentEncodingResolver
     /** @var callable[]|ContentEncoding[] */
     protected array $list;
 
+    /** @var callable|ContentEncoding|null */
+    protected $defaultEncoding = null;
+
     /**
      * @param callable[]|ContentEncoding[] $list
+     * @param callable|ContentEncoding|null $defaultEncoding
      */
-    public function __construct(array $list = [])
+    public function __construct(array $list = [], $defaultEncoding = null)
     {
         $list += [
             'binary' => self::class . '::DecodeBinary',
@@ -36,6 +40,7 @@ class ContentEncodingResolver
         ];
 
         $this->list = $list;
+        $this->defaultEncoding = $defaultEncoding;
     }
 
     /**
@@ -44,7 +49,7 @@ class ContentEncodingResolver
      */
     public function resolve(string $name)
     {
-        return $this->list[$name] ?? null;
+        return $this->list[$name] ?? $this->defaultEncoding;
     }
 
     /**
@@ -86,16 +91,28 @@ class ContentEncodingResolver
         return false;
     }
 
+    /**
+     * @param callable|ContentEncoding|null $handler
+     * @return $this
+     */
+    public function setDefaultHandler($handler): self
+    {
+        $this->defaultEncoding = $handler;
+        return $this;
+    }
+
     public function __serialize(): array
     {
         return [
             'list' => $this->list,
+            'defaultEncoding' => $this->defaultEncoding,
         ];
     }
 
     public function __unserialize(array $data): void
     {
         $this->list = $data['list'];
+        $this->defaultEncoding = $data['defaultEncoding'] ?? null;
     }
 
     public static function DecodeBinary(string $value): ?string
