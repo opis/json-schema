@@ -17,9 +17,10 @@
 
 namespace Opis\JsonSchema;
 
+use JsonSerializable;
 use Opis\Uri\Uri as BaseUri;
 
-class Uri extends BaseUri
+class Uri extends BaseUri implements JsonSerializable
 {
     /**
      * @var bool Set this to true and the qs will always be sorted
@@ -32,6 +33,14 @@ class Uri extends BaseUri
             $components = self::normalizeComponents($components);
         }
         parent::__construct($components);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function jsonSerialize(): string
+    {
+        return $this->__toString();
     }
 
     /**
