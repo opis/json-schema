@@ -40,14 +40,14 @@ class SchemaLoader
     protected ?Uri $base = null;
 
     /**
-     * @param SchemaParser $parser
+     * @param null|SchemaParser $parser
      * @param null|SchemaResolver $resolver
      * @param bool $decodeJsonString
      */
-    public function __construct(SchemaParser $parser, ?SchemaResolver $resolver = null, bool $decodeJsonString = true)
+    public function __construct(?SchemaParser $parser = null, ?SchemaResolver $resolver = null, bool $decodeJsonString = true)
     {
         $this->dataCache = new SplObjectStorage();
-        $this->parser = $parser;
+        $this->parser = $parser ?? new SchemaParser();
         $this->resolver = $resolver;
         $this->decodeJsonString = $decodeJsonString;
     }
