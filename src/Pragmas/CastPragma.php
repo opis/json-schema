@@ -89,6 +89,9 @@ class CastPragma implements Pragma
             case 'object':
                 $f = 'toObject';
                 break;
+            case 'boolean':
+                $f = 'toBoolean';
+                break;
         }
 
         return [$this, $f];
@@ -173,5 +176,23 @@ class CastPragma implements Pragma
         }
 
         return null;
+    }
+
+    /**
+     * @param $value
+     * @return bool
+     */
+    public function toBoolean($value): bool
+    {
+        if ($value === null) {
+            return false;
+        }
+        if (is_string($value)) {
+            return !($value === '');
+        }
+        if (is_object($value)) {
+            return count(get_object_vars($value)) === 0;
+        }
+        return boolval($value);
     }
 }
