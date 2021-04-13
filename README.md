@@ -8,25 +8,22 @@ Opis JSON Schema
 Validate JSON documents
 -----------
 
-**Opis JSON Schema** is a PHP implementation for the [JSON Schema] standard (draft-07 and draft-06), that
+**Opis JSON Schema** is a PHP implementation for the [JSON Schema] standard (draft-2020-12, draft-2019-09, draft-07 and draft-06), that
 will help you validate all sorts of JSON documents, whether they are configuration files or a set 
 of data sent to an RESTful API endpoint.
 
 
 **The library's key features:**
 
-- Fast validation (you can set maximum number of errors for a validation)
-- Custom schema document [loaders](https://docs.opis.io/json-schema/1.x/php-loader.html)
-- Support for [if-then-else](https://docs.opis.io/json-schema/1.x/conditional-subschemas.html#if-then-else)
-- All [string formats](https://docs.opis.io/json-schema/1.x/formats.html#provided-formats) are supported
-- Support for custom [formats](https://docs.opis.io/json-schema/1.x/php-format.html)
-- Support for custom [media types](https://docs.opis.io/json-schema/1.x/php-media-type.html)
-- Support for [default value](https://docs.opis.io/json-schema/1.x/default-value.html)
-- Support for custom variables using [`$vars` keyword](https://docs.opis.io/json-schema/1.x/variables.html)
-- Support for custom filters using [`$filters` keyword](https://docs.opis.io/json-schema/1.x/filters.html)
-- Advanced schema reuse using [`$map` keyword](https://docs.opis.io/json-schema/1.x/mappers.html)
-- Support for [json pointers](https://docs.opis.io/json-schema/1.x/pointers.html) (absolute and relative pointers)
-- Support for [URI templates](https://docs.opis.io/json-schema/1.x/uri-template.html)
+- Supports all keywords from all drafts (draft-2020-12 down to draft-06)
+- Support for custom PHP filters using [`$filters` keyword](https://docs.opis.io/json-schema/2.x/filters.html)
+- Advanced schema reuse using [`$map` keyword](https://docs.opis.io/json-schema/2.x/mappers.html)
+- Intuitive schema composition using [slots](https://docs.opis.io/json-schema/2.x/slots.html)
+- Support for absolute & relative [json pointers](https://docs.opis.io/json-schema/2.x/pointers.html)
+- Support for [URI templates](https://docs.opis.io/json-schema/2.x/uri-template.html)
+- Support for [`$data` keyword](https://docs.opis.io/json-schema/2.x/data-keyword.html)
+- Support for [casting](https://docs.opis.io/json-schema/2.x/pragma.html#cast)
+- Support for custom [formats](https://docs.opis.io/json-schema/2.x/php-format.html) and [media types](https://docs.opis.io/json-schema/2.x/php-media-type.html)
 
 ### Documentation
 
@@ -40,7 +37,7 @@ the library's own API.
 
 ### Requirements
 
-* PHP ^7.4|^8.0
+* PHP ^7.4 || ^8.0
 
 ## Installation
 
@@ -56,7 +53,7 @@ Or you could directly reference it into your `composer.json` file as a dependenc
 ```json
 {
     "require": {
-        "opis/json-schema": "2020.x-dev"
+        "opis/json-schema": "^2.0"
     }
 }
 ```
