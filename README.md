@@ -58,7 +58,7 @@ Or you could directly reference it into your `composer.json` file as a dependenc
 }
 ```
 
-[documentation]: https://docs.opis.io/json-schema
+[documentation]: https://opis.io/json-schema
 [apache_license]: https://www.apache.org/licenses/LICENSE-2.0 "Apache License"
 [Packagist]: https://packagist.org/packages/opis/json-schema "Packagist"
 [Composer]: https://getcomposer.org "Composer"

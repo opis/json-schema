@@ -23,8 +23,8 @@
     "require": {
         "php": "^7.4 || ^8.0",
         "ext-json": "*",
-        "opis/string": "2020.x-dev",
-        "opis/uri": "2021.x-dev"
+        "opis/string": "^2.0",
+        "opis/uri": "^1.0"
     },
     "require-dev": {
         "ext-bcmath": "*",
@@ -43,7 +43,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "2020.x-dev"
+            "dev-master": "2.x-dev"
         }
     }
 }
