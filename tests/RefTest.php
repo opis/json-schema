@@ -1,6 +1,6 @@
 <?php
-/* ===========================================================================
- * Copyright 2018 Zindex Software
+/* ============================================================================
+ * Copyright 2020 Zindex Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,100 +17,58 @@
 
 namespace Opis\JsonSchema\Test;
 
-use Opis\JsonSchema\Validator;
-use PHPUnit\Framework\TestCase;
-
-class RefTest extends TestCase
+class RefTest extends AbstractTest
 {
-    use JsonValidatorTrait;
-
-    public function testSimple()
+    /**
+     * @inheritDoc
+     */
+    public function validationsProvider(): array
     {
-        $validator = $this->getValidator();
+        $globals = [
+            'prefix' => 'valid',
+        ];
 
-        $result = $validator->uriValidation((object)['name' => 'Name'], "schema:/simple-ref.json");
-        $this->assertTrue($result->isValid());
+        return [
+            // uris
+            ["file:///simple-ref.json", (object)['name' => 'Name'], true],
+            ["file:///simple-ref.json", (object)['name' => 'Name', 'age' => 23], true],
+            ["file:///simple-ref.json", (object)['name' => 'Name', '/' => 'slash'], true],
+            ["file:///simple-ref.json", (object)['name' => 'Name', 'age' => 8.5], false],
+            ["file:///simple-ref.json", (object)['name' => 'Name', '/' => 'backslash'], false],
+            ["file:///simple-ref.json#age", 23, true],
 
-        $result = $validator->uriValidation((object)['name' => 'Name', 'age' => 23], "schema:/simple-ref.json");
-        $this->assertTrue($result->isValid());
+            // ids
+            ["file:///id-ref.json#a-number", 5, true],
+            ["file:///id-ref.json#a-number", -5.5, true],
+            ["file:///id-ref.json#a-number", "5", false],
+            ["file:///id-ref.json#some-string", "str", true],
+            ["file:///id-ref.json#some-string", "", true],
+            ["file:///id-ref.json#some-string", 5, false],
+            ["file:///id-ref.json#level-5", "level-5", true],
+            ["file:///id-ref.json#level-5", "level-6", false],
+            ["file:///id-ref.json", (object)['direct' => 'direct'], true],
+            ["file:///id-ref.json", (object)['direct' => 'deep'], false],
+            ["file:///id-ref.json", (object)['deep' => ['deep']], true],
+            ["file:///id-ref.json", (object)['deep' => ['direct']], false],
 
-        $result = $validator->uriValidation((object)['name' => 'Name', '/' => 'slash'], "schema:/simple-ref.json");
-        $this->assertTrue($result->isValid());
+            // pointers
+            ["file:///pointer-ref.json#/properties/b/properties/c", 10, true],
+            ["file:///pointer-ref.json#/definitions/c", 10, true],
+            ["file:///pointer-ref.json#/properties/a", true, true],
+            ["file:///pointer-ref.json", (object)[], true],
+            ["file:///pointer-ref.json", (object)["a" => true], true],
+            ["file:///pointer-ref.json", (object)["b" => (object)["c" => 10]], true],
+            ["file:///pointer-ref.json", (object)["a" => true, "b" => (object)["c" => 10]], true],
+            ["file:///pointer-ref.json", (object)["a" => 1, "b" => (object)["c" => 10]], false],
+            ["file:///pointer-ref.json", (object)["b" => (object)["c" => 5]], false],
 
-        $result = $validator->uriValidation((object)['name' => 'name'], "schema:/simple-ref.json");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation((object)['name' => 'Name', 'age' => 8.5], "schema:/simple-ref.json");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation((object)['name' => 'Name', '/' => 'backslash'], "schema:/simple-ref.json");
-        $this->assertTrue($result->hasErrors());
-
-        //
-
-        $result = $validator->uriValidation(23, "schema:/simple-ref.json#age");
-        $this->assertTrue($result->isValid());
-
+            // templates
+            ["file:///var-ref.json", (object)["age" => 18, "regionData" => "eu"], true, false, $globals],
+            ["file:///var-ref.json", (object)["age" => 22, "regionData" => "us"], true, false, $globals],
+            ["file:///var-ref.json", (object)["age" => 17, "regionData" => "eu"], false, false, $globals],
+            ["file:///var-ref.json", (object)["age" => 20, "regionData" => "us"], false, false, $globals],
+            ["file:///var-ref.json", (object)["age" => 25, "regionData" => "xx"], false, true, $globals],
+            ["file:///var-ref.json", (object)["age" => 25.5, "regionData" => "us"], false, false, $globals],
+        ];
     }
-
-    public function testPointers()
-    {
-        $validator = $this->getValidator();
-
-        $result = $validator->uriValidation(10, "schema:/pointer-ref.json#/properties/b/properties/c");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(10, "schema:/pointer-ref.json#/definitions/c");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(true, "schema:/pointer-ref.json#/properties/a");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation((object) [], "schema:/pointer-ref.json");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation((object) ["a" => true], "schema:/pointer-ref.json");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation((object) ["b" => (object)["c" => 10]], "schema:/pointer-ref.json");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation((object) ["a" => true, "b" => (object)["c" => 10]], "schema:/pointer-ref.json");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation((object) ["a" => 1, "b" => (object)["c" => 10]], "schema:/pointer-ref.json");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation((object) ["b" => (object)["c" => 5]], "schema:/pointer-ref.json");
-        $this->assertTrue($result->hasErrors());
-    }
-
-    public function testVars()
-    {
-        /** @var Validator $validator */
-        $validator = $this->getValidator();
-
-        $validator->setGlobalVars([
-            'prefix' => 'valid'
-        ]);
-
-        $result = $validator->uriValidation((object)["age" => 18, "regionData" => "eu"], "schema:/var-ref.json");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation((object)["age" => 22, "regionData" => "us"], "schema:/var-ref.json");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation((object)["age" => 17, "regionData" => "eu"], "schema:/var-ref.json");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation((object)["age" => 20, "regionData" => "us"], "schema:/var-ref.json");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation((object)["age" => 25, "regionData" => "xx"], "schema:/var-ref.json");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation((object)["age" => 25.5, "regionData" => "us"], "schema:/var-ref.json");
-        $this->assertTrue($result->hasErrors());
-    }
-
 }

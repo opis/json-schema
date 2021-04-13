@@ -1,0 +1,110 @@
+{
+  "$id": "file:///data.json#",
+  "definitions": {
+    "const": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "const": {"$data": "/const"}
+        }
+      }
+    },
+    "enum": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "enum": {"$data": "/enum"}
+        }
+      }
+    },
+    "format": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "format": {"$data": "/format"}
+        }
+      }
+    },
+
+    "number-min-max": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number",
+          "minimum": {"$data": "/min"},
+          "maximum": {"$data": "/max"}
+        }
+      }
+    },
+    "number-ex-min-max": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number",
+          "exclusiveMinimum": {"$data": "/min"},
+          "exclusiveMaximum": {"$data": "/max"}
+        }
+      }
+    },
+    "number-divisor": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number",
+          "multipleOf": {"$data": "/divisor"}
+        }
+      }
+    },
+
+    "string-min-max": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "minLength": {"$data": "/min"},
+          "maxLength": {"$data": "/max"}
+        }
+      }
+    },
+    "string-pattern": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "string",
+          "pattern": {"$data": "/pattern"}
+        }
+      }
+    },
+
+    "array-min-max": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "minItems": {"$data": "/min"},
+          "maxItems": {"$data": "/max"}
+        }
+      }
+    },
+    "array-unique": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "array",
+          "uniqueItems": {"$data": "/unique"}
+        }
+      }
+    },
+
+    "object-min-max": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "object",
+          "minProperties": {"$data": "/min"},
+          "maxProperties": {"$data": "/max"}
+        }
+      }
+    }
+  }
+}

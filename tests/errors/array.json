@@ -1,0 +1,254 @@
+[
+    {
+        "schema": {
+            "type": "array",
+            "items": {
+                "type": "integer"
+            }
+        },
+        "tests": [
+            {
+                "data": [1, 2, 3],
+                "errors": null
+            },
+            {
+                "data": [1, "2", 3],
+                "errors": {
+                    "nested": {
+                        "kwd": "items",
+                        "msg": "All array items must match schema",
+                        "path": [],
+                        "args": {},
+                        "sub": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (string) must match the type: integer",
+                                "path": [1],
+                                "args": {
+                                    "expected": "integer",
+                                    "type": "string"
+                                },
+                                "sub": []
+                            }
+                        ]
+                    },
+                    "flat": [
+                        {
+                            "kwd": "items",
+                            "msg": "All array items must match schema",
+                            "path": [],
+                            "args": {}
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (string) must match the type: integer",
+                            "path": [1],
+                            "args": {
+                                "expected": "integer",
+                                "type": "string"
+                            }
+                        }
+                    ],
+                    "keyed": {
+                        "/1": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (string) must match the type: integer",
+                                "path": [1],
+                                "args": {
+                                    "expected": "integer",
+                                    "type": "string"
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "data": [1, "2", "3", "4"],
+                "maxErrors": 2,
+                "errors": {
+                    "nested": {
+                        "kwd": "items",
+                        "msg": "All array items must match schema",
+                        "path": [],
+                        "args": {},
+                        "sub": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (string) must match the type: integer",
+                                "path": [1],
+                                "args": {
+                                    "expected": "integer",
+                                    "type": "string"
+                                },
+                                "sub": []
+                            },
+                            {
+                                "kwd": "type",
+                                "msg": "The data (string) must match the type: integer",
+                                "path": [2],
+                                "args": {
+                                    "expected": "integer",
+                                    "type": "string"
+                                },
+                                "sub": []
+                            }
+                        ]
+                    },
+                    "flat": [
+                        {
+                            "kwd": "items",
+                            "msg": "All array items must match schema",
+                            "path": [],
+                            "args": {}
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (string) must match the type: integer",
+                            "path": [1],
+                            "args": {
+                                "expected": "integer",
+                                "type": "string"
+                            }
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (string) must match the type: integer",
+                            "path": [2],
+                            "args": {
+                                "expected": "integer",
+                                "type": "string"
+                            }
+                        }
+                    ],
+                    "keyed": {
+                        "/1": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (string) must match the type: integer",
+                                "path": [1],
+                                "args": {
+                                    "expected": "integer",
+                                    "type": "string"
+                                }
+                            }
+                        ],
+                        "/2": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (string) must match the type: integer",
+                                "path": [2],
+                                "args": {
+                                    "expected": "integer",
+                                    "type": "string"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    {
+        "skipDraft": ["2020-12"],
+        "schema": {
+            "type": "array",
+            "items": [
+                {"type": "integer"},
+                {"type": "string"},
+                {"type": "integer"}
+            ]
+        },
+        "maxErrors": 3,
+        "tests": [
+            {
+                "data": [1, "2", 3],
+                "errors": null
+            },
+            {
+                "data": [1, 2, "3"],
+                "errors": {
+                    "nested": {
+                        "kwd": "items",
+                        "msg": "Array items must match corresponding schemas",
+                        "path": [],
+                        "args": {},
+                        "sub": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string",
+                                "path": [1],
+                                "args": {
+                                    "expected": "string",
+                                    "type": "integer"
+                                },
+                                "sub": []
+                            },
+                            {
+                                "kwd": "type",
+                                "msg": "The data (string) must match the type: integer",
+                                "path": [2],
+                                "args": {
+                                    "expected": "integer",
+                                    "type": "string"
+                                },
+                                "sub": []
+                            }
+                        ]
+                    },
+                    "flat": [
+                        {
+                            "kwd": "items",
+                            "msg": "Array items must match corresponding schemas",
+                            "path": [],
+                            "args": {}
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (integer) must match the type: string",
+                            "path": [1],
+                            "args": {
+                                "expected": "string",
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (string) must match the type: integer",
+                            "path": [2],
+                            "args": {
+                                "expected": "integer",
+                                "type": "string"
+                            }
+                        }
+                    ],
+                    "keyed": {
+                        "/1": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string",
+                                "path": [1],
+                                "args": {
+                                    "expected": "string",
+                                    "type": "integer"
+                                }
+                            }
+                        ],
+                        "/2": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (string) must match the type: integer",
+                                "path": [2],
+                                "args": {
+                                    "expected": "integer",
+                                    "type": "string"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+]

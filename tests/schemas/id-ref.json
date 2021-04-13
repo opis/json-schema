@@ -1,0 +1,49 @@
+{
+    "$id": "file:///id-ref.json#",
+    "type": "object",
+    "properties": {
+        "a-number": {
+            "$id": "#a-number",
+            "type": "number"
+        },
+        "something": {
+            "some-string": {
+                "$id": "#some-string",
+                "type": "string"
+            }
+        },
+        "direct": {
+            "$id": "virtual:///direct",
+            "$ref": "#sub"
+        },
+        "deep": {
+            "$id": "virtual:///deep",
+            "type": "array",
+            "items": {
+                "$ref": "#sub"
+            }
+        }
+    },
+    "definitions": {
+        "virtual-direct": {
+            "$id": "virtual:///direct#sub",
+            "const": "direct"
+        },
+        "virtual-deep": {
+            "$id": "virtual:///deep#sub",
+            "const": "deep"
+        },
+        "level-1": {
+            "level-2": {
+                "level-3": {
+                    "level-4": {
+                        "level-5": {
+                            "$id": "#level-5",
+                            "const": "level-5"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

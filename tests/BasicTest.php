@@ -1,6 +1,6 @@
 <?php
-/* ===========================================================================
- * Copyright 2018 Zindex Software
+/* ============================================================================
+ * Copyright 2020 Zindex Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,186 +17,94 @@
 
 namespace Opis\JsonSchema\Test;
 
-use Opis\JsonSchema\Validator;
-use PHPUnit\Framework\TestCase;
-
-class BasicTest extends TestCase
+class BasicTest extends AbstractTest
 {
-    use JsonValidatorTrait;
-
-    public function testBasics()
+    public function validationsProvider(): array
     {
-        $validator = $this->getValidator();
+        $schema = "file:///basic.json#/definitions";
 
-        $result = $validator->dataValidation("abc", (object)["minLength" => 3]);
-        $this->assertTrue($result->isValid());
+        return [
+            // Types
+            ["{$schema}/types", 10, true],
+            ["{$schema}/types", -5.0, true],
+            ["{$schema}/types", [], true],
+            ["{$schema}/types", [1, 2], true],
+            ["{$schema}/types", [1, "a"], true],
+            ["{$schema}/types", "str", false],
+            ["{$schema}/types", 2.1, false],
+            ["{$schema}/types", null, false],
+            ["{$schema}/types", true, false],
+            ["{$schema}/types", (object)[], false],
 
-        $result = $validator->uriValidation(10, "schema:/basic.json#/definitions/constant");
-        $this->assertTrue($result->isValid());
+            // Constants
+            ["{$schema}/constant", 10, true],
+            ["{$schema}/constant", "a", false],
 
-        $result = $validator->uriValidation("a", "schema:/basic.json#/definitions/constant");
-        $this->assertTrue($result->hasErrors());
+            // Enums
+            ["{$schema}/enumeration", "b", true],
+            ["{$schema}/enumeration", 10, false],
 
-        $result = $validator->uriValidation("b", "schema:/basic.json#/definitions/enumeration");
-        $this->assertTrue($result->isValid());
+            // Booleans
+            ["{$schema}/false", "always fail", false],
+            ["{$schema}/true", (object)['x' => 'always valid'], true],
 
-        $result = $validator->uriValidation(10, "schema:/basic.json#/definitions/enumeration");
-        $this->assertTrue($result->hasErrors());
+            // Empty schema
+            ["{$schema}/empty", "for empty schema", true],
 
-        $result = $validator->uriValidation("always fail", "schema:/basic.json#/definitions/false");
-        $this->assertTrue($result->hasErrors());
+            // Default value
+            ["{$schema}/def", (object)["a" => "aaa"], true],
+            ["{$schema}/def", (object)[], true],
+            ["{$schema}/def", (object)["a" => 5], false],
 
-        $result = $validator->uriValidation([[1], ["a"], (object)["x" => "always ok"]], "schema:/basic.json#/definitions/true");
-        $this->assertTrue($result->isValid());
+            // Not
+            ["{$schema}/cond/negation", 10, true],
+            ["{$schema}/cond/negation", "x", true],
+            ["{$schema}/cond/negation", "a", false],
+            ["{$schema}/cond/negation", "b", false],
 
-        $result = $validator->uriValidation("for empty schema", "schema:/basic.json#/definitions/empty");
-        $this->assertTrue($result->isValid());
-    }
+            // if-then
+            ["{$schema}/cond/if-then", 10, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-then", 10.5, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-then", "str", true, false, null, null, ['06']],
+            ["{$schema}/cond/if-then", 5, false, false, null, null, ['06']],
 
-    public function testDefault()
-    {
-        /** @var Validator $validator */
-        $validator = $this->getValidator();
+            // if-else
+            ["{$schema}/cond/if-else", 10, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-else", 5, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-else", 5.8, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-else", "str", false, false, null, null, ['06']],
 
-        $result = $validator->uriValidation((object)["a" => "aaa"], "schema:/basic.json#/definitions/def");
-        $this->assertTrue($result->isValid());
+            // if-then-else
+            ["{$schema}/cond/if-then-else", 10, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-then-else", 5.8, true, false, null, null, ['06']],
+            ["{$schema}/cond/if-then-else", 5, false, false, null, null, ['06']],
+            ["{$schema}/cond/if-then-else", 3.2, false, false, null, null, ['06']],
 
-        $result = $validator->uriValidation((object)[], "schema:/basic.json#/definitions/def");
-        $this->assertTrue($result->isValid());
+            // allOf
+            ["{$schema}/cond/all", 1, true],
+            ["{$schema}/cond/all", 1.0, true],
+            ["{$schema}/cond/all", 2, false],
+            ["{$schema}/cond/all", 3, false],
+            ["{$schema}/cond/all", "str", false],
 
-        $result = $validator->uriValidation((object)["a" => 5], "schema:/basic.json#/definitions/def");
-        $this->assertTrue($result->hasErrors());
+            // anyOf
+            ["{$schema}/cond/any", 1, true],
+            ["{$schema}/cond/any", "127.0.0.1", true],
+            ["{$schema}/cond/any", "x", true],
+            ["{$schema}/cond/any", "y", true],
+            ["{$schema}/cond/any", 5.5, false],
+            ["{$schema}/cond/any", "z", false],
 
-        $validator->defaultSupport(false);
-        $result = $validator->uriValidation((object)[], "schema:/basic.json#/definitions/def");
-        $this->assertTrue($result->hasErrors());
-        $validator->defaultSupport(true);
-    }
-
-    public function testConditionals()
-    {
-        $validator = $this->getValidator();
-
-        $result = $validator->uriValidation(10, "schema:/basic.json#/definitions/cond/negation");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation("x", "schema:/basic.json#/definitions/cond/negation");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation("a", "schema:/basic.json#/definitions/cond/negation");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation("b", "schema:/basic.json#/definitions/cond/negation");
-        $this->assertTrue($result->hasErrors());
-
-        // if-then
-
-        $result = $validator->uriValidation(10, "schema:/basic.json#/definitions/cond/if-then");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(10.5, "schema:/basic.json#/definitions/cond/if-then");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation("str", "schema:/basic.json#/definitions/cond/if-then");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(5, "schema:/basic.json#/definitions/cond/if-then");
-        $this->assertTrue($result->hasErrors());
-
-        // if-else
-
-        $result = $validator->uriValidation(10, "schema:/basic.json#/definitions/cond/if-else");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(5, "schema:/basic.json#/definitions/cond/if-else");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(5.8, "schema:/basic.json#/definitions/cond/if-else");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation("str", "schema:/basic.json#/definitions/cond/if-else");
-        $this->assertTrue($result->hasErrors());
-
-        // if-then-else
-        $result = $validator->uriValidation(10, "schema:/basic.json#/definitions/cond/if-then-else");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(5.8, "schema:/basic.json#/definitions/cond/if-then-else");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(5, "schema:/basic.json#/definitions/cond/if-then-else");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation(3.2, "schema:/basic.json#/definitions/cond/if-then-else");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation("str", "schema:/basic.json#/definitions/cond/if-then-else");
-        $this->assertTrue($result->hasErrors());
-
-        // all
-
-        $result = $validator->uriValidation(1, "schema:/basic.json#/definitions/cond/all");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(1.0, "schema:/basic.json#/definitions/cond/all");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(2, "schema:/basic.json#/definitions/cond/all");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation(3, "schema:/basic.json#/definitions/cond/all");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation("str", "schema:/basic.json#/definitions/cond/all");
-        $this->assertTrue($result->hasErrors());
-
-        // any
-        $result = $validator->uriValidation(1, "schema:/basic.json#/definitions/cond/any");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation("127.0.0.1", "schema:/basic.json#/definitions/cond/any");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation("x", "schema:/basic.json#/definitions/cond/any");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation("y", "schema:/basic.json#/definitions/cond/any");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(5.5, "schema:/basic.json#/definitions/cond/any");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation("z", "schema:/basic.json#/definitions/cond/any");
-        $this->assertTrue($result->hasErrors());
-
-        // one
-
-        $result = $validator->uriValidation(1, "schema:/basic.json#/definitions/cond/one");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(-2.0, "schema:/basic.json#/definitions/cond/one");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(true, "schema:/basic.json#/definitions/cond/one");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(false, "schema:/basic.json#/definitions/cond/one");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation([1, 2], "schema:/basic.json#/definitions/cond/one");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation(["a"], "schema:/basic.json#/definitions/cond/one");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation([1, 2, "a"], "schema:/basic.json#/definitions/cond/one");
-        $this->assertTrue($result->isValid());
-
-        $result = $validator->uriValidation("str", "schema:/basic.json#/definitions/cond/one");
-        $this->assertTrue($result->hasErrors());
-
-        $result = $validator->uriValidation(["a", "b"], "schema:/basic.json#/definitions/cond/one");
-        $this->assertTrue($result->hasErrors());
-
+            // oneOf
+            ["{$schema}/cond/one", 1, true],
+            ["{$schema}/cond/one", -2.0, true],
+            ["{$schema}/cond/one", true, true],
+            ["{$schema}/cond/one", false, true],
+            ["{$schema}/cond/one", [1, 2], true],
+            ["{$schema}/cond/one", ["a"], true],
+            ["{$schema}/cond/one", [1, 2, "a"], true],
+            ["{$schema}/cond/one", "str", false],
+            ["{$schema}/cond/one", ["a", "b"], false],
+        ];
     }
 }

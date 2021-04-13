@@ -1,0 +1,188 @@
+[
+  {
+    "schema": {
+      "$error": "Should be {const}",
+      "const": 1
+    },
+    "tests": [
+      {
+        "data": 0,
+        "errors": {
+          "custom": {
+            "/": ["Should be 1"]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "schema": {
+      "$error": {
+        "type": "Only {expected}, not {type}",
+        "required": "Missing: {missing}",
+        "properties": {
+          "b": "B should be valid"
+        },
+        "*": "Other object error"
+      },
+      "type": "object",
+      "required": ["a", "b"],
+      "properties": {
+        "a": {
+          "$error": "A must be valid",
+          "type": "integer"
+        },
+        "b": {
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "[a-z]": {
+          "type": ["integer", "string"]
+        }
+      }
+    },
+    "tests": [
+      {
+        "data": "abc",
+        "errors": {
+          "custom": {
+            "/": ["Only object, not string"]
+          }
+        }
+      },
+      {
+        "data": {},
+        "maxErrors": 1,
+        "errors": {
+          "custom": {
+            "/": ["Missing: a"]
+          }
+        }
+      },
+      {
+        "data": {},
+        "maxErrors": 2,
+        "errors": {
+          "custom": {
+            "/": ["Missing: a, b"]
+          }
+        }
+      },
+      {
+        "data": {
+          "a": 1
+        },
+        "maxErrors": 2,
+        "errors": {
+          "custom": {
+            "/": ["Missing: b"]
+          }
+        }
+      },
+      {
+        "data": {
+          "a": 1,
+          "b": 2
+        },
+        "errors": {
+          "custom": {
+            "/b": ["B should be valid"]
+          }
+        }
+      },
+      {
+        "data": {
+          "a": "1",
+          "b": "2"
+        },
+        "errors": {
+          "custom": {
+            "/a": ["A must be valid"]
+          }
+        }
+      },
+      {
+        "data": {
+          "a": 1,
+          "b": "2",
+          "c": 3.5
+        },
+        "errors": {
+          "custom": {
+            "/": ["Other object error"]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "schema": {
+      "$error": {
+        "$filters": "Something went wrong"
+      },
+      "$filters": [
+        {
+          "$func": "max-date",
+          "$vars": {
+            "value": "1969-12-31"
+          },
+          "$error": "Unix era not allowed"
+        },
+        {
+          "$func": "min-date",
+          "$vars": {
+            "value": "1960-01-01"
+          }
+        }
+      ]
+    },
+    "tests": [
+      {
+        "data": "1970-01-01",
+        "errors": {
+          "custom": {
+            "/": ["Unix era not allowed"]
+          }
+        }
+      },
+      {
+        "data": "1950-01-01",
+        "errors": {
+          "custom": {
+            "/": ["Something went wrong"]
+          }
+        }
+      }
+    ]
+  },
+  {
+    "schema": {
+      "$error": {
+        "required": {
+          "x": "Missing x",
+          "*": "Missing important property"
+        }
+      },
+      "required": ["x", "y"]
+    },
+    "tests": [
+      {
+        "data": {"y":  2},
+        "errors": {
+          "custom": {
+            "/": ["Missing x"]
+          }
+        }
+      },
+      {
+        "data": {"x":  2},
+        "errors": {
+          "custom": {
+            "/": ["Missing important property"]
+          }
+        }
+      }
+    ]
+  }
+]

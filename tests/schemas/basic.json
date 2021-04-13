@@ -1,6 +1,9 @@
 {
-    "$id": "schema:/basic.json#",
+    "$id": "file:///basic.json#",
     "definitions": {
+        "types": {
+            "type": ["integer", "array"]
+        },
         "constant": {
             "const": 10
         },

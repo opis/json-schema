@@ -1,6 +1,6 @@
 <?php
-/* ===========================================================================
- * Copyright 2018 Zindex Software
+/* ============================================================================
+ * Copyright 2021 Zindex Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,123 +17,37 @@
 
 namespace Opis\JsonSchema;
 
-final class ValidationResult
+use Opis\JsonSchema\Errors\ValidationError;
+
+class ValidationResult
 {
+    protected ?ValidationError $error;
 
-    /** @var int */
-    protected $maxErrors;
-
-    /** @var array */
-    protected $errors = [];
-
-    /** @var int */
-    protected $totalErrors = 0;
-
-    /**
-     * ErrorBag constructor.
-     * @param int $max_errors
-     */
-    public function __construct(int $max_errors = 1)
+    public function __construct(?ValidationError $error)
     {
-        if ($max_errors < 0) {
-            $max_errors = PHP_INT_MAX;
-        }
-        elseif ($max_errors === 0) {
-            $max_errors = 1;
-        }
-        $this->maxErrors = $max_errors;
+        $this->error = $error;
     }
 
-    /**
-     * @return int
-     */
-    public function maxErrors(): int
+    public function error(): ?ValidationError
     {
-        return $this->maxErrors;
+        return $this->error;
     }
 
-    /**
-     * @return int
-     */
-    public function totalErrors(): int
-    {
-        return $this->totalErrors;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isFull(): bool
-    {
-        return $this->maxErrors <= $this->totalErrors;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasErrors(): bool
-    {
-        return $this->totalErrors > 0;
-    }
-
-    /**
-     * @return bool
-     */
     public function isValid(): bool
     {
-        return $this->totalErrors === 0;
+        return $this->error === null;
     }
 
-    /**
-     * @return ValidationError[]
-     */
-    public function getErrors(): array
+    public function hasError(): bool
     {
-        return $this->errors;
+        return $this->error !== null;
     }
 
-    /**
-     * @return ValidationError|null
-     */
-    public function getFirstError()
+    public function __toString(): string
     {
-        if ($this->errors) {
-            return reset($this->errors);
+        if ($this->error) {
+            return $this->error->message();
         }
-        return null;
-    }
-
-    /**
-     * @param ValidationError $error
-     * @return ValidationResult
-     */
-    public function addError(ValidationError $error): self
-    {
-        $this->errors[] = $error;
-        $this->totalErrors += $error->subErrorsCount() + 1;
-        return $this;
-    }
-
-    /**
-     * Clears all errors
-     * @return ValidationResult
-     */
-    public function clear(): self
-    {
-        $this->errors = [];
-        $this->totalErrors = 0;
-        return $this;
-    }
-
-    /**
-     * @return ValidationResult
-     */
-    public function createByDiff(): self
-    {
-        $max = $this->maxErrors - $this->totalErrors;
-        if ($max < 1) {
-            $max = 1;
-        }
-        return new self($max);
+        return '';
     }
 }

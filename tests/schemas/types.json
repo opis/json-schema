@@ -1,5 +1,5 @@
 {
-    "$id": "schema:/types.json#",
+    "$id": "file:///types.json#",
     "definitions": {
         "null": {
             "type": "null"
@@ -48,13 +48,37 @@
                 "type": "string",
                 "pattern": "^[a-z|/]+$"
             },
-            "date-time": {
+            "encoding": {
                 "type": "string",
-                "format": "date-time"
+                "contentEncoding": "base64"
             },
-            "date": {
+            "media": {
                 "type": "string",
-                "format": "date"
+                "contentMediaType": "application/json"
+            },
+            "encoding-media": {
+                "type": "string",
+                "contentEncoding": "base64",
+                "contentMediaType": "application/json"
+            },
+            "content": {
+                "type": "string",
+                "contentSchema": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "encoding-content": {
+                "type": "string",
+                "contentEncoding": "base64",
+                "contentSchema": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
             }
         },
         "array": {
@@ -138,11 +162,10 @@
                     "^p[02468]$": {"type": "string"}
                 }
             },
-            "prop_names_numeric": {
+            "pattern-number": {
                 "type": "object",
-                "propertyNames": {
-                    "type": "string",
-                    "pattern": "^(0|-?[1-9][0-9]*)$"
+                "patternProperties": {
+                    "^[123]0$": {"type": "integer"}
                 }
             },
             "dep": {
@@ -155,6 +178,27 @@
                             "a": {"type": "array"}
                         }
                     }
+                }
+            },
+            "dep2": {
+                "type": "object",
+                "dependentRequired": {
+                    "a": ["b"],
+                    "c": ["d"]
+                },
+                "dependentSchemas": {
+                    "e": {
+                        "properties": {
+                            "a": {"type": "array"}
+                        }
+                    }
+                }
+            },
+            "names": {
+                "type": "object",
+                "propertyNames": {
+                    "minLength": 2,
+                    "maxLength": 3
                 }
             }
         },

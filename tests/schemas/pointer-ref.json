@@ -1,5 +1,5 @@
 {
-    "$id": "schema:/pointer-ref#",
+    "$id": "file:///pointer-ref.json#",
     "type": "object",
     "properties": {
         "a": {"$ref": "#/definitions/a"},

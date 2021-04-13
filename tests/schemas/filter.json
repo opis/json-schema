@@ -1,5 +1,5 @@
 {
-    "$id": "schema:/filter.json#",
+    "$id": "file:///filter.json#",
     "definitions": {
         "simple": {
             "type": "string",
@@ -15,6 +15,15 @@
                     "divisor": 3,
                     "reminder": 2
                 }
+            }
+        },
+        "syntax-sugar": {
+            "type": "integer",
+            "$filters": {
+                "$func": "modulo",
+
+                "divisor": 3,
+                "reminder": 2
             }
         },
         "multi": {
@@ -49,6 +58,9 @@
                     }
                 }
             ]
+        },
+        "invalid": {
+            "$filters": "invalid-filter"
         }
     }
 }

@@ -1,5 +1,5 @@
 {
-    "$id": "schema:/var-ref.json#",
+    "$id": "file:///var-ref.json#",
     "type": "object",
     "properties": {
         "regionData": {

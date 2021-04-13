@@ -1,0 +1,647 @@
+[
+    {
+        "schema": {
+            "$id": "http://example.com/error-formatter/object.json",
+            "type": "object",
+            "properties": {
+                "a": {
+                    "type": ["string", "null"]
+                },
+                "b": {
+                    "type": "integer",
+                    "minimum": 1
+                },
+                "c": {
+                    "type": "object",
+                    "properties": {
+                        "a": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "d": {
+                    "$ref": "#"
+                }
+            },
+            "required": ["a", "b", "c"]
+        },
+        "tests": [
+            {
+                "data": {
+                    "c": {
+                        "a": "a"
+                    }
+                },
+                "errors": {
+                    "nested": {
+                        "kwd": "required",
+                        "msg": "The required properties (a) are missing",
+                        "path": [],
+                        "args": {
+                            "missing": [
+                                "a"
+                            ]
+                        },
+                        "sub": []
+                    },
+                    "flat": [
+                        {
+                            "kwd": "required",
+                            "msg": "The required properties (a) are missing",
+                            "path": [],
+                            "args": {
+                                "missing": [
+                                    "a"
+                                ]
+                            }
+                        }
+                    ],
+                    "keyed": {
+                        "/": [
+                            {
+                                "kwd": "required",
+                                "msg": "The required properties (a) are missing",
+                                "path": [],
+                                "args": {
+                                    "missing": [
+                                        "a"
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "maxErrors": 3,
+                "data": {
+                    "c": {
+                        "a": "a"
+                    }
+                },
+                "errors": {
+                    "nested": {
+                        "kwd": "required",
+                        "msg": "The required properties (a, b) are missing",
+                        "path": [],
+                        "args": {
+                            "missing": [
+                                "a",
+                                "b"
+                            ]
+                        },
+                        "sub": []
+                    },
+                    "flat": [
+                        {
+                            "kwd": "required",
+                            "msg": "The required properties (a, b) are missing",
+                            "path": [],
+                            "args": {
+                                "missing": [
+                                    "a",
+                                    "b"
+                                ]
+                            }
+                        }
+                    ],
+                    "keyed": {
+                        "/": [
+                            {
+                                "kwd": "required",
+                                "msg": "The required properties (a, b) are missing",
+                                "path": [],
+                                "args": {
+                                    "missing": [
+                                        "a",
+                                        "b"
+                                    ]
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "data": {
+                    "a": 123,
+                    "b": 0,
+                    "c": {}
+                },
+                "errors": {
+                    "nested": {
+                        "kwd": "properties",
+                        "msg": "The properties must match schema: a",
+                        "path": [],
+                        "args": {
+                            "properties": ["a"]
+                        },
+                        "sub": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string, null",
+                                "path": [
+                                    "a"
+                                ],
+                                "args": {
+                                    "expected": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "type": "integer"
+                                },
+                                "sub": []
+                            }
+                        ]
+                    },
+                    "flat": [
+                        {
+                            "kwd": "properties",
+                            "msg": "The properties must match schema: a",
+                            "path": [],
+                            "args": {
+                                "properties": ["a"]
+                            }
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (integer) must match the type: string, null",
+                            "path": [
+                                "a"
+                            ],
+                            "args": {
+                                "expected": [
+                                    "string",
+                                    "null"
+                                ],
+                                "type": "integer"
+                            }
+                        }
+                    ],
+                    "keyed": {
+                        "/a": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string, null",
+                                "path": [
+                                    "a"
+                                ],
+                                "args": {
+                                    "expected": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "type": "integer"
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "maxErrors": 3,
+                "data": {
+                    "a": 123,
+                    "b": 0,
+                    "c": {
+                        "a": 123
+                    }
+                },
+                "errors": {
+                    "nested": {
+                        "kwd": "properties",
+                        "msg": "The properties must match schema: a, b, c",
+                        "path": [],
+                        "args": {
+                            "properties": ["a", "b", "c"]
+                        },
+                        "sub": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string, null",
+                                "path": [
+                                    "a"
+                                ],
+                                "args": {
+                                    "expected": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "type": "integer"
+                                },
+                                "sub": []
+                            },
+                            {
+                                "kwd": "minimum",
+                                "msg": "Number must be greater than or equal to 1",
+                                "path": [
+                                    "b"
+                                ],
+                                "args": {
+                                    "min": 1
+                                },
+                                "sub": []
+                            },
+                            {
+                                "kwd": "properties",
+                                "msg": "The properties must match schema: a",
+                                "path": [
+                                    "c"
+                                ],
+                                "args": {
+                                    "properties": ["a"]
+                                },
+                                "sub": [
+                                    {
+                                        "kwd": "type",
+                                        "msg": "The data (integer) must match the type: string",
+                                        "path": [
+                                            "c",
+                                            "a"
+                                        ],
+                                        "args": {
+                                            "expected": "string",
+                                            "type": "integer"
+                                        },
+                                        "sub": []
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "flat": [
+                        {
+                            "kwd": "properties",
+                            "msg": "The properties must match schema: a, b, c",
+                            "path": [],
+                            "args": {
+                                "properties": ["a", "b", "c"]
+                            }
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (integer) must match the type: string, null",
+                            "path": [
+                                "a"
+                            ],
+                            "args": {
+                                "expected": [
+                                    "string",
+                                    "null"
+                                ],
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "kwd": "minimum",
+                            "msg": "Number must be greater than or equal to 1",
+                            "path": [
+                                "b"
+                            ],
+                            "args": {
+                                "min": 1
+                            }
+                        },
+                        {
+                            "kwd": "properties",
+                            "msg": "The properties must match schema: a",
+                            "path": [
+                                "c"
+                            ],
+                            "args": {
+                                "properties": ["a"]
+                            }
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (integer) must match the type: string",
+                            "path": [
+                                "c",
+                                "a"
+                            ],
+                            "args": {
+                                "expected": "string",
+                                "type": "integer"
+                            }
+                        }
+                    ],
+                    "keyed": {
+                        "/a": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string, null",
+                                "path": [
+                                    "a"
+                                ],
+                                "args": {
+                                    "expected": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "type": "integer"
+                                }
+                            }
+                        ],
+                        "/b": [
+                            {
+                                "kwd": "minimum",
+                                "msg": "Number must be greater than or equal to 1",
+                                "path": [
+                                    "b"
+                                ],
+                                "args": {
+                                    "min": 1
+                                }
+                            }
+                        ],
+                        "/c/a": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string",
+                                "path": [
+                                    "c",
+                                    "a"
+                                ],
+                                "args": {
+                                    "expected": "string",
+                                    "type": "integer"
+                                }
+                            }
+                        ]
+                    }
+                }
+            },
+            {
+                "maxErrors": 3,
+                "data": {
+                    "a": 123,
+                    "b": 1,
+                    "c": {
+                        "a": 123
+                    },
+                    "d": {
+                        "a": 555,
+                        "b": 0,
+                        "c": {
+                            "a": null
+                        }
+                    }
+                },
+                "errors": {
+                    "nested": {
+                        "kwd": "properties",
+                        "msg": "The properties must match schema: a, c, d",
+                        "path": [],
+                        "args": {
+                            "properties": ["a", "c", "d"]
+                        },
+                        "sub": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string, null",
+                                "path": ["a"],
+                                "args": {
+                                    "expected": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "type": "integer"
+                                },
+                                "sub": []
+                            },
+                            {
+                                "kwd": "properties",
+                                "msg": "The properties must match schema: a",
+                                "path": ["c"],
+                                "args": {
+                                    "properties": ["a"]
+                                },
+                                "sub": [
+                                    {
+                                        "kwd": "type",
+                                        "msg": "The data (integer) must match the type: string",
+                                        "path": ["c", "a"],
+                                        "args": {
+                                            "expected": "string",
+                                            "type": "integer"
+                                        },
+                                        "sub": []
+                                    }
+                                ]
+                            },
+                            {
+                                "kwd": "$ref",
+                                "msg": "The data must match $ref",
+                                "path": ["d"],
+                                "args": {
+                                    "keyword": "$ref",
+                                    "uri": "http://example.com/error-formatter/object.json#"
+                                },
+                                "sub": [
+                                    {
+                                        "kwd": "properties",
+                                        "msg": "The properties must match schema: a, b, c",
+                                        "path": ["d"],
+                                        "args": {
+                                            "properties": ["a", "b", "c"]
+                                        },
+                                        "sub": [
+                                            {
+                                                "kwd": "type",
+                                                "msg": "The data (integer) must match the type: string, null",
+                                                "path": ["d", "a"],
+                                                "args": {
+                                                    "expected": ["string", "null"],
+                                                    "type": "integer"
+                                                },
+                                                "sub": []
+                                            },
+                                            {
+                                                "kwd": "minimum",
+                                                "msg": "Number must be greater than or equal to 1",
+                                                "path": ["d", "b"],
+                                                "args": {
+                                                    "min": 1
+                                                },
+                                                "sub": []
+                                            },
+                                            {
+                                                "kwd": "properties",
+                                                "msg": "The properties must match schema: a",
+                                                "path": ["d", "c"],
+                                                "args": {
+                                                    "properties": ["a"]
+                                                },
+                                                "sub": [
+                                                    {
+                                                        "kwd": "type",
+                                                        "msg": "The data (null) must match the type: string",
+                                                        "path": ["d", "c", "a"],
+                                                        "args": {
+                                                            "expected": "string",
+                                                            "type": "null"
+                                                        },
+                                                        "sub": []
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    "flat": [
+                        {
+                            "kwd": "properties",
+                            "msg": "The properties must match schema: a, c, d",
+                            "path": [],
+                            "args": {
+                                "properties": ["a", "c", "d"]
+                            }
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (integer) must match the type: string, null",
+                            "path": ["a"],
+                            "args": {
+                                "expected": [
+                                    "string",
+                                    "null"
+                                ],
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "kwd": "properties",
+                            "msg": "The properties must match schema: a",
+                            "path": ["c"],
+                            "args": {
+                                "properties": ["a"]
+                            }
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (integer) must match the type: string",
+                            "path": ["c", "a"],
+                            "args": {
+                                "expected": "string",
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "kwd": "$ref",
+                            "msg": "The data must match $ref",
+                            "path": ["d"],
+                            "args": {
+                                "keyword": "$ref",
+                                "uri": "http://example.com/error-formatter/object.json#"
+                            }
+                        },
+                        {
+                            "kwd": "properties",
+                            "msg": "The properties must match schema: a, b, c",
+                            "path": ["d"],
+                            "args": {
+                                "properties": ["a", "b", "c"]
+                            }
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (integer) must match the type: string, null",
+                            "path": ["d", "a"],
+                            "args": {
+                                "expected": ["string", "null"],
+                                "type": "integer"
+                            }
+                        },
+                        {
+                            "kwd": "minimum",
+                            "msg": "Number must be greater than or equal to 1",
+                            "path": ["d", "b"],
+                            "args": {
+                                "min": 1
+                            }
+                        },
+                        {
+                            "kwd": "properties",
+                            "msg": "The properties must match schema: a",
+                            "path": ["d", "c"],
+                            "args": {
+                                "properties": ["a"]
+                            }
+                        },
+                        {
+                            "kwd": "type",
+                            "msg": "The data (null) must match the type: string",
+                            "path": ["d", "c", "a"],
+                            "args": {
+                                "expected": "string",
+                                "type": "null"
+                            }
+                        }
+                    ],
+                    "keyed": {
+                        "/a": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string, null",
+                                "path": ["a"],
+                                "args": {
+                                    "expected": [
+                                        "string",
+                                        "null"
+                                    ],
+                                    "type": "integer"
+                                }
+                            }
+                        ],
+                        "/c/a": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string",
+                                "path": ["c", "a"],
+                                "args": {
+                                    "expected": "string",
+                                    "type": "integer"
+                                }
+                            }
+                        ],
+                        "/d/a": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (integer) must match the type: string, null",
+                                "path": ["d", "a"],
+                                "args": {
+                                    "expected": ["string", "null"],
+                                    "type": "integer"
+                                }
+                            }
+                        ],
+                        "/d/b": [
+                            {
+                                "kwd": "minimum",
+                                "msg": "Number must be greater than or equal to 1",
+                                "path": ["d", "b"],
+                                "args": {
+                                    "min": 1
+                                }
+                            }
+                        ],
+                        "/d/c/a": [
+                            {
+                                "kwd": "type",
+                                "msg": "The data (null) must match the type: string",
+                                "path": ["d", "c", "a"],
+                                "args": {
+                                    "expected": "string",
+                                    "type": "null"
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    }
+]
