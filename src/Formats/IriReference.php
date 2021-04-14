@@ -42,7 +42,7 @@ class IriReference implements IFormat
             if (!$data) {
                 return false;
             }
-            foreach (['host', 'path', 'fragment'] as $component) {
+            foreach (['host', 'path', 'query', 'fragment'] as $component) {
                 if (isset($data[$component])) {
                     $data[$component] = idn_to_ascii($data[$component], 0, INTL_IDNA_VARIANT_UTS46);
                 }

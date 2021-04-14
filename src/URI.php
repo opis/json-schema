@@ -31,7 +31,9 @@ class URI
         'fragment' => null
     ];
 
-    const FRAGMENT_REGEX = '/^(?:(%[0-9a-f]{2})|[a-z0-9\-\/?:@._~!\$&\'\(\)*+,;=])*$/i';
+    const FRAGMENT_REGEX = '/^(?:(?:%[0-9a-f]{2})+|[a-z0-9\-\/?:@._~!\$&\'\(\)*+,;=])*$/i';
+
+    const QUERY_REGEX = self::FRAGMENT_REGEX;
 
     const PATH_REGEX = '/^(?:(%[0-9a-f]{2})|[a-z0-9\/:@\-._~\!\$&\'\(\)*+,;=])*$/i';
 
@@ -134,6 +136,9 @@ REGEX;
         if (isset($uri['path']) && !static::isValidPath($uri['path'])) {
             return false;
         }
+        if (isset($uri['query']) && !static::isValidQuery($uri['query'])) {
+            return false;
+        }
         if (isset($uri['fragment']) && !static::isValidFragment($uri['fragment'])) {
             return false;
         }
@@ -171,6 +176,15 @@ REGEX;
     public static function isValidFragment(string $fragment): bool
     {
         return (bool) preg_match(static::FRAGMENT_REGEX, $fragment);
+    }
+
+    /**
+     * @param string $query
+     * @return bool
+     */
+    public static function isValidQuery(string $query): bool
+    {
+        return $query === '' || preg_match(static::QUERY_REGEX, $query);
     }
 
     /**
