@@ -171,8 +171,9 @@ class SchemaLoader
         }
 
         // Resolve json pointer
-        if ($fragment !== '' && $schema && $schema->info()->isObject() && JsonPointer::isAbsolutePointer($fragment)) {
-            $object = JsonPointer::parse($fragment)->data($schema->info()->data());
+        if ($fragment !== '' && $schema && $schema->info()->isObject() &&
+            ($pointer = JsonPointer::parse($fragment)) && $pointer->isAbsolute()) {
+            $object = $pointer->data($schema->info()->data());
             if (is_bool($object)) {
                 $schema = $this->loadBooleanSchema($object, $uri, $schema->info()->draft());
             } elseif (is_object($object)) {
