@@ -28,6 +28,7 @@ class TemplateRefKeyword extends AbstractRefKeyword
     protected ?Variables $vars = null;
     /** @var Schema[]|null[] */
     protected ?array $cached = [];
+    protected bool $allowRelativeJsonPointerInRef;
 
     public function __construct(
         UriTemplate $template,
@@ -35,11 +36,13 @@ class TemplateRefKeyword extends AbstractRefKeyword
         ?Variables $mapper = null,
         ?Variables $globals = null,
         ?array $slots = null,
-        string $keyword = '$ref'
+        string $keyword = '$ref',
+        bool $allowRelativeJsonPointerInRef = true
     ) {
         parent::__construct($mapper, $globals, $slots, $keyword);
         $this->template = $template;
         $this->vars = $vars;
+        $this->allowRelativeJsonPointerInRef = $allowRelativeJsonPointerInRef;
     }
 
     protected function doValidate(ValidationContext $context, Schema $schema): ?ValidationError
@@ -98,7 +101,7 @@ class TemplateRefKeyword extends AbstractRefKeyword
                 }
                 unset($pointer);
             }
-        } elseif ($pointer = JsonPointer::parse($ref)) {
+        } elseif ($this->allowRelativeJsonPointerInRef && ($pointer = JsonPointer::parse($ref))) {
             if ($pointer->isRelative()) {
                 return $this->resolvePointer($repo, $pointer, $baseUri, $schema->info()->path());
             }

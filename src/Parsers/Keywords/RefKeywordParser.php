@@ -141,7 +141,11 @@ class RefKeywordParser extends KeywordParser
                     }
                 }
 
-                return new TemplateRefKeyword($tpl, $vars, $mapper, $globals, $slots, $this->keyword);
+                return new TemplateRefKeyword(
+                    $tpl, $vars, $mapper,
+                    $globals, $slots, $this->keyword,
+                    $parser->option('allowRelativeJsonPointerInRef')
+                );
             }
 
             unset($tpl);
