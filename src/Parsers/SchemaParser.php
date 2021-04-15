@@ -54,6 +54,7 @@ class SchemaParser
         'allowDataKeyword' => true,
         'allowKeywordsAlongsideRef' => false,
         'allowUnevaluated' => true,
+        'allowRelativeJsonPointerInRef' => true,
 
         'decodeContent' => ['06', '07'],
         'defaultDraft' => self::DEFAULT_DRAFT,

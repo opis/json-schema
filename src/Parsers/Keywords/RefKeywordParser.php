@@ -151,7 +151,8 @@ class RefKeywordParser extends KeywordParser
             if (($pointer = JsonPointer::parse(substr($ref, 1))) && $pointer->isAbsolute()) {
                 return new PointerRefKeyword($pointer, $mapper, $globals, $slots, $this->keyword);
             }
-        } elseif (($pointer = JsonPointer::parse($ref)) && $pointer->isRelative()) {
+        } elseif ($parser->option('allowRelativeJsonPointerInRef') &&
+                ($pointer = JsonPointer::parse($ref)) && $pointer->isRelative()) {
             return new PointerRefKeyword($pointer, $mapper, $globals, $slots, $this->keyword);
         }
 
