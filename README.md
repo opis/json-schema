@@ -1,9 +1,9 @@
 Opis JSON Schema
 ====================
 [![Tests](https://github.com/opis/json-schema/workflows/Tests/badge.svg)](https://github.com/opis/json-schema/actions)
-[![Latest Stable Version](https://poser.pugx.org/opis/json-schema/v/stable.png)](https://packagist.org/packages/opis/json-schema)
-[![Latest Unstable Version](https://poser.pugx.org/opis/json-schema/v/unstable.png)](https://packagist.org/packages/opis/json-schema)
-[![License](https://poser.pugx.org/opis/json-schema/license.png)](https://packagist.org/packages/opis/json-schema)
+[![Packagist Version](https://img.shields.io/packagist/v/opis/json-schema?label=Version)](https://packagist.org/packages/opis/json-schema)
+[![Packagist Downloads](https://img.shields.io/packagist/dt/opis/json-schema?label=Downloads)](https://packagist.org/packages/opis/json-schema)
+[![Packagist License](https://img.shields.io/packagist/l/opis/json-schema?color=teal&label=License)](https://packagist.org/packages/opis/json-schema)
 
 Validate JSON documents
 -----------
