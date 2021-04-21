@@ -147,8 +147,8 @@ final class Helper
 
     /**
      * Converts assoc-arrays to objects (recursive)
-     * @param $schema
-     * @return mixed
+     * @param scalar|\stdClass|array $schema
+     * @return scalar|\stdClass|array
      */
     public static function convertAssocArrayToObject($schema)
     {
@@ -161,7 +161,7 @@ final class Helper
         $data = [];
 
         foreach ($schema as $key => $value) {
-            $data[$key] = is_array($value) || is_object($value) ? self::convertAssocArrayToObject($schema) : $value;
+            $data[$key] = is_array($value) || is_object($value) ? self::convertAssocArrayToObject($value) : $value;
         }
 
         return $keepArray ? $data : (object) $data;
