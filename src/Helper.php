@@ -147,8 +147,8 @@ final class Helper
 
     /**
      * Converts assoc-arrays to objects (recursive)
-     * @param scalar|\stdClass|array $schema
-     * @return scalar|\stdClass|array
+     * @param scalar|object|array|null $schema
+     * @return scalar|object|array|null
      */
     public static function convertAssocArrayToObject($schema)
     {
