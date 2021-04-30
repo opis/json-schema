@@ -129,6 +129,7 @@ class Draft202012 extends Draft
             new ContainsKeywordParser('contains', 'minContains', 'maxContains'),
             new ItemsKeywordParser('prefixItems', ItemsKeywordParser::ONLY_ARRAY),
             new ItemsKeywordParser('items', ItemsKeywordParser::ONLY_SCHEMA, 'prefixItems'),
+            // keep for draft-2019-09 compatibility
             new AdditionalItemsKeywordParser('additionalItems'),
 
             // Object

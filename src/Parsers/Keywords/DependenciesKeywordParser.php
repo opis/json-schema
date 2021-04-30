@@ -37,6 +37,10 @@ class DependenciesKeywordParser extends KeywordParser
      */
     public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
+        if (!$parser->option('keepDependenciesKeyword') && !in_array($info->draft(), ['06', '07'])) {
+            return null;
+        }
+
         $schema = $info->data();
 
         if (!$this->keywordExists($schema)) {

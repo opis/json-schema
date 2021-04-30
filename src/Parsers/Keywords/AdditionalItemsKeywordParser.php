@@ -37,6 +37,10 @@ class AdditionalItemsKeywordParser extends KeywordParser
      */
     public function parse(SchemaInfo $info, SchemaParser $parser, object $shared): ?Keyword
     {
+        if (!$parser->option('keepAdditionalItemsKeyword') && $info->draft() === '2020-12') {
+            return null;
+        }
+
         $schema = $info->data();
 
         if (!$this->keywordExists($schema)) {

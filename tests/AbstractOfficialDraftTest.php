@@ -55,6 +55,8 @@ abstract class AbstractOfficialDraftTest extends TestCase
             'allowKeywordsAlongsideRef' => false,
             'allowUnevaluated' => true,
             'allowRelativeJsonPointerInRef' => false,
+            'keepDependenciesKeyword' => false,
+            'keepAdditionalItemsKeyword' => false,
         ]);
 
         self::$validator = new Validator(new SchemaLoader($parser, $resolver));
