@@ -40,7 +40,24 @@ abstract class AbstractOfficialDraftTest extends TestCase
         $resolver->registerPrefix('https://json-schema.org/', __DIR__ . '/official/drafts');
         $resolver->registerPrefix('http://localhost:1234/', __DIR__ . '/official/remotes');
 
-        self::$validator = new Validator(new SchemaLoader(new SchemaParser(), $resolver));
+        $parser = new SchemaParser([], [
+            // Vanilla options
+            'allowFilters' => false,
+            'allowFormats' => true,
+            'allowMappers' => false,
+            'allowTemplates' => false,
+            'allowGlobals' => false,
+            'allowDefaults' => false,
+            'allowSlots' => false,
+            'allowKeywordValidators' => false,
+            'allowPragmas' => false,
+            'allowDataKeyword' => false,
+            'allowKeywordsAlongsideRef' => false,
+            'allowUnevaluated' => true,
+            'allowRelativeJsonPointerInRef' => false,
+        ]);
+
+        self::$validator = new Validator(new SchemaLoader($parser, $resolver));
     }
 
     /**
