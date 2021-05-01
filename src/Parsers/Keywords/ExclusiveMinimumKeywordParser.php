@@ -51,7 +51,7 @@ class ExclusiveMinimumKeywordParser extends KeywordParser
 
         $value = $this->keywordValue($schema);
 
-        if (is_bool($value)) {
+        if (is_bool($value) && $parser->option('allowExclusiveMinMaxAsBool')) {
             return null;
         }
 

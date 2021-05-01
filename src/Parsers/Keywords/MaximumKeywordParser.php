@@ -66,7 +66,9 @@ class MaximumKeywordParser extends KeywordParser
         $value = $this->keywordValue($schema);
 
         $exclusive = false;
-        if ($this->exclusiveKeyword !== null && property_exists($schema, $this->exclusiveKeyword)) {
+        if ($parser->option('allowExclusiveMinMaxAsBool') &&
+            $this->exclusiveKeyword !== null &&
+            property_exists($schema, $this->exclusiveKeyword)) {
             $exclusive = $schema->{$this->exclusiveKeyword} === true;
         }
 

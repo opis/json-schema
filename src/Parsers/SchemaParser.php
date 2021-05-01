@@ -55,6 +55,7 @@ class SchemaParser
         'allowKeywordsAlongsideRef' => false,
         'allowUnevaluated' => true,
         'allowRelativeJsonPointerInRef' => true,
+        'allowExclusiveMinMaxAsBool' => true,
 
         'keepDependenciesKeyword' => true,
         'keepAdditionalItemsKeyword' => true,

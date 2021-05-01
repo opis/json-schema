@@ -55,6 +55,7 @@ abstract class AbstractOfficialDraftTest extends TestCase
             'allowKeywordsAlongsideRef' => false,
             'allowUnevaluated' => true,
             'allowRelativeJsonPointerInRef' => false,
+            'allowExclusiveMinMaxAsBool' => false,
             'keepDependenciesKeyword' => false,
             'keepAdditionalItemsKeyword' => false,
         ]);
