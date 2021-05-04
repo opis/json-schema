@@ -1,6 +1,7 @@
 <phpunit bootstrap="./vendor/autoload.php">
     <testsuites>
         <testsuite name="Schema">
+            <file>./tests/HelperTest.php</file>
             <file>./tests/BasicTest.php</file>
             <file>./tests/BooleanTypeTest.php</file>
             <file>./tests/NullTypeTest.php</file>
