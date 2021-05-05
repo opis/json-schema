@@ -1,6 +1,6 @@
 <?php
 /* ============================================================================
- * Copyright 2020 Zindex Software
+ * Copyright 2020-2021 Zindex Software
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,50 +17,30 @@
 
 namespace Opis\JsonSchema\Test;
 
-use Opis\JsonSchema\{Schema, Uri, Validator, SchemaLoader};
-use Opis\JsonSchema\Parsers\SchemaParser;
-use Opis\JsonSchema\Resolvers\SchemaResolver;
+use Opis\JsonSchema\{CompliantValidator, Schema, Uri};
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\Exceptions\SchemaException;
 use PHPUnit\Framework\TestCase;
 
 abstract class AbstractOfficialDraftTest extends TestCase
 {
-
-    protected static Validator $validator;
+    protected static CompliantValidator $validator;
 
     /**
      * @inheritDoc
      */
     public static function setUpBeforeClass(): void
     {
-        $resolver = new SchemaResolver();
+        $validator = new CompliantValidator();
 
-        $resolver->registerPrefix('http://json-schema.org/', __DIR__ . '/official/drafts');
-        $resolver->registerPrefix('https://json-schema.org/', __DIR__ . '/official/drafts');
-        $resolver->registerPrefix('http://localhost:1234/', __DIR__ . '/official/remotes');
+        $validator
+            ->resolver()
+            ->registerPrefix('http://json-schema.org/', __DIR__ . '/official/drafts')
+            ->registerPrefix('https://json-schema.org/', __DIR__ . '/official/drafts')
+            ->registerPrefix('http://localhost:1234/', __DIR__ . '/official/remotes')
+        ;
 
-        $parser = new SchemaParser([], [
-            // Vanilla options
-            'allowFilters' => false,
-            'allowFormats' => true,
-            'allowMappers' => false,
-            'allowTemplates' => false,
-            'allowGlobals' => false,
-            'allowDefaults' => false,
-            'allowSlots' => false,
-            'allowKeywordValidators' => false,
-            'allowPragmas' => false,
-            'allowDataKeyword' => false,
-            'allowKeywordsAlongsideRef' => false,
-            'allowUnevaluated' => true,
-            'allowRelativeJsonPointerInRef' => false,
-            'allowExclusiveMinMaxAsBool' => false,
-            'keepDependenciesKeyword' => false,
-            'keepAdditionalItemsKeyword' => false,
-        ]);
-
-        self::$validator = new Validator(new SchemaLoader($parser, $resolver));
+        self::$validator = $validator;
     }
 
     /**
