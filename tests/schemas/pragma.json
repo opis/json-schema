@@ -40,11 +40,81 @@
             },
             "type": "integer"
         },
+        "testCastObjectNull": {
+            "$pragma": {
+                "cast": "object"
+            },
+            "type": ["object", "null"],
+            "const": null
+        },
+        "testCastStringNull": {
+            "$pragma": {
+                "cast": "string"
+            },
+            "type": ["string", "null"],
+            "const": null
+        },
+        "testCastIntegerNull": {
+            "$pragma": {
+                "cast": "integer"
+            },
+            "type": ["integer", "null"],
+            "const": null
+        },
+        "testCastNumberNull": {
+            "$pragma": {
+                "cast": "number"
+            },
+            "type": ["number", "null"],
+            "const": null
+        },
+        "testCastBooleanTrue": {
+            "$pragma": {
+                "cast": "boolean"
+            },
+            "type": "boolean",
+            "const": true
+        },
+        "testCastBooleanFalse": {
+            "$pragma": {
+              "cast": "boolean"
+            },
+            "type": "boolean",
+            "const": false
+        },
+        "testCastIntegerMinimum1": {
+            "$pragma": {
+                "cast": "integer"
+            },
+            "type": "integer",
+            "minimum": 1
+        },
+        "testCastIntegerMaximum0": {
+            "$pragma": {
+              "cast": "integer"
+            },
+            "type": "integer",
+            "maximum": 0
+        },
         "testCastNumber": {
             "$pragma": {
                 "cast": "number"
             },
             "type": "number"
+        },
+        "testCastNumberMinimum1": {
+            "$pragma": {
+                "cast": "number"
+            },
+            "type": "number",
+            "minimum": 1
+        },
+       "testCastNumberMaximum0": {
+            "$pragma": {
+              "cast": "number"
+            },
+            "type": "number",
+            "maximum": 0
         },
         "testCastString": {
             "$pragma": {

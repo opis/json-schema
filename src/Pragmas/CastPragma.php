@@ -191,7 +191,7 @@ class CastPragma implements Pragma
             return !($value === '');
         }
         if (is_object($value)) {
-            return count(get_object_vars($value)) === 0;
+            return count(get_object_vars($value)) > 0;
         }
         return boolval($value);
     }
