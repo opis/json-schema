@@ -56,7 +56,7 @@ class FormatKeyword implements Keyword
         }
 
         $format = $this->types[$type];
-        if ($type instanceof Format) {
+        if ($format instanceof Format) {
             $ok = $format->validate($context->currentData());
         } else {
             $ok = $format($context->currentData());
