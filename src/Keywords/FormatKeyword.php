@@ -23,7 +23,7 @@ use Opis\JsonSchema\{
     Keyword,
     Schema
 };
-use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\Errors\{ValidationError, CustomError};
 
 class FormatKeyword implements Keyword
 {
@@ -56,10 +56,18 @@ class FormatKeyword implements Keyword
         }
 
         $format = $this->types[$type];
-        if ($format instanceof Format) {
-            $ok = $format->validate($context->currentData());
-        } else {
-            $ok = $format($context->currentData());
+
+        try {
+            if ($format instanceof Format) {
+                $ok = $format->validate($context->currentData());
+            } else {
+                $ok = $format($context->currentData());
+            }
+        } catch (CustomError $error) {
+            return $this->error($schema, $context, 'format', $error->getMessage(), $error->getArgs() + [
+                'format' => $this->name,
+                'type' => $type,
+            ]);
         }
 
         if ($ok) {

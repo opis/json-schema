@@ -23,7 +23,7 @@ use Opis\JsonSchema\{
     Keyword,
     Schema
 };
-use Opis\JsonSchema\Errors\ValidationError;
+use Opis\JsonSchema\Errors\{ValidationError, CustomError};
 use Opis\JsonSchema\Exceptions\UnresolvedFilterException;
 
 class FiltersKeyword implements Keyword
@@ -62,10 +62,18 @@ class FiltersKeyword implements Keyword
                 $args = $context->globals();
             }
 
-            if ($func instanceof Filter) {
-                $ok = $func->validate($context, $schema, $args);
-            } else {
-                $ok = $func($context->currentData(), $args);
+            try {
+                if ($func instanceof Filter) {
+                    $ok = $func->validate($context, $schema, $args);
+                } else {
+                    $ok = $func($context->currentData(), $args);
+                }
+            } catch (CustomError $error) {
+                return $this->error($schema, $context, '$filters', $error->getMessage(), $error->getArgs() + [
+                    'filter' => $filter->name,
+                    'type' => $type,
+                    'args' => $args,
+                ]);
             }
 
             if ($ok) {
