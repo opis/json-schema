@@ -398,6 +398,10 @@ class ErrorFormatter
         }
 
         if (!$map) {
+            if (in_array($error->keyword(), ['oneOf', 'anyOf', 'allOf'])) {
+                yield $error => $pMap ?? $error->message();
+            }
+
             foreach ($subErrors as $subError) {
                 yield from $this->getErrors($subError);
             }

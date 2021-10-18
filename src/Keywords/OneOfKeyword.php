@@ -48,7 +48,7 @@ class OneOfKeyword implements Keyword
         $count = 0;
         $matchedIndex = -1;
         $object = $this->createArrayObject($context);
-        $errors = [];
+        $subErrors = [];
 
         foreach ($this->value as $index => $value) {
             if ($value === false) {
@@ -71,9 +71,8 @@ class OneOfKeyword implements Keyword
                 $value = $this->value[$index] = $context->loader()->loadObjectSchema($value);
             }
 
-            $error = $context->validateSchemaWithoutEvaluated($value, null, false, $object);
-            if ($error) {
-                $errors[] = $error;
+            if ($error = $context->validateSchemaWithoutEvaluated($value, null, false, $object)) {
+                $subErrors[] = $error;
             } else {
                 if (++$count > 1) {
                     $this->addEvaluatedFromArrayObject($object, $context);
@@ -93,6 +92,7 @@ class OneOfKeyword implements Keyword
 
         return $this->error($schema, $context, 'oneOf', 'The data should match exactly one schema', [
             'matched' => [],
-        ], $errors);
+        ],
+        empty($subErrors) ? null : $subErrors);
     }
 }
