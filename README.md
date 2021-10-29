@@ -53,7 +53,7 @@ Or you could directly reference it into your `composer.json` file as a dependenc
 ```json
 {
     "require": {
-        "opis/json-schema": "^2.1"
+        "opis/json-schema": "^2.2"
     }
 }
 ```
