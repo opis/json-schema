@@ -115,6 +115,7 @@ class ErrorContainer implements Countable, Iterator
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function next(): ?ValidationError
     {
         return next($this->errors) ?: null;
@@ -139,6 +140,7 @@ class ErrorContainer implements Countable, Iterator
     /**
      * @inheritDoc
      */
+    #[\ReturnTypeWillChange]
     public function rewind(): ?ValidationError
     {
         return reset($this->errors) ?: null;
