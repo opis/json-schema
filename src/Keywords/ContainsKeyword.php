@@ -127,7 +127,7 @@ class ContainsKeyword implements Keyword
         }
 
         if (!$isMaxNull && $valid > $this->max) {
-            return $this->error($schema, $context, 'minContains', 'At most {max} array items must match schema', [
+            return $this->error($schema, $context, 'maxContains', 'At most {max} array items must match schema', [
                 'max' => $this->max,
                 'count' => $valid,
             ]);
