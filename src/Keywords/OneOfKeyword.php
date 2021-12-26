@@ -74,8 +74,7 @@ class OneOfKeyword implements Keyword
             $error = $context->validateSchemaWithoutEvaluated($value, null, false, $object);
             if ($error) {
                 $errors[] = $error;
-            }
-            if (!$error) {
+            } else {
                 if (++$count > 1) {
                     $this->addEvaluatedFromArrayObject($object, $context);
                     return $this->error($schema, $context, 'oneOf', 'The data should match exactly one schema', [
