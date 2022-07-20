@@ -96,7 +96,10 @@ class IriFormats
                 return false;
             }
 
-            $m['name'] = $idn($m['name']);
+            // E-mail address names are allowed to end in one or more hyphens.
+            // This is, however, not supported by the $idn callback, which will
+            // fail in that case.
+            $m['name'] = $idn(rtrim($m['name'], '-'));
             if ($m['name'] === null) {
                 return false;
             }

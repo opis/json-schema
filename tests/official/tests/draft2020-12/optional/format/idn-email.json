@@ -22,6 +22,11 @@
                 "description": "an invalid e-mail address",
                 "data": "2962",
                 "valid": false
+            },
+            {
+                "description": "a valid e-mail address with hyphen suffixed name",
+                "data": "hyphened--email---@example.com",
+                "valid": true
             }
         ]
     }
