@@ -65,6 +65,9 @@ class EnumKeywordParser extends KeywordParser
         $allowedTypes = isset($shared->types) ? $shared->types : null;
         $foundTypes = [];
         $list = [];
+        if (in_array('null', $allowedTypes, true)) {
+            $list[] = null;
+        }
         foreach ($value as $item) {
             $type = Helper::getJsonType($item);
             if ($type === null) {
