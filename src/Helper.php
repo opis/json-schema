@@ -238,37 +238,18 @@ final class Helper
     /**
      * @param $number
      * @param $divisor
-     * @param int $scale
      * @return bool
      */
-    public static function isMultipleOf($number, $divisor, int $scale = 14): bool
+    public static function isMultipleOf($number, $divisor): bool
     {
-        static $bcMath = null;
-        if ($bcMath === null) {
-            $bcMath = extension_loaded('bcmath');
-        }
-        if ($divisor == 0) {
-            return $number == 0;
-        }
+        $modulus = ($number - round($number / $divisor) * $divisor);
+        $precision = 0.0000000001;
 
-        if ($bcMath) {
-            $number = number_format($number, $scale, '.', '');
-            $divisor = number_format($divisor, $scale, '.', '');
-
-            /** @noinspection PhpComposerExtensionStubsInspection */
-            $x = bcdiv($number, $divisor, 0);
-            /** @noinspection PhpComposerExtensionStubsInspection */
-            $x = bcmul($divisor, $x, $scale);
-            /** @noinspection PhpComposerExtensionStubsInspection */
-            $x = bcsub($number, $x, $scale);
-
-            /** @noinspection PhpComposerExtensionStubsInspection */
-            return 0 === bccomp($x, 0, $scale);
+        if (-$precision < $modulus && $modulus < $precision) {
+            return true;
         }
 
-        $div = $number / $divisor;
-
-        return $div == (int)$div;
+        return $modulus == 0.0;
     }
 
     /**
