@@ -238,8 +238,6 @@ final class Helper
     /**
      * @param $number
      * @param $divisor
-     * @param int $scale
-     * @param bool $useBcMath
      * @return bool
      */
     public static function isMultipleOf($number, $divisor): bool
@@ -330,24 +328,5 @@ final class Helper
         }
 
         return (object) $map;
-    }
-
-    private static function floatToString(float $float, int $scale = 14) {
-        $localeInfo = localeconv();
-        $decimalSeparator = $localeInfo['decimal_point'] ?? '.';
-
-
-        $string = (string) $float;
-        if (false !== strpos($string, 'E+')) {
-            $string = sprintf("%.${scale}f", $float);
-        }
-        $numberAsArray = explode($decimalSeparator, $string);
-        $numberDecimalPart = $numberAsArray[1] ?? '';
-        $times = $scale - strlen($numberDecimalPart);
-        if ($times > 0) {
-            $numberDecimalPart .= str_repeat('0', $times);
-        }
-
-        return implode($decimalSeparator, [$numberAsArray[0], substr($numberDecimalPart, 0, $scale)]);
     }
 }
