@@ -242,34 +242,16 @@ final class Helper
      * @param bool $useBcMath
      * @return bool
      */
-    public static function isMultipleOf($number, $divisor, int $scale = 14, bool $useBcMath = true): bool
+    public static function isMultipleOf($number, $divisor): bool
     {
-        $number = self::floatToString($number, $scale);
-        $divisor = self::floatToString($divisor, $scale);
+        $modulus = ($number - round($number / $divisor) * $divisor);
+        $precision = 0.0000000001;
 
-        static $bcMath = null;
-        if ($bcMath === null) {
-            $bcMath = extension_loaded('bcmath');
-        }
-        if ($divisor == 0) {
-            return $number == 0;
+        if (-$precision < $modulus && $modulus < $precision) {
+            return true;
         }
 
-        if ($bcMath && $useBcMath) {
-            /** @noinspection PhpComposerExtensionStubsInspection */
-            $x = bcdiv($number, $divisor, 0);
-            /** @noinspection PhpComposerExtensionStubsInspection */
-            $x = bcmul($divisor, $x, $scale);
-            /** @noinspection PhpComposerExtensionStubsInspection */
-            $x = bcsub($number, $x, $scale);
-
-            /** @noinspection PhpComposerExtensionStubsInspection */
-            return 0 === bccomp($x, 0, $scale);
-        }
-
-        $div = $number / $divisor;
-
-        return $div == (int)$div;
+        return $modulus == 0.0;
     }
 
     /**

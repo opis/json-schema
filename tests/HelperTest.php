@@ -35,30 +35,16 @@ class HelperTest extends TestCase
     }
 
     /**
-     * @dataProvider multipleOfDataOnlyWorkingWithBCMath
      * @dataProvider multipleOfData
      */
-    public function testIsMultipleOf($x, $y, bool $expectedTrue = true, int $scale = 14)
+    public function testIsMultipleOf($x, $y, bool $expectedTrue = true)
     {
         if ($expectedTrue) {
-            $this->assertTrue(Helper::isMultipleOf($x, $y, $scale), sprintf('%s wasn\'t detected as a multiple of %s but it should', $x, $y));
+            $this->assertTrue(Helper::isMultipleOf($x, $y), sprintf('%s wasn\'t detected as a multiple of %s but it should', $x, $y));
             return;
         }
 
-        $this->assertFalse(Helper::isMultipleOf($x, $y, $scale), sprintf('%s was detected as a multiple of %s but it shouldn\'t', $x, $y));
-    }
-
-    /**
-     * @dataProvider multipleOfData
-     */
-    public function testIsMultipleOfWithoutBCMath($x, $y, bool $expectedTrue = true, int $scale = 14)
-    {
-        if ($expectedTrue) {
-            $this->assertTrue(Helper::isMultipleOf($x, $y, $scale, false), sprintf('%s wasn\'t detected as a multiple of %s but it should', $x, $y));
-            return;
-        }
-
-        $this->assertFalse(Helper::isMultipleOf($x, $y, $scale, false), sprintf('%s was detected as a multiple of %s but it shouldn\'t', $x, $y));
+        $this->assertFalse(Helper::isMultipleOf($x, $y), sprintf('%s was detected as a multiple of %s but it shouldn\'t', $x, $y));
     }
 
     public function multipleOfData()
@@ -71,14 +57,8 @@ class HelperTest extends TestCase
         yield 'number 2, divisor 10' => [2, 10, false];
         yield 'number 2.1, divisor 1' => [2.1, 1, false];
         yield 'number 400.0001, divisor 3' => [400.0001, 3, false];
-        yield 'number 4000.00000000000001, divisor 0.00000000000001, scale 14' => [4000.00000000000001, 0.00000000000001, false];
-        yield 'number 4000.000000000000000000000000001, divisor 0.000000000000000000000000001, scale 14' => [4000.000000000000000000000000001, 0.000000000000000000000000001, false];
-
-        // Scale should not be under 14 so it's not normal test case.
-        yield 'number 2.2, divisor 1.15, scale 1' => [2.2, 1.15, true, 1];
-        yield 'number 4000.0001, divisor 0.0001, scale 3' => [400.0001, 0.0001, false, 3];
-        yield 'number 4000.0001, divisor 0.0001, scale 1' => [400.0001, 0.0001, false, 1];
-        yield 'number 4000.0001, divisor 3, scale 2' => [400.0001, 3, false, 2];
+        yield 'number 4000.00000000000001, divisor 0.00000000000001' => [4000.00000000000001, 0.00000000000001, true];
+        yield 'number 4000.000000000000000000000000001, divisor 0.000000000000000000000000001' => [4000.000000000000000000000000001, 0.000000000000000000000000001, true];
     }
 
     public function multipleOfDataOnlyWorkingWithBCMath()
