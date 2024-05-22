@@ -37,8 +37,6 @@ class URI
 
     const PATH_REGEX = '/^(?:(%[0-9a-f]{2})|[a-z0-9\/:@\-._~\!\$&\'\(\)*+,;=])*$/i';
 
-    const HOSTNAME_REGEX = '/^(([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9]){1,63}\.)*([a-z0-9]|[a-z0-9][a-z0-9\-]*[a-z0-9]){1,63}$/i';
-
     const TEMPLATE_VARSPEC_REGEX = '~^(?<varname>[a-zA-Z0-9\_\%\.]+)(?:(?<explode>\*)?|\:(?<prefix>\d+))?$~';
 
     const TEMPLATE_REGEX = <<<'REGEX'
@@ -151,7 +149,7 @@ REGEX;
      */
     public static function isValidHostname(string $host): bool
     {
-        if (preg_match( static::HOSTNAME_REGEX, $host)) {
+        if (filter_var($host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME)) {
             return true;
         }
         if (preg_match('/^\[(?<ip>[^\]]+)\]$/', $host, $m)) {
