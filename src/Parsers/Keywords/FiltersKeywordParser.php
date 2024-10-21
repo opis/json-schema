@@ -134,7 +134,7 @@ class FiltersKeywordParser extends KeywordParser
 
             if (property_exists($filter, '$vars')) {
                 if (!is_object($filter->{'$vars'})) {
-                    throw $this->keywordException('$vars (for {keyword}) must be a string', $info);
+                    throw $this->keywordException('$vars (for {keyword}) must be an object', $info);
                 }
                 unset($vars['$vars']);
                 $vars = get_object_vars($filter->{'$vars'}) + $vars;
