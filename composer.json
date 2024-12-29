@@ -41,6 +41,9 @@
             "Opis\\JsonSchema\\Test\\": "tests/"
         }
     },
+    "scripts": {
+        "tests": "./vendor/bin/phpunit --verbose --color"
+    },
     "extra": {
         "branch-alias": {
             "dev-master": "2.x-dev"
