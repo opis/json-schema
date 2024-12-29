@@ -54,6 +54,8 @@ class ValidationContext
 
     protected int $maxErrors = 1;
 
+    protected bool $stopAtFirstError = true;
+
     /**
      * @param $data
      * @param SchemaLoader $loader
@@ -70,7 +72,8 @@ class ValidationContext
         ?Schema $sender = null,
         array $globals = [],
         ?array $slots = null,
-        int $max_errors = 1
+        int $max_errors = 1,
+        bool $stop_at_first_error = true
     ) {
         $this->sender = $sender;
         $this->rootData = $data;
@@ -79,6 +82,7 @@ class ValidationContext
         $this->globals = $globals;
         $this->slots = null;
         $this->maxErrors = $max_errors;
+        $this->stopAtFirstError = $stop_at_first_error;
         $this->currentData = [
             [$data, false],
         ];
@@ -101,10 +105,19 @@ class ValidationContext
         ?Schema $sender,
         ?array $globals = null,
         ?array $slots = null,
-        ?int $max_errors = null
+        ?int $max_errors = null,
+        ?bool $stop_at_first_error = null
     ): self {
-        return new self($data, $this->loader, $this, $sender, $globals ?? $this->globals, $slots ?? $this->slots,
-            $max_errors ?? $this->maxErrors);
+        return new self(
+            $data,
+            $this->loader,
+            $this,
+            $sender,
+                $globals ?? $this->globals,
+                $slots ?? $this->slots,
+            $max_errors ?? $this->maxErrors,
+            $stop_at_first_error ?? $this->stopAtFirstError
+        );
     }
 
     public function create(
@@ -112,7 +125,8 @@ class ValidationContext
         ?Variables $mapper = null,
         ?Variables $globals = null,
         ?array $slots = null,
-        ?int $maxErrors = null
+        ?int $maxErrors = null,
+        ?bool $stop_at_first_error = null
     ): self {
         if ($globals) {
             $globals = $globals->resolve($this->rootData(), $this->currentDataPath());
@@ -131,7 +145,7 @@ class ValidationContext
         }
 
         return new self($data, $this->loader, $this, $sender, $globals, $slots ?? $this->slots,
-            $maxErrors ?? $this->maxErrors);
+            $maxErrors ?? $this->maxErrors, $stop_at_first_error ?? $this->stopAtFirstError);
     }
 
     public function sender(): ?Schema
@@ -355,6 +369,19 @@ class ValidationContext
     public function setMaxErrors(int $max): self
     {
         $this->maxErrors = $max;
+
+        return $this;
+    }
+
+
+    public function stopAtFirstError(): bool
+    {
+        return $this->stopAtFirstError;
+    }
+
+    public function setStopAtFirstError(bool $stop): self
+    {
+        $this->stopAtFirstError = $stop;
 
         return $this;
     }
