@@ -16,6 +16,7 @@ of data sent to a RESTful API endpoint.
 **The library's key features:**
 
 - Supports all keywords from all drafts (draft-2020-12 down to draft-06)
+- Support for custom errors inside schema using [`$error` keyword](https://opis.io/json-schema/2.x/errors.html)
 - Support for custom PHP filters using [`$filters` keyword](https://docs.opis.io/json-schema/2.x/filters.html)
 - Advanced schema reuse using [`$map` keyword](https://docs.opis.io/json-schema/2.x/mappers.html)
 - Intuitive schema composition using [slots](https://docs.opis.io/json-schema/2.x/slots.html)
@@ -53,7 +54,7 @@ Or you could directly reference it into your `composer.json` file as a dependenc
 ```json
 {
     "require": {
-        "opis/json-schema": "^2.2"
+        "opis/json-schema": "^2.4"
     }
 }
 ```
