@@ -218,7 +218,7 @@ class ErrorFormatter
         return preg_replace_callback(
             '~{([^}]+)}~imu',
             static function (array $m) use ($args) {
-                if (!isset($args[$m[1]])) {
+                if (!array_key_exists($m[1], $args)) {
                     return $m[0];
                 }
 
