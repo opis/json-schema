@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Filters;
 
-use DateTime;
+use DateTime, DateTimeZone;
 
 final class DateTimeFilters
 {
@@ -91,7 +91,7 @@ final class DateTimeFilters
 
     private static function CreateDate(string $value, ?string $timezone = null, bool $time = true): DateTime
     {
-        $date = new DateTime($value, $timezone);
+        $date = new DateTime($value, $timezone ? new DateTimeZone($timezone) : null);
         if (!$time) {
             return $date->setTime(0, 0, 0, 0);
         }
