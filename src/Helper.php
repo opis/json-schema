@@ -259,7 +259,7 @@ final class Helper
      */
     public static function isMultipleOf($number, $divisor, ?int $scale = null): bool
     {
-        if ($number == $divisor) {
+        if (!$number || $number == $divisor) {
             return true;
         }
 
@@ -267,18 +267,21 @@ final class Helper
             return $number == 0;
         }
 
-        if ($divisor == 1 && !is_string($number)) {
-            return is_int($number) || !fmod($number, 1);
-        }
-
         // maybe we get lucky
         if (!fmod($number, $divisor)) {
             return true;
         }
 
-        // int mod
-        if (is_int($number) && is_int($divisor)) {
-            return !($number % $divisor);
+        $divisor = abs($divisor);
+        if ($divisor == 1) {
+            // should have been caught by the above fmod()
+            return false;
+        }
+
+        $number = abs($number);
+        if ($divisor > $number) {
+            // number / divisor < 1
+            return false;
         }
 
         // Use global scale if null
@@ -289,8 +292,7 @@ final class Helper
             !(self::$hasBCMath ??= extension_loaded('bcmath'))
         ) {
             // use an approximation
-            $div = $number / $divisor;
-            return abs($div - round($div)) < (10 ** -$scale);
+            return abs($number - round($number / $divisor) * $divisor) < (10 ** -$scale);
         }
 
         // use bcmath
