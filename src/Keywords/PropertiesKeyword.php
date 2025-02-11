@@ -93,6 +93,7 @@ class PropertiesKeyword implements Keyword
             }
         }
 
+        $context->addCheckedProperties($checked);
         $context->addEvaluatedProperties($evaluated);
 
         if (!$errors->isEmpty()) {
@@ -101,8 +102,6 @@ class PropertiesKeyword implements Keyword
             ], $errors);
         }
         unset($errors);
-
-        $context->addCheckedProperties($checked);
 
         return null;
     }
