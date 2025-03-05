@@ -38,7 +38,7 @@ abstract class AbstractFormat implements IFormat
      * @param null $options
      * @return bool
      */
-    protected function validateFilter($data, int $filter, $options = null): bool
+    protected function validateFilter($data, int $filter, $options = 0): bool
     {
         return filter_var($data, $filter, $options) !== false;
     }

@@ -59,7 +59,7 @@ class Memory implements ISchemaLoader
      * @param string|null $id
      * @return Memory
      */
-    public function add($data, string $id = null): self
+    public function add($data, ?string $id = null): self
     {
         if (is_string($data)) {
             $data = json_decode($data, false);

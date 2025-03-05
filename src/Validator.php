@@ -65,11 +65,11 @@ class Validator implements IValidator
      * @param IFilterContainer|null $filters
      * @param IMediaTypeContainer|null $media
      */
-    public function __construct(IValidatorHelper $helper = null,
-                                ISchemaLoader $loader = null,
-                                IFormatContainer $formats = null,
-                                IFilterContainer $filters = null,
-                                IMediaTypeContainer $media = null)
+    public function __construct(?IValidatorHelper $helper = null,
+                                ?ISchemaLoader $loader = null,
+                                ?IFormatContainer $formats = null,
+                                ?IFilterContainer $filters = null,
+                                ?IMediaTypeContainer $media = null)
     {
         $this->helper = $helper ?? new ValidatorHelper();
         $this->formats = $formats ?? new FormatContainer();
@@ -81,7 +81,7 @@ class Validator implements IValidator
     /**
      * @inheritDoc
      */
-    public function schemaValidation($data, ISchema $schema, int $max_errors = 1, ISchemaLoader $loader = null): ValidationResult
+    public function schemaValidation($data, ISchema $schema, int $max_errors = 1, ?ISchemaLoader $loader = null): ValidationResult
     {
         $bag = new ValidationResult($max_errors);
 
@@ -103,7 +103,7 @@ class Validator implements IValidator
     /**
      * @inheritDoc
      */
-    public function uriValidation($data, string $schema_uri, int $max_errors = 1, ISchemaLoader $loader = null): ValidationResult
+    public function uriValidation($data, string $schema_uri, int $max_errors = 1, ?ISchemaLoader $loader = null): ValidationResult
     {
         $schema = new stdClass();
         $schema->{'$ref'} = URI::normalize($schema_uri);
@@ -113,7 +113,7 @@ class Validator implements IValidator
     /**
      * @inheritDoc
      */
-    public function dataValidation($data, $schema, int $max_errors = 1, ISchemaLoader $loader = null): ValidationResult
+    public function dataValidation($data, $schema, int $max_errors = 1, ?ISchemaLoader $loader = null): ValidationResult
     {
         $schema = is_string($schema) ? Schema::fromJsonString($schema) : new Schema($schema);
         return $this->schemaValidation($data, $schema, $max_errors, $loader);
@@ -122,7 +122,7 @@ class Validator implements IValidator
     /**
      * @inheritDoc
      */
-    public function setFilters(IFilterContainer $filters = null): IValidator
+    public function setFilters(?IFilterContainer $filters = null): IValidator
     {
         $this->filters = $filters;
         return $this;
@@ -139,7 +139,7 @@ class Validator implements IValidator
     /**
      * @inheritDoc
      */
-    public function setFormats(IFormatContainer $formats = null): IValidator
+    public function setFormats(?IFormatContainer $formats = null): IValidator
     {
         $this->formats = $formats;
         return $this;
@@ -173,7 +173,7 @@ class Validator implements IValidator
     /**
      * @inheritDoc
      */
-    public function setLoader(ISchemaLoader $loader = null): IValidator
+    public function setLoader(?ISchemaLoader $loader = null): IValidator
     {
         $this->loader = $loader;
         return $this;
@@ -190,7 +190,7 @@ class Validator implements IValidator
     /**
      * @inheritDoc
      */
-    public function setMediaType(IMediaTypeContainer $media = null): IValidator
+    public function setMediaType(?IMediaTypeContainer $media = null): IValidator
     {
         $this->mediaTypes = $media;
         return $this;
@@ -544,7 +544,7 @@ class Validator implements IValidator
      * @return bool
      */
     protected function validateCommons(/** @noinspection PhpUnusedParameterInspection */
-        &$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag, array &$defaults = null): bool
+        &$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag, ?array &$defaults = null): bool
     {
         $ok = true;
 
@@ -929,7 +929,7 @@ class Validator implements IValidator
      * @param array|null $defaults
      * @return bool
      */
-    protected function validateProperties(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag, array $defaults = null): bool
+    protected function validateProperties(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag, ?array $defaults = null): bool
     {
         $type = $this->helper->type($data, true);
         if ($type === 'null' || $type === 'boolean') {
@@ -1694,7 +1694,7 @@ class Validator implements IValidator
      * @param array|null $defaults
      * @return bool
      */
-    protected function validateObject(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag, array &$defaults = null): bool
+    protected function validateObject(&$document_data, &$data, array $data_pointer, array $parent_data_pointer, ISchema $document, $schema, ValidationResult $bag, ?array &$defaults = null): bool
     {
         $ok = true;
 
@@ -2014,7 +2014,7 @@ class Validator implements IValidator
      * @param $data
      * @param $defaults
      */
-    protected function setObjectDefaults($data, array &$defaults = null)
+    protected function setObjectDefaults($data, ?array &$defaults = null)
     {
         if (is_object($data) && $defaults) {
             foreach ($defaults as $property => $value) {

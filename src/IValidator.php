@@ -28,7 +28,7 @@ interface IValidator
      * @param ISchemaLoader|null $loader
      * @return ValidationResult
      */
-    public function schemaValidation($data, ISchema $schema, int $max_errors = 1, ISchemaLoader $loader = null): ValidationResult;
+    public function schemaValidation($data, ISchema $schema, int $max_errors = 1, ?ISchemaLoader $loader = null): ValidationResult;
 
     /**
      * @param $data
@@ -37,7 +37,7 @@ interface IValidator
      * @param ISchemaLoader|null $loader
      * @return ValidationResult
      */
-    public function uriValidation($data, string $schema_uri, int $max_errors = 1, ISchemaLoader $loader = null): ValidationResult;
+    public function uriValidation($data, string $schema_uri, int $max_errors = 1, ?ISchemaLoader $loader = null): ValidationResult;
 
     /**
      * @param $data
@@ -46,13 +46,13 @@ interface IValidator
      * @param ISchemaLoader|null $loader
      * @return ValidationResult
      */
-    public function dataValidation($data, $schema, int $max_errors = 1, ISchemaLoader $loader = null): ValidationResult;
+    public function dataValidation($data, $schema, int $max_errors = 1, ?ISchemaLoader $loader = null): ValidationResult;
 
     /**
      * @param IFilterContainer|null $filters
      * @return IValidator
      */
-    public function setFilters(IFilterContainer $filters = null): self;
+    public function setFilters(?IFilterContainer $filters = null): self;
 
     /**
      * @return IFilterContainer|null
@@ -63,7 +63,7 @@ interface IValidator
      * @param IFormatContainer|null $formats
      * @return IValidator
      */
-    public function setFormats(IFormatContainer $formats = null): self;
+    public function setFormats(?IFormatContainer $formats = null): self;
 
     /**
      * @return IFilterContainer|null
@@ -85,7 +85,7 @@ interface IValidator
      * @param ISchemaLoader|null $loader
      * @return IValidator
      */
-    public function setLoader(ISchemaLoader $loader = null): self;
+    public function setLoader(?ISchemaLoader $loader = null): self;
 
     /**
      * @return ISchemaLoader|null
@@ -96,7 +96,7 @@ interface IValidator
      * @param IMediaTypeContainer|null $media
      * @return IValidator
      */
-    public function setMediaType(IMediaTypeContainer $media = null): self;
+    public function setMediaType(?IMediaTypeContainer $media = null): self;
 
     /**
      * @return IMediaTypeContainer|null
