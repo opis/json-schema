@@ -53,7 +53,7 @@ class Schema implements ISchema
      * @param \stdClass|boolean $data
      * @param string|null $id
      */
-    public function __construct($data, string $id = null)
+    public function __construct($data, ?string $id = null)
     {
         if (is_object($data)) {
             if (property_exists($data, static::ID_PROP)) {
@@ -117,7 +117,7 @@ class Schema implements ISchema
     /**
      * @inheritDoc
      */
-    public function resolve(string $id = null)
+    public function resolve(?string $id = null)
     {
         if ($id === null) {
             $id = $this->id;
@@ -196,7 +196,7 @@ class Schema implements ISchema
      * @param string|null $id
      * @return Schema
      */
-    public static function fromJsonString(string $json, string $id = null): self
+    public static function fromJsonString(string $json, ?string $id = null): self
     {
         return new self(json_decode($json, false), $id);
     }

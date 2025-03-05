@@ -61,6 +61,6 @@ interface IValidatorHelper
      * @param array $defaults
      * @return bool
      */
-    public function equals($a, $b, array $defaults = null): bool;
+    public function equals($a, $b, ?array $defaults = null): bool;
 
 }

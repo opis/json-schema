@@ -36,6 +36,6 @@ interface ISchema
      * @param string|null $id
      * @return mixed
      */
-    public function resolve(string $id = null);
+    public function resolve(?string $id = null);
 
 }

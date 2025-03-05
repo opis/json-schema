@@ -20,10 +20,10 @@
         }
     ],
     "require": {
-        "php": ">=7.0"
+        "php": ">=7.4"
     },
     "require-dev": {
-        "opis/string": "^1.4",
+        "opis/string": "^2.0",
         "ext-bcmath": "*",
         "ext-json": "*",
         "ext-mbstring": "*",

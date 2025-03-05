@@ -36,7 +36,7 @@ trait JsonValidatorTrait
         return $this->validator;
     }
 
-    protected function createValidator(ISchemaLoader $loader = null, bool $use_default = true): IValidator
+    protected function createValidator(?ISchemaLoader $loader = null, bool $use_default = true): IValidator
     {
         if ($loader === null) {
             $loader = new File( 'schema:', [__DIR__ . '/schemas']);
