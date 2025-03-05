@@ -72,7 +72,7 @@ abstract class AbstractTest extends TestCase
     /**
      * @dataProvider draftValidationsProvider
      */
-    public function testValidations(string $uri, $data, bool $valid, bool $expectException = false, array $globals = null, array $slots = null, array $skip_drafts = null)
+    public function testValidations(string $uri, $data, bool $valid, bool $expectException = false, ?array $globals = null, ?array $slots = null, ?array $skip_drafts = null)
     {
         $validator = self::validator();
 
