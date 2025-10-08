@@ -242,7 +242,7 @@ class SchemaLoader
      */
     protected function checkExistingObject(object $data): ?Schema
     {
-        if (!$this->dataCache->contains($data)) {
+        if (!$this->dataCache->offsetExists($data)) {
             return null;
         }
 
