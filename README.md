@@ -42,7 +42,7 @@ the library's own API.
 
 ## Installation
 
-**Opis JSON Schema** is available on [Packagist] and it can be installed from a 
+**Opis JSON Schema** is available on [Packagist], and it can be installed from a 
 command line interface by using [Composer]. 
 
 ```bash
@@ -54,7 +54,7 @@ Or you could directly reference it into your `composer.json` file as a dependenc
 ```json
 {
     "require": {
-        "opis/json-schema": "^2.4"
+        "opis/json-schema": "^2.6"
     }
 }
 ```

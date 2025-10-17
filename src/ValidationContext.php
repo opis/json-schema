@@ -481,7 +481,7 @@ class ValidationContext
         $shared = $this->sharedObject();
 
         if (!isset($shared->stringLength)) {
-            $shared->stringLength = UnicodeString::from($this->currentData())->length();
+            $shared->stringLength = UnicodeString::getStringLength($this->currentData());
         }
 
         return $shared->stringLength;
