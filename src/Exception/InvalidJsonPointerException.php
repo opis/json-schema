@@ -30,7 +30,7 @@ class InvalidJsonPointerException extends AbstractSchemaException
      * @param string $pointer
      * @param Throwable|null $previous
      */
-    public function __construct(string $pointer, Throwable $previous = null)
+    public function __construct(string $pointer, ?Throwable $previous = null)
     {
         $this->pointer = $pointer;
         parent::__construct("Invalid JSON pointer: $pointer", 0, $previous);

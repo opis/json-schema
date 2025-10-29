@@ -17,7 +17,8 @@
 
 namespace Opis\JsonSchema\Exception;
 
-use stdClass, Throwable;
+use stdClass;
+use Throwable;
 
 class InvalidSchemaDraftException extends AbstractSchemaException
 {
@@ -30,7 +31,7 @@ class InvalidSchemaDraftException extends AbstractSchemaException
      * @param stdClass $schema
      * @param Throwable|null $previous
      */
-    public function __construct(stdClass $schema, Throwable $previous = null)
+    public function __construct(stdClass $schema, ?Throwable $previous = null)
     {
         $this->schema = $schema;
         parent::__construct("Invalid '\$schema' property", 0, $previous);

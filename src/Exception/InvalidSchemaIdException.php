@@ -30,7 +30,7 @@ class InvalidSchemaIdException extends AbstractSchemaException
      * @param string $id
      * @param Throwable|null $previous
      */
-    public function __construct(string $id, Throwable $previous = null)
+    public function __construct(string $id, ?Throwable $previous = null)
     {
         $this->id = $id;
         parent::__construct("Invalid id '{$id}'", 0, $previous);

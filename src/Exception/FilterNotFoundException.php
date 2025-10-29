@@ -34,7 +34,7 @@ class FilterNotFoundException extends AbstractSchemaException
      * @param string $filter
      * @param Throwable|null $previous
      */
-    public function __construct(string $type, string $filter, Throwable $previous = null)
+    public function __construct(string $type, string $filter, ?Throwable $previous = null)
     {
         $this->type = $type;
         $this->filter = $filter;

@@ -17,7 +17,8 @@
 
 namespace Opis\JsonSchema\Exception;
 
-use stdClass, Throwable;
+use stdClass;
+use Throwable;
 
 class SchemaDraftNotSupportedException extends AbstractSchemaException
 {
@@ -34,7 +35,7 @@ class SchemaDraftNotSupportedException extends AbstractSchemaException
      * @param string $draft
      * @param Throwable|null $previous
      */
-    public function __construct(stdClass $schema, string $draft, Throwable $previous = null)
+    public function __construct(stdClass $schema, string $draft, ?Throwable $previous = null)
     {
         $this->schema = $schema;
         $this->draft = $draft;

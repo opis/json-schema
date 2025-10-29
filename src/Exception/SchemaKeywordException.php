@@ -17,7 +17,8 @@
 
 namespace Opis\JsonSchema\Exception;
 
-use stdClass, Throwable;
+use stdClass;
+use Throwable;
 
 class SchemaKeywordException extends AbstractSchemaException
 {
@@ -39,7 +40,7 @@ class SchemaKeywordException extends AbstractSchemaException
      * @param string $message
      * @param Throwable|null $previous
      */
-    public function __construct(stdClass $schema, string $keyword, $value, string $message, Throwable $previous = null)
+    public function __construct(stdClass $schema, string $keyword, $value, string $message, ?Throwable $previous = null)
     {
         $this->schema = $schema;
         $this->keyword = $keyword;

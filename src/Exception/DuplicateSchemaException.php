@@ -17,7 +17,8 @@
 
 namespace Opis\JsonSchema\Exception;
 
-use stdClass, Throwable;
+use stdClass;
+use Throwable;
 
 class DuplicateSchemaException extends AbstractSchemaException
 {
@@ -38,7 +39,7 @@ class DuplicateSchemaException extends AbstractSchemaException
      * @param array $container
      * @param Throwable|null $previous
      */
-    public function __construct(string $id, stdClass $schema, array $container = [], Throwable $previous = null)
+    public function __construct(string $id, stdClass $schema, array $container = [], ?Throwable $previous = null)
     {
         $this->id = $id;
         $this->schema = $schema;
