@@ -23,7 +23,7 @@
         "php": ">=7.4"
     },
     "require-dev": {
-        "opis/string": "^2.0",
+        "opis/string": "^2.1",
         "ext-bcmath": "*",
         "ext-json": "*",
         "ext-mbstring": "*",

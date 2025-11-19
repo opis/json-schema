@@ -36,10 +36,8 @@ class ValidatorHelper implements IValidatorHelper
     public function __construct(int $scale = 10)
     {
         $this->scale = $scale;
-        if (class_exists('\\Opis\String\\UnicodeString', true)) {
-            $this->strLengthFunc = function (string $data): int {
-                return \Opis\String\UnicodeString::from($data)->length();
-            };
+        if (class_exists(\Opis\String\UnicodeString::class, true)) {
+            $this->strLengthFunc = [\Opis\String\UnicodeString::class, "getStringLength"];
         }
         else {
             $this->strLengthFunc = function_exists('mb_strlen') ? 'mb_strlen' : 'strlen';
