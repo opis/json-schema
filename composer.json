@@ -33,6 +33,9 @@
     "suggest": {
         "opis/string": "A standalone library for manipulating multibyte strings"
     },
+    "scripts": {
+        "tests": "./vendor/bin/phpunit --verbose --color"
+    },
     "autoload": {
         "psr-4": {
             "Opis\\JsonSchema\\": "src/"
