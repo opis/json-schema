@@ -30,7 +30,7 @@ class InvalidSchemaException extends AbstractSchemaException
      * @param $schema
      * @param Throwable|null $previous
      */
-    public function __construct($schema, Throwable $previous = null)
+    public function __construct($schema, ?Throwable $previous = null)
     {
         $this->schema = $schema;
         $type = is_object($schema) ? get_class($schema) : gettype($schema);

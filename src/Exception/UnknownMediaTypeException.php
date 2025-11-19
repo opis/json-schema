@@ -17,7 +17,8 @@
 
 namespace Opis\JsonSchema\Exception;
 
-use stdClass, Throwable;
+use stdClass;
+use Throwable;
 
 class UnknownMediaTypeException extends AbstractSchemaException
 {
@@ -31,7 +32,7 @@ class UnknownMediaTypeException extends AbstractSchemaException
     /**
      * @inheritDoc
      */
-    public function __construct(stdClass $schema, string $media, Throwable $previous = null)
+    public function __construct(stdClass $schema, string $media, ?Throwable $previous = null)
     {
         $this->schema = $schema;
         $this->media = $media;
