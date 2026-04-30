@@ -33,11 +33,17 @@ class ValidationResult
         return $this->error;
     }
 
+    /**
+     * @phpstan-assert-if-true null $this->error
+     */
     public function isValid(): bool
     {
         return $this->error === null;
     }
 
+    /**
+     * @phpstan-assert-if-true ValidationError $this->error
+     */
     public function hasError(): bool
     {
         return $this->error !== null;
