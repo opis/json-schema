@@ -47,6 +47,8 @@ class AllOfKeyword implements Keyword
     {
         $object = $this->createArrayObject($context);
 
+        $errors = [];
+
         foreach ($this->value as $index => $value) {
             if ($value === true) {
                 continue;
@@ -54,9 +56,13 @@ class AllOfKeyword implements Keyword
 
             if ($value === false) {
                 $this->addEvaluatedFromArrayObject($object, $context);
-                return $this->error($schema, $context, 'allOf', 'The data should match all schemas', [
+                $error = $this->error($schema, $context, 'allOf', 'The data should match all schemas', [
                     'index' => $index,
                 ]);
+                if ($context->stopAtFirstError()) {
+                    return $error;
+                }
+                $errors[] = $error;
             }
 
             if (is_object($value) && !($value instanceof Schema)) {
@@ -65,10 +71,20 @@ class AllOfKeyword implements Keyword
 
             if ($error = $context->validateSchemaWithoutEvaluated($value, null, false, $object)) {
                 $this->addEvaluatedFromArrayObject($object, $context);
-                return $this->error($schema, $context, 'allOf', 'The data should match all schemas', [
+                $error = $this->error($schema, $context, 'allOf', 'The data should match all schemas', [
                     'index' => $index,
                 ], $error);
+                if ($context->stopAtFirstError()) {
+                    return $error;
+                }
+                $errors[] = $error;
             }
+        }
+
+        if (count($errors) > 0 && !$context->stopAtFirstError()) {
+            return $this->error($schema, $context, 'allOf', 'The data should match all schemas', [
+                'index' => $index,
+            ], $errors);
         }
 
         $this->addEvaluatedFromArrayObject($object, $context);
