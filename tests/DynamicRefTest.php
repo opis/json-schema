@@ -85,6 +85,23 @@ JSON;
         yield 'boolean pointer target' => ['{"$schema":"https://json-schema.org/draft/2020-12/schema","$defs":{"yes":true},"$dynamicRef":"#/$defs/yes"}', 'null', true];
         yield 'false pointer target' => ['{"$schema":"https://json-schema.org/draft/2020-12/schema","$defs":{"no":false},"$dynamicRef":"#/$defs/no"}', 'null', false];
 
+        $embedded = <<<'JSON'
+{
+    "$schema":"https://json-schema.org/draft/2020-12/schema",
+    "$id":"https://example.com/root",
+    "$defs":{"outer":{"$dynamicAnchor":"node", "const":1}},
+    "properties":{
+        "foo":{
+            "$id":"inner",
+            "$defs":{"target":{"$dynamicAnchor":"node", "type":"integer"}},
+            "$dynamicRef":"#node"
+        }
+    }
+}
+JSON;
+        yield 'applicator enters embedded resource' => [$embedded, '{"foo":1}', true];
+        yield 'applicator retains outer dynamic scope' => [$embedded, '{"foo":2}', false];
+
         $override = <<<'JSON'
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",

@@ -45,18 +45,11 @@ class DynamicRefKeyword extends AbstractRefKeyword
         if ($anchor !== null && $resolved->info()->isObject() &&
             $loader->parser()->parseDynamicAnchor($resolved->info()->data(), $resolved->info()->draft()) === $anchor) {
             // Search every resource on the dynamic path, keeping the outermost match.
-            $current = $context;
-            $sender = $schema;
-            while ($sender) {
+            foreach ($context->dynamicScope() as $sender) {
                 $target = $loader->loadSchemaById($sender->info()->idBaseRoot()->resolveRef('#' . $anchor));
                 if ($target && $target->info()->isObject() &&
                     $loader->parser()->parseDynamicAnchor($target->info()->data(), $target->info()->draft()) === $anchor) {
                     $resolved = $target;
-                }
-                $sender = $current->sender();
-                $current = $current->parent();
-                if (!$current) {
-                    break;
                 }
             }
         }
