@@ -20,6 +20,45 @@ namespace Opis\JsonSchema\Test;
 class ObjectTypeTest extends AbstractTest
 {
     /**
+     * @dataProvider unevaluatedDataLocationsProvider
+     */
+    public function testUnevaluatedDataLocations(string $draft, string $schema, string $data, bool $valid): void
+    {
+        $schema = json_decode($schema);
+        $schema->{'$schema'} = "https://json-schema.org/draft/{$draft}/schema";
+        $validator = new \Opis\JsonSchema\CompliantValidator();
+
+        $result = $validator->validate(json_decode($data), $schema);
+        $this->assertSame($valid, $result->isValid());
+    }
+
+    public function unevaluatedDataLocationsProvider(): iterable
+    {
+        $properties = '{"type":"object","properties":{"foo":{"type":"object","properties":{"bar":true}},"baz":{"type":"object","properties":{"fiz":true}}},"unevaluatedProperties":false}';
+        $nested = '{"type":"object","properties":{"foo":{"type":"object","properties":{"child":{"type":"object","properties":{"bar":true}}},"unevaluatedProperties":false}},"unevaluatedProperties":false}';
+        $allOf = '{"type":"object","allOf":[{"properties":{"foo":true}},{"properties":{"baz":true}}],"unevaluatedProperties":false}';
+        $reference = '{"$defs":{"obj":{"type":"object","properties":{"foo":{"type":"object","properties":{"bar":true}}}}},"$ref":"#/$defs/obj","unevaluatedProperties":false}';
+
+        foreach (['2019-09', '2020-12'] as $draft) {
+            yield "{$draft} child names cannot evaluate parent names" => [$draft, $properties, '{"foo":{"bar":1},"baz":{"fiz":2},"bar":3,"fiz":4}', false];
+            yield "{$draft} valid child objects" => [$draft, $properties, '{"foo":{"bar":1},"baz":{"fiz":2}}', true];
+            yield "{$draft} deeper names cannot evaluate the root" => [$draft, $nested, '{"foo":{"child":{"bar":1}},"bar":2}', false];
+            yield "{$draft} deeper names cannot evaluate their parent" => [$draft, $nested, '{"foo":{"child":{"bar":1},"bar":2}}', false];
+            yield "{$draft} valid deeper object" => [$draft, $nested, '{"foo":{"child":{"bar":1}}}', true];
+            yield "{$draft} allOf annotations still combine" => [$draft, $allOf, '{"foo":1,"baz":2}', true];
+            yield "{$draft} allOf does not evaluate extra names" => [$draft, $allOf, '{"foo":1,"baz":2,"extra":3}', false];
+            yield "{$draft} ref annotations still combine" => [$draft, $reference, '{"foo":{"bar":1}}', true];
+            yield "{$draft} ref child annotations stay local" => [$draft, $reference, '{"foo":{"bar":1},"bar":2}', false];
+
+            $array = $draft === '2020-12'
+                ? '{"type":"array","prefixItems":[{"type":"array","items":true}],"unevaluatedItems":false}'
+                : '{"type":"array","items":[{"type":"array","items":true}],"unevaluatedItems":false}';
+            yield "{$draft} child indices cannot evaluate parent indices" => [$draft, $array, '[[1,2],3]', false];
+            yield "{$draft} valid nested array" => [$draft, $array, '[[1,2]]', true];
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public function validationsProvider(): array

@@ -401,6 +401,7 @@ class ValidationContext
 
         $this->shared[] = [
             'schema' => $schema,
+            'dataPath' => $this->fullDataPath(),
             'unevaluated' => $unevaluated,
             'object' => null,
         ];
@@ -423,9 +424,13 @@ class ValidationContext
 
         if ($data['unevaluated'] && $data['object']) {
             if ($this->sharedIndex >= 0) {
-                $this->mergeUnevaluated($data['object']);
+                if ($data['dataPath'] === $this->shared[$this->sharedIndex]['dataPath']) {
+                    $this->mergeUnevaluated($data['object']);
+                }
             } elseif ($this->parent && $this->parent->sharedIndex >= 0) {
-                $this->parent->mergeUnevaluated($data['object']);
+                if ($data['dataPath'] === $this->parent->shared[$this->parent->sharedIndex]['dataPath']) {
+                    $this->parent->mergeUnevaluated($data['object']);
+                }
             }
         }
 
