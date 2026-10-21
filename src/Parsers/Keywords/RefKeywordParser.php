@@ -21,7 +21,7 @@ use Opis\Uri\UriTemplate;
 use Opis\JsonSchema\Info\SchemaInfo;
 use Opis\JsonSchema\{Keyword, Schema, JsonPointer, Uri};
 use Opis\JsonSchema\Parsers\{KeywordParser, SchemaParser, VariablesTrait};
-use Opis\JsonSchema\Keywords\{PointerRefKeyword, RecursiveRefKeyword, TemplateRefKeyword, URIRefKeyword};
+use Opis\JsonSchema\Keywords\{DynamicRefKeyword, PointerRefKeyword, RecursiveRefKeyword, TemplateRefKeyword, URIRefKeyword};
 
 class RefKeywordParser extends KeywordParser
 {
@@ -63,12 +63,11 @@ class RefKeywordParser extends KeywordParser
                     continue;
                 }
                 $ref = $this->keywordValue($schema, $v['ref']);
-                if ($v['fragment']) {
-                    if (!preg_match('/^#[a-z][a-z0-9\\-.:_]*/i', $ref)) {
-                        $this->keywordException("{keyword} value is malformed", $info, $v['ref']);
-                    }
-                } elseif ($ref !== '#') {
-                    $this->keywordException("{keyword} supports only '#' as value", $info, $v['ref']);
+                if (!is_string($ref)) {
+                    throw $this->keywordException('{keyword} must be a string', $info, $v['ref']);
+                }
+                if (!$v['fragment'] && $ref !== '#') {
+                    throw $this->keywordException("{keyword} supports only '#' as value", $info, $v['ref']);
                 }
                 $variation = $v;
                 $recursive = true;
@@ -112,10 +111,12 @@ class RefKeywordParser extends KeywordParser
         }
 
         if ($recursive) {
-            $ref = $info->idBaseRoot()->resolveRef($ref);
+            $ref = Uri::merge($ref, $info->idBaseRoot(), true);
+            if ($ref === null || !$ref->isAbsolute()) {
+                throw $this->keywordException('{keyword} must be a valid uri-reference', $info, $variation['ref']);
+            }
             if ($variation['fragment']) {
-                return new RecursiveRefKeyword($ref->resolveRef('#'), $mapper, $globals, $slots,
-                    $variation['ref'], $variation['anchor'], $ref->fragment());
+                return new DynamicRefKeyword($ref, $mapper, $globals, $slots);
             }
             return new RecursiveRefKeyword($ref, $mapper, $globals, $slots,
                 $variation['ref'], $variation['anchor'], true);

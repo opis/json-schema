@@ -12,6 +12,7 @@
             <file>./tests/ObjectTypeTest.php</file>
             <file>./tests/MultipleTypesTest.php</file>
             <file>./tests/RefTest.php</file>
+            <file>./tests/DynamicRefTest.php</file>
             <file>./tests/MapperTest.php</file>
             <file>./tests/SlotTest.php</file>
             <file>./tests/FiltersTest.php</file>
