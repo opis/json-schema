@@ -315,6 +315,22 @@ class SchemaParser
 
     /**
      * @param object $schema
+     * @param string $draft
+     * @return string|null
+     */
+    public function parseDynamicAnchor(object $schema, string $draft): ?string
+    {
+        if ($draft !== '2020-12' || !property_exists($schema, '$dynamicAnchor')) {
+            return null;
+        }
+
+        $anchor = $schema->{'$dynamicAnchor'};
+
+        return is_string($anchor) && preg_match(self::ANCHOR_REGEX, $anchor) ? $anchor : null;
+    }
+
+    /**
+     * @param object $schema
      * @return string|null
      */
     public function parseSchemaDraft(object $schema): ?string

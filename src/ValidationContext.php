@@ -449,6 +449,20 @@ class ValidationContext
         return $this->shared[$this->sharedIndex]['schema'] ?? null;
     }
 
+    /**
+     * Schemas on the evaluation path, from innermost to outermost.
+     *
+     * @return iterable<Schema>
+     */
+    public function dynamicScope(): iterable
+    {
+        for ($context = $this; $context; $context = $context->parent) {
+            for ($index = $context->sharedIndex; $index >= 0; $index--) {
+                yield $context->shared[$index]['schema'];
+            }
+        }
+    }
+
     public function trackUnevaluated(): bool
     {
         return $this->shared[$this->sharedIndex]['unevaluated'] ?? false;
