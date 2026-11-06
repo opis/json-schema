@@ -63,6 +63,9 @@ class ContainsKeywordParser extends KeywordParser
 
         if ($this->minContains && $this->keywordExists($schema, $this->minContains)) {
             $min = $this->keywordValue($schema, $this->minContains);
+            if (is_float($min) && fmod($min, 1) == 0) {
+                $min = (int)$min;
+            }
             if (!is_int($min) || $min < 0) {
                 throw $this->keywordException("{keyword} must be a non-negative integer", $info, $this->minContains);
             }
@@ -70,6 +73,9 @@ class ContainsKeywordParser extends KeywordParser
 
         if ($this->maxContains && $this->keywordExists($schema, $this->maxContains)) {
             $max = $this->keywordValue($schema, $this->maxContains);
+            if (is_float($max) && fmod($max, 1) == 0) {
+                $max = (int)$max;
+            }
             if (!is_int($max) || $max < 0) {
                 throw $this->keywordException("{keyword} must be a non-negative integer", $info, $this->maxContains);
             }

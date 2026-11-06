@@ -2,6 +2,7 @@
     {
         "description": "maxContains without contains is ignored",
         "schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
             "maxContains": 1
         },
         "tests": [
@@ -20,6 +21,7 @@
     {
         "description": "maxContains with contains",
         "schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
             "contains": {"const": 1},
             "maxContains": 1
         },
@@ -52,8 +54,29 @@
         ]
     },
     {
+        "description": "maxContains with contains, value with a decimal",
+        "schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "contains": {"const": 1},
+            "maxContains": 1.0
+        },
+        "tests": [
+            {
+                "description": "one element matches, valid maxContains",
+                "data": [ 1 ],
+                "valid": true
+            },
+            {
+                "description": "too many elements match, invalid maxContains",
+                "data": [ 1, 1 ],
+                "valid": false
+            }
+        ]
+    },
+    {
         "description": "minContains < maxContains",
         "schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
             "contains": {"const": 1},
             "minContains": 1,
             "maxContains": 3
@@ -72,6 +95,27 @@
             {
                 "description": "minContains < maxContains < actual",
                 "data": [ 1, 1, 1, 1 ],
+                "valid": false
+            }
+        ]
+    },
+    {
+        "description": "maxContains = 0 with minContains = 0",
+        "schema": {
+            "$schema": "https://json-schema.org/draft/2020-12/schema",
+            "contains": {"const": 1},
+            "minContains": 0,
+            "maxContains": 0
+        },
+        "tests": [
+            {
+                "description": "empty array",
+                "data": [ ],
+                "valid": true
+            },
+            {
+                "description": "one matching item",
+                "data": [ 1 ],
                 "valid": false
             }
         ]

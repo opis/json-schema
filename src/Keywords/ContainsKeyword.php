@@ -55,14 +55,17 @@ class ContainsKeyword implements Keyword
 
         $context->markAllAsEvaluatedItems();
 
+        $isMaxNull = $this->max === null;
+        if ($this->min === 0 && ($isMaxNull || $count <= $this->max)) {
+            return null;
+        }
+
         if ($this->min > $count) {
             return $this->error($schema, $context, 'minContains', 'Array must have at least {min} items', [
                 'min' => $this->min,
                 'count' => $count,
             ]);
         }
-
-        $isMaxNull = $this->max === null;
 
         if ($this->value === true) {
             if ($count) {
