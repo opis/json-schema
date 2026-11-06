@@ -296,20 +296,87 @@ final class Helper
         }
 
         // use bcmath
+        //
+        // number_format($n, $scale) prints fraction digits past the significant
+        // precision of a float (32.49 -> 32.49000000000001, 2222.22 -> 2222.21999999999980).
+        // Divide the shortest round-trip decimal instead.
+        // https://github.com/opis/json-schema/issues/165
 
-        $number = number_format($number, $scale, '.', '');
-        $divisor = number_format($divisor, $scale, '.', '');
+        $number = self::decimalString($number);
+        $divisor = self::decimalString($divisor);
 
-        // number can be zero after formatting
-        if (!(float)$divisor) {
-            return $number === $divisor;
+        if (!is_string($number) || !is_string($divisor)) {
+            return false;
+        }
+
+        $scale = max($scale, self::fractionDigits($number), self::fractionDigits($divisor));
+
+        if (bccomp($divisor, '0', $scale) === 0) {
+            return bccomp($number, '0', $scale) === 0;
         }
 
         $x = bcdiv($number, $divisor, 0);
         $x = bcmul($divisor, $x, $scale);
         $x = bcsub($number, $x, $scale);
 
-        return 0 === bccomp($x, 0, $scale);
+        return bccomp($x, '0', $scale) === 0;
+    }
+
+    /**
+     * Shortest round-trip decimal, with scientific notation expanded.
+     * 1.0e-5 becomes 0.00001, 1.0e+20 becomes 100000000000000000000.
+     * BCMath does not accept exponent syntax.
+     *
+     * @param int|float $number
+     * @return string|null
+     */
+    private static function decimalString($number): ?string
+    {
+        if (is_int($number)) {
+            return (string) $number;
+        }
+
+        $previous = ini_set('serialize_precision', '-1');
+        $encoded = json_encode($number, JSON_PRESERVE_ZERO_FRACTION);
+        if ($previous !== false) {
+            ini_set('serialize_precision', $previous);
+        }
+
+        if (!is_string($encoded) || preg_match('/\A(-?)(\d+)(?:\.(\d+))?(?:[eE]([+-]?\d+))?\z/', $encoded, $matches) !== 1) {
+            return null;
+        }
+
+        $digits = $matches[2] . ($matches[3] ?? '');
+        $point = strlen($matches[2]) + (int) ($matches[4] ?? 0);
+
+        if ($point <= 0) {
+            $plain = '0.' . str_repeat('0', -$point) . $digits;
+        } elseif ($point >= strlen($digits)) {
+            $plain = $digits . str_repeat('0', $point - strlen($digits));
+        } else {
+            $plain = substr($digits, 0, $point) . '.' . substr($digits, $point);
+        }
+
+        if (strpos($plain, '.') !== false) {
+            $plain = rtrim(rtrim($plain, '0'), '.');
+        }
+
+        if ($plain === '' || $plain === '0') {
+            return '0';
+        }
+
+        return $matches[1] === '-' ? '-' . $plain : $plain;
+    }
+
+    /**
+     * @param string $number
+     * @return int
+     */
+    private static function fractionDigits(string $number): int
+    {
+        $point = strpos($number, '.');
+
+        return $point === false ? 0 : strlen($number) - $point - 1;
     }
 
     /**
