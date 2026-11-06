@@ -439,7 +439,8 @@ class SchemaLoader
         if (is_bool($data)) {
             $data = $data ? 'true' : 'false';
         } else {
-            $data = spl_object_hash($data);
+            // Same value as spl_object_hash() since PHP 8.1; spl_object_hash() is deprecated in PHP 8.6.
+            $data = sprintf('%016x%016x', spl_object_id($data), 0);
         }
 
         return "schema:///{$data}.json";
