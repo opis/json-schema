@@ -77,18 +77,28 @@ class ObjectSchema extends AbstractSchema
      */
     public function doValidate(ValidationContext $context): ?ValidationError
     {
+        $errors = [];
         if ($this->before && ($error = $this->applyKeywords($this->before, $context))) {
-            return $error;
+            if ($context->stopAtFirstError()) {
+                return $error;
+            }
+            $errors[] = $error;
         }
 
         if ($this->types && ($type = $context->currentDataType())) {
             if (isset($this->types[$type]) && ($error = $this->applyKeywords($this->types[$type], $context))) {
-                return $error;
+                if ($context->stopAtFirstError()) {
+                    return $error;
+                }
+                $errors[] = $error;
             }
 
             if (($type = Helper::getJsonSuperType($type)) && isset($this->types[$type])) {
                 if ($error = $this->applyKeywords($this->types[$type], $context)) {
-                    return $error;
+                    if ($context->stopAtFirstError()) {
+                        return $error;
+                    }
+                    $errors[] = $error;
                 }
             }
 
@@ -96,10 +106,21 @@ class ObjectSchema extends AbstractSchema
         }
 
         if ($this->after && ($error = $this->applyKeywords($this->after, $context))) {
-            return $error;
+            if ($context->stopAtFirstError()) {
+                return $error;
+            }
+            $errors[] = $error;
         }
 
-        return null;
+        if (count($errors) === 0) {
+            return null;
+        }
+
+        if (count($errors) === 1) {
+            return $errors[0];
+        }
+
+        return new ValidationError('', $this, DataInfo::fromContext($context), 'Data must match schema', [], $errors);
     }
 
     /**
