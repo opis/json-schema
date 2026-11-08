@@ -17,7 +17,7 @@
 
 namespace Opis\JsonSchema\Keywords;
 
-use Traversable;
+use ArrayIterator, Traversable;
 use Opis\JsonSchema\Errors\ValidationError;
 use Opis\JsonSchema\{Helper, ValidationContext, Keyword, Schema};
 
@@ -27,6 +27,9 @@ class PatternPropertiesKeyword implements Keyword
 
     /** @var bool[]|object[] */
     protected array $value;
+
+    /** @var string|null */
+    protected ?string $currentPattern;
 
     /**
      * @param bool[]|object[] $value
@@ -42,61 +45,71 @@ class PatternPropertiesKeyword implements Keyword
     public function validate(ValidationContext $context, Schema $schema): ?ValidationError
     {
         $props = $context->getObjectProperties();
-
         if (!$props) {
             return null;
         }
 
-        $checked = [];
-
-        foreach ($this->value as $pattern => $value) {
-            if ($value === true) {
-                iterator_to_array($this->matchedProperties($pattern, $props, $checked));
-                continue;
+        foreach ($this->walk($context, $props) as $list => $subSchema) {
+            if ($subSchema === false) {
+                return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '{pattern}' are not allowed", [
+                    'pattern' => $this->currentPattern,
+                    'forbidden' => $list,
+                ]);
             }
 
-            if ($value === false) {
-                $list = iterator_to_array($this->matchedProperties($pattern, $props, $checked));
-
-                if ($list) {
-                    if ($context->trackUnevaluated()) {
-                        $context->addEvaluatedProperties(array_diff(array_keys($checked), $list));
-                    }
-                    return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '{pattern}' are not allowed", [
-                        'pattern' => $pattern,
-                        'forbidden' => $list,
-                    ]);
-                }
-
-                unset($list);
-                continue;
-            }
-
-            if (is_object($value) && !($value instanceof Schema)) {
-                $value = $this->value[$pattern] = $context->loader()->loadObjectSchema($value);
-            }
-
-            $subErrors = $this->iterateAndValidate($value, $context, $this->matchedProperties($pattern, $props, $checked));
+            $subErrors = $this->iterateAndValidate($subSchema, $context, $list);
 
             if (!$subErrors->isEmpty()) {
-                if ($context->trackUnevaluated()) {
-                    $context->addEvaluatedProperties(array_keys($checked));
-                }
                 return $this->error($schema, $context, 'patternProperties', "Object properties that match pattern '{pattern}' must also match pattern's schema", [
-                    'pattern' => $pattern,
+                    'pattern' => $this->currentPattern,
                 ], $subErrors);
             }
 
             unset($subErrors);
         }
 
-        if ($checked) {
-            $checked = array_keys($checked);
-            $context->addCheckedProperties($checked);
-            $context->addEvaluatedProperties($checked);
-        }
-
         return null;
+    }
+
+    /**
+     * @param ValidationContext $context
+     * @param array $props
+     * @return iterable<array<string>, Schema | false>
+     */
+    protected function walk(ValidationContext $context, array $props): iterable
+    {
+        $checked = [];
+        $it = new ArrayIterator($this->value);
+        try {
+            foreach ($it as $pattern => $schema) {
+                $list = iterator_to_array($this->matchedProperties($pattern, $props, $checked));
+                if (!$list || $schema === true) {
+                    // no properties matched or schema is true
+                    continue;
+                }
+                // resolve schema
+                if (is_object($schema) && !($schema instanceof Schema)) {
+                    $schema = $this->value[$pattern] = $context->loader()->loadObjectSchema($schema);
+                }
+                // save current pattern
+                $this->currentPattern = $pattern;
+                yield $list => $schema;
+            }
+        } finally {
+            if ($checked) {
+                $context->addEvaluatedProperties(array_keys($checked));
+            }
+            // consume the rest to properly mark as checked
+            $it->next();
+            while ($it->valid()) {
+                iterator_to_array($this->matchedProperties($it->key(), $props, $checked));
+                $it->next();
+            }
+            if ($checked) {
+                $context->addCheckedProperties(array_keys($checked));
+            }
+            $this->currentPattern = null;
+        }
     }
 
     /**

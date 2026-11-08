@@ -49,19 +49,20 @@ class PropertiesKeyword implements Keyword
             return null;
         }
 
-        $checked = [];
+        $errored = [];
         $evaluated = [];
 
         $data = $context->currentData();
 
         $errors = $this->errorContainer($context->maxErrors());
 
+        // mark all as checked
+        $context->addCheckedProperties($this->propertyKeys);
+
         foreach ($this->properties as $name => $prop) {
             if (!property_exists($data, $name)) {
                 continue;
             }
-
-            $checked[] = $name;
 
             if ($prop === true) {
                 $evaluated[] = $name;
@@ -84,6 +85,7 @@ class PropertiesKeyword implements Keyword
             $context->popDataPath();
 
             if ($error) {
+                $errored[] = $name;
                 $errors->add($error);
                 if ($errors->isFull()) {
                     break;
@@ -97,12 +99,10 @@ class PropertiesKeyword implements Keyword
 
         if (!$errors->isEmpty()) {
             return $this->error($schema, $context, 'properties', "The properties must match schema: {properties}", [
-                'properties' => array_values(array_diff($checked, $evaluated))
+                'properties' => $errored
             ], $errors);
         }
         unset($errors);
-
-        $context->addCheckedProperties($checked);
 
         return null;
     }
