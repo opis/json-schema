@@ -92,7 +92,9 @@ class IfThenElseKeywordParser extends KeywordParser
             }
             $then = true;
         } elseif ($then === true && $else === true) {
-            return null;
+            if (!$parser->option('allowUnevaluated')) {
+                return null;
+            }
         }
 
         return new IfThenElseKeyword($if, $then, $else);
