@@ -362,8 +362,9 @@ class SchemaLoader
     )
     {
         $schema_id = $this->parser->parseId($data);
-        $schema_anchor = $this->parser->parseAnchor($data, $draft);
         $draft = $this->parser->parseSchemaDraft($data) ?? $draft;
+        $schema_anchor = $this->parser->parseAnchor($data, $draft);
+        $dynamic_anchor = $this->parser->parseDynamicAnchor($data, $draft);
 
         if ($schema_id !== null) {
             $id = Uri::merge($schema_id, $base, true);
@@ -381,11 +382,11 @@ class SchemaLoader
             $this->uriCache[$key] = $lazy;
         }
 
-        // When $id and $anchor are both present add a reference to the same lazy object
-        if ($schema_id !== null && $schema_anchor !== null) {
-            $anchor_id = Uri::merge('#' . $schema_anchor, $id, true);
+        // Both anchor keywords identify the same schema, relative to its resource.
+        foreach (array_unique(array_filter([$schema_anchor, $dynamic_anchor], fn ($anchor) => $anchor !== null)) as $anchor) {
+            $anchor_id = Uri::merge('#' . $anchor, $id ?? $base, true);
             $key = $this->cacheKey((string)$anchor_id);
-            if (isset($this->uriCache[$key])) {
+            if (isset($this->uriCache[$key]) && $this->uriCache[$key] !== $lazy) {
                 throw new DuplicateSchemaIdException($anchor_id, $data);
             }
             $this->uriCache[$key] = $lazy;
