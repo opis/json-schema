@@ -136,7 +136,7 @@ class ContainsKeyword implements Keyword
             ]);
         }
 
-        if ($valid) {
+        if ($valid || $this->min === 0) {
             return null;
         }
 
