@@ -33,4 +33,21 @@ class HelperTest extends TestCase
         $this->assertSame('foo', Helper::convertAssocArrayToObject('foo'));
         $this->assertSame(true, Helper::convertAssocArrayToObject(true));
     }
+
+    public function testIsMultipleOfFloatPrecision()
+    {
+        if (!extension_loaded('bcmath')) {
+            $this->markTestSkipped('BCMath is required to reproduce the number_format precision bug');
+        }
+
+        $this->assertTrue(Helper::isMultipleOf(32.49, 0.01));
+        $this->assertTrue(Helper::isMultipleOf(0.29, 0.01));
+        $this->assertTrue(Helper::isMultipleOf(2222.22, 0.01));
+        $this->assertTrue(Helper::isMultipleOf(123456789.01, 0.01));
+        $this->assertTrue(Helper::isMultipleOf(2.0e-5, 1.0e-5));
+
+        $this->assertFalse(Helper::isMultipleOf(32.495, 0.01));
+        $this->assertFalse(Helper::isMultipleOf(32.49000000000001, 0.01));
+        $this->assertFalse(Helper::isMultipleOf(0.1 + 0.2, 0.1));
+    }
 }
