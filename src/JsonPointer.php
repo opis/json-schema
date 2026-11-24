@@ -20,7 +20,7 @@ namespace Opis\JsonSchema;
 final class JsonPointer
 {
     /** @var string */
-    protected const PATTERN = '~^(?:(?<level>0|[1-9][0-9]*)(?<shift>(?:\+|-)(?:0|[1-9][0-9]*))?)?(?<pointer>(?:/[^/#]*)*)(?<fragment>#)?$~';
+    protected const PATTERN = '~^(?:(?<level>0|[1-9][0-9]*)(?<shift>(?:\+|-)(?:0|[1-9][0-9]*))?)?(?<pointer>(?:/[^/#]*)*)(?<fragment>#)?\z~';
 
     /** @var string */
     protected const UNESCAPED = '/~([^01]|$)/';
@@ -188,7 +188,7 @@ final class JsonPointer
 
         $last = $path[$count - 1];
 
-        if (is_string($last) && preg_match('/^[1-9]\d*$/', $last)) {
+        if (is_string($last) && preg_match('/^[1-9]\d*\z/', $last)) {
             $last = (int) $last;
         }
 

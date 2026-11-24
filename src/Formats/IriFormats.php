@@ -92,7 +92,7 @@ class IriFormats
         $idn = $idn ?? static::idn();
 
         if ($idn) {
-            if (!preg_match('/^(?<name>.+)@(?<domain>.+)$/u', $value, $m)) {
+            if (!preg_match('/^(?<name>.+)@(?<domain>.+)\z/u', $value, $m)) {
                 return false;
             }
 
